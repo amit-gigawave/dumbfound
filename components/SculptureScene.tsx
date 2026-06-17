@@ -66,9 +66,9 @@ const SingleModel: FC<{ url: string; offsetX: number; offsetY: number; scrollCon
         
         const ctx = gsap.context(() => {
             gsap.fromTo(groupRef.current!.rotation,
-                { y: 0 },
+                { y: -Math.PI },
                 {
-                    y: Math.PI * 2,
+                    y: Math.PI,
                     ease: "none",
                     scrollTrigger: {
                         trigger: scrollContainerRef.current,
