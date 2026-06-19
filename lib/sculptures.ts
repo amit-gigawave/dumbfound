@@ -4,6 +4,11 @@ export interface Sculpture {
   subtitle: string;
   description: string;
   modelUrl: string;
+  /**
+   * Optional USDZ model used by iOS AR Quick Look. Drop a `<slug>.usdz` next to
+   * the GLB under /public/sculptures and point this at it to enable AR on iPhone.
+   */
+  usdzUrl?: string;
   accent: string;
   offsetX: number;
   offsetY: number;

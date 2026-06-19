@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, RotateCcw, Hand, ZoomIn } from "lucide-react";
 import type { Sculpture } from "@/lib/sculptures";
 import BlurText from "./BlurText";
+import ARButton from "./ARButton";
 
 const SculptureScene = dynamic(() => import("./SculptureScene"), {
   ssr: false,
@@ -56,6 +57,10 @@ const SculptureViewer = ({ sculpture }: { sculpture: Sculpture }) => {
           <p className="mt-5 max-w-md text-base leading-relaxed text-black/55">
             {sculpture.description}
           </p>
+
+          <div className="mt-8">
+            <ARButton sculpture={sculpture} />
+          </div>
 
           <div className="mt-8 h-px w-16 bg-black/10" />
 

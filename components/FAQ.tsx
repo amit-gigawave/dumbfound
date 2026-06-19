@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import BlurText from "./BlurText";
+import SectionBadge from "./SectionBadge";
 
 const faqs = [
   {
@@ -76,18 +77,8 @@ export default function FAQ() {
           viewport={{ once: true, margin: "-80px" }}
           className="lg:sticky lg:top-28 lg:self-start"
         >
-          <motion.div
-            variants={fadeUp}
-            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1 mb-8"
-          >
-            <motion.span
-              className="h-1.5 w-1.5 rounded-full bg-[#f2741f]"
-              animate={{ opacity: [1, 0.4, 1], scale: [1, 1.4, 1] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/80">
-              FAQ
-            </span>
+          <motion.div variants={fadeUp} className="mb-8">
+            <SectionBadge label="FAQ" />
           </motion.div>
           <h2 className="font-display text-4xl sm:text-[3.5rem] leading-[1.1] font-medium tracking-tight mb-6 text-black">
             <span className="block">

@@ -6,9 +6,11 @@ import {
   MapPin,
   Phone,
   Check,
+  ArrowUpRight,
 } from "lucide-react";
 import { motion } from "motion/react";
 import BlurText from "./BlurText";
+import SectionBadge from "./SectionBadge";
 
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -43,21 +45,27 @@ export default function Contact() {
   const contactCards = [
     {
       icon: Mail,
-      title: "Email",
+      label: "Email",
       value: "hello@dumbfound.tech",
       sub: "Get fast responses, usually within 24 hours.",
+      action: "Send a message",
+      href: "mailto:hello@dumbfound.tech",
     },
     {
       icon: Phone,
-      title: "Sales & Partnerships",
+      label: "Sales & Partnerships",
       value: "sales@dumbfound.tech",
       sub: "Let's talk about scaling your brand with us.",
+      action: "Start a conversation",
+      href: "mailto:sales@dumbfound.tech",
     },
     {
       icon: MapPin,
-      title: "Location",
+      label: "Location",
       value: "Mumbai, Maharashtra, India",
       sub: "Visit our primary studio by appointment.",
+      action: "Get directions",
+      href: "https://maps.google.com/?q=Mumbai,Maharashtra,India",
     },
   ];
 
@@ -108,18 +116,8 @@ export default function Contact() {
           viewport={{ once: true, margin: "-80px" }}
           className="flex flex-col items-center text-center mb-16"
         >
-          <motion.div
-            variants={fadeUp}
-            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-4 py-1.5 mb-6"
-          >
-            <motion.span
-              className="h-1.5 w-1.5 rounded-full bg-[#f2741f]"
-              animate={{ opacity: [1, 0.4, 1], scale: [1, 1.4, 1] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/80">
-              Contact
-            </span>
+          <motion.div variants={fadeUp} className="mb-6">
+            <SectionBadge label="Contact" />
           </motion.div>
           <h2 className="font-display text-4xl sm:text-5xl font-medium tracking-tight mb-4 text-black flex justify-center">
             <BlurText
@@ -146,26 +144,56 @@ export default function Contact() {
           viewport={{ once: true, margin: "-60px" }}
           className="grid md:grid-cols-3 gap-6 mb-24"
         >
-          {contactCards.map((card, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              whileHover={{ y: -6 }}
-              transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              className="group bg-white rounded-2xl p-6 sm:p-8 border border-black/5 shadow-[0_2px_15px_rgba(0,0,0,0.03)] flex flex-col items-start text-left hover:border-[#f2741f]/20 hover:shadow-[0_12px_30px_rgba(242,116,31,0.10)]"
-            >
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#ffe2cf] to-[#ffd3be] flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                <card.icon className="w-4 h-4 text-[#b3551c]" />
-              </div>
-              <h3 className="font-display font-medium text-black mb-4">
-                {card.title}
-              </h3>
-              <p className="font-semibold text-sm text-black mb-2">
-                {card.value}
-              </p>
-              <p className="text-[0.8rem] text-black/40">{card.sub}</p>
-            </motion.div>
-          ))}
+          {contactCards.map((card, i) => {
+            const external = card.href.startsWith("http");
+            return (
+              <motion.a
+                key={i}
+                href={card.href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                variants={fadeUp}
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                className="group relative flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white p-7 text-left shadow-[0_2px_20px_rgba(21,20,21,0.04)] sm:p-8 hover:border-[#f2741f]/20 hover:shadow-[0_18px_40px_rgba(242,116,31,0.12)]"
+              >
+                {/* hover gradient wash */}
+                <span className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#fff6f0] via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                {/* top accent bar that sweeps in */}
+                <span className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-[#ffd3be] to-[#f2741f] transition-all duration-500 ease-out group-hover:w-full" />
+
+                <div className="relative flex items-start justify-between">
+                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-[#ffe2cf] to-[#ff9e6d] text-[#5a2e16] shadow-[0_10px_22px_rgba(242,116,31,0.28)] transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
+                    <card.icon className="h-5 w-5" strokeWidth={2} />
+                  </span>
+                  <span className="font-display text-2xl leading-none text-black/[0.12]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <div className="relative mt-7">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#b3551c]">
+                    {card.label}
+                  </span>
+                  <p className="mt-2.5 break-words text-[15px] font-semibold text-black">
+                    {card.value}
+                  </p>
+                  <p className="mt-2 text-[0.8rem] leading-6 text-black/45">
+                    {card.sub}
+                  </p>
+                </div>
+
+                <div className="relative mt-auto flex items-center gap-2.5 pt-5 text-[13px] font-semibold text-black/70 before:absolute before:left-0 before:top-0 before:h-px before:w-full before:bg-black/[0.06]">
+                  <span className="transition-colors duration-300 group-hover:text-[#f2741f]">
+                    {card.action}
+                  </span>
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-black/[0.05] text-black/60 transition-all duration-300 group-hover:translate-x-1 group-hover:bg-[#f2741f] group-hover:text-white">
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </motion.a>
+            );
+          })}
         </motion.div>
 
         {/* Bottom Section */}
