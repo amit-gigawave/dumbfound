@@ -21,6 +21,9 @@ const detectPlatform = (): Platform => {
   return "desktop";
 };
 
+const toAbs = (path: string) =>
+  typeof window === "undefined" ? path : new URL(path, window.location.origin).href;
+
 /** Launch Android Scene Viewer with the GLB. */
 const launchSceneViewer = (glbAbsUrl: string, title: string, fallback: string) => {
   const params = new URLSearchParams({
@@ -35,12 +38,11 @@ const launchSceneViewer = (glbAbsUrl: string, title: string, fallback: string) =
   window.location.href = intent;
 };
 
-/** Launch iOS AR Quick Look with a USDZ. */
-const launchQuickLook = (usdzAbsUrl: string) => {
+/** Open an href in iOS AR Quick Look (must contain an <img> child). */
+const openQuickLook = (usdzUrl: string) => {
   const anchor = document.createElement("a");
   anchor.setAttribute("rel", "ar");
-  anchor.setAttribute("href", usdzAbsUrl);
-  // Quick Look requires an <img> child to engage from a user gesture.
+  anchor.setAttribute("href", usdzUrl);
   anchor.appendChild(document.createElement("img"));
   anchor.style.display = "none";
   document.body.appendChild(anchor);
@@ -48,27 +50,49 @@ const launchQuickLook = (usdzAbsUrl: string) => {
   document.body.removeChild(anchor);
 };
 
+/**
+ * Build a USDZ for iOS Quick Look. Uses a prebuilt `usdzUrl` if one is supplied,
+ * otherwise converts the GLB to USDZ in-browser with three's USDZExporter.
+ */
+const resolveUsdz = async (sculpture: Sculpture): Promise<string> => {
+  if (sculpture.usdzUrl) return toAbs(sculpture.usdzUrl);
+
+  const [{ GLTFLoader }, { DRACOLoader }, { USDZExporter }] = await Promise.all([
+    import("three/examples/jsm/loaders/GLTFLoader.js"),
+    import("three/examples/jsm/loaders/DRACOLoader.js"),
+    import("three/examples/jsm/exporters/USDZExporter.js"),
+  ]);
+
+  const loader = new GLTFLoader();
+  const draco = new DRACOLoader();
+  draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+  loader.setDRACOLoader(draco);
+
+  const gltf = await loader.loadAsync(toAbs(sculpture.modelUrl));
+  const exporter = new USDZExporter();
+  const usdz = await exporter.parseAsync(gltf.scene);
+  const blob = new Blob([usdz as BlobPart], { type: "model/vnd.usdz+zip" });
+  return URL.createObjectURL(blob);
+};
+
 const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
   const [mounted, setMounted] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
-  const [qrDataUrl, setQrDataUrl] = useState<string>("");
+  const [qrDataUrl, setQrDataUrl] = useState("");
+  const [arPromptOpen, setArPromptOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const platformRef = useRef<Platform>("desktop");
 
   useEffect(() => {
     setMounted(true);
     platformRef.current = detectPlatform();
+    // Arrived from a QR scan → show a tap prompt (iOS/Android AR needs a gesture).
+    const wantsAR = new URLSearchParams(window.location.search).get("ar") === "1";
+    if (wantsAR && platformRef.current !== "desktop") setArPromptOpen(true);
   }, []);
 
-  const abs = useCallback(
-    (path: string) =>
-      typeof window === "undefined"
-        ? path
-        : new URL(path, window.location.origin).href,
-    [],
-  );
-
   const openQr = useCallback(async () => {
-    // Encode the current page with ?ar=1 so a phone scan can auto-launch AR.
     const target = new URL(window.location.href);
     target.searchParams.set("ar", "1");
     const data = await QRCode.toDataURL(target.href, {
@@ -80,38 +104,47 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
     setQrOpen(true);
   }, []);
 
-  const launch = useCallback(() => {
+  /** Fire AR. Must be called from within a user gesture (tap/click). */
+  const launchAR = useCallback(async () => {
     const platform = platformRef.current;
+    setError(null);
     if (platform === "android") {
-      launchSceneViewer(abs(sculpture.modelUrl), sculpture.title, window.location.href);
-    } else if (platform === "ios" && sculpture.usdzUrl) {
-      launchQuickLook(abs(sculpture.usdzUrl));
-    } else {
-      // Desktop (or iOS without a USDZ) → hand off to a phone via QR.
-      openQr();
+      launchSceneViewer(
+        toAbs(sculpture.modelUrl),
+        sculpture.title,
+        window.location.href.replace(/[?&]ar=1/, ""),
+      );
+      return;
     }
-  }, [abs, openQr, sculpture.modelUrl, sculpture.title, sculpture.usdzUrl]);
+    // iOS
+    try {
+      setBusy(true);
+      const usdz = await resolveUsdz(sculpture);
+      openQuickLook(usdz);
+    } catch (e) {
+      console.error(e);
+      setError("Could not prepare the AR model. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  }, [sculpture]);
 
-  // Auto-launch when arriving from a QR scan (?ar=1) on a capable device.
-  useEffect(() => {
-    if (!mounted) return;
-    const wantsAR = new URLSearchParams(window.location.search).get("ar") === "1";
-    if (!wantsAR) return;
-    const platform = platformRef.current;
-    if (platform === "android" || (platform === "ios" && sculpture.usdzUrl)) {
-      const t = setTimeout(launch, 400);
-      return () => clearTimeout(t);
-    }
-  }, [mounted, launch, sculpture.usdzUrl]);
+  const onButtonClick = useCallback(() => {
+    if (platformRef.current === "desktop") openQr();
+    else launchAR();
+  }, [openQr, launchAR]);
+
+  const closeArPrompt = useCallback(() => {
+    if (!busy) setArPromptOpen(false);
+  }, [busy]);
 
   return (
     <>
       <motion.button
-        onClick={launch}
+        onClick={onButtonClick}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-black px-7 py-3.5 text-sm font-medium text-white shadow-[0_10px_30px_-8px_rgba(21,20,21,0.5)] ring-1 ring-white/10"
-        style={{ "--ar": sculpture.accent } as React.CSSProperties}
       >
         {/* animated accent glow */}
         <span
@@ -164,66 +197,85 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
         </span>
       </motion.button>
 
-      {/* Desktop QR handoff modal */}
       {mounted &&
         createPortal(
           <AnimatePresence>
+            {/* Desktop: QR handoff to a phone */}
             {qrOpen && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setQrOpen(false)}
-                className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
-              >
-                <motion.div
-                  initial={{ scale: 0.92, y: 16, opacity: 0 }}
-                  animate={{ scale: 1, y: 0, opacity: 1 }}
-                  exit={{ scale: 0.92, y: 16, opacity: 0 }}
-                  transition={{ type: "spring", damping: 24, stiffness: 280 }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="relative w-full max-w-sm rounded-[1.75rem] bg-[#faf9f6] p-8 text-center shadow-2xl ring-1 ring-black/5"
+              <Backdrop key="qr" onClose={() => setQrOpen(false)}>
+                <button
+                  onClick={() => setQrOpen(false)}
+                  className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-black/50 transition-colors hover:bg-black/5 hover:text-black"
+                  aria-label="Close"
                 >
+                  <X size={18} />
+                </button>
+                <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
+                  <Smartphone size={13} /> Augmented Reality
+                </div>
+                <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
+                  View on your phone
+                </h3>
+                <div
+                  className="mx-auto mt-6 grid h-56 w-56 place-items-center rounded-2xl bg-white p-3 ring-1 ring-black/5"
+                  style={{ boxShadow: `0 16px 40px -16px ${sculpture.accent}88` }}
+                >
+                  {qrDataUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={qrDataUrl} alt="Scan to view in AR" className="h-full w-full" />
+                  )}
+                </div>
+                <p className="mx-auto mt-6 max-w-xs text-sm leading-relaxed text-black/55">
+                  Scan with your phone&apos;s camera to place{" "}
+                  <span className="font-medium text-black/75">{sculpture.title}</span>{" "}
+                  in your space at true scale.
+                </p>
+              </Backdrop>
+            )}
+
+            {/* Mobile: tap prompt after a QR scan (provides the required gesture) */}
+            {arPromptOpen && (
+              <Backdrop key="arp" onClose={closeArPrompt}>
+                {!busy && (
                   <button
-                    onClick={() => setQrOpen(false)}
+                    onClick={closeArPrompt}
                     className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-black/50 transition-colors hover:bg-black/5 hover:text-black"
                     aria-label="Close"
                   >
                     <X size={18} />
                   </button>
+                )}
+                <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
+                  <Smartphone size={13} /> Augmented Reality
+                </div>
+                <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
+                  {sculpture.title}
+                </h3>
+                <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-black/55">
+                  {busy
+                    ? "Preparing the 3D model for AR…"
+                    : "Tap below, then point your camera at the floor to place the sculpture at true scale."}
+                </p>
 
-                  <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
-                    <Smartphone size={13} /> Augmented Reality
-                  </div>
-                  <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
-                    View on your phone
-                  </h3>
+                <button
+                  onClick={launchAR}
+                  disabled={busy}
+                  className="mx-auto mt-7 inline-flex items-center gap-2 rounded-full bg-black px-8 py-3.5 text-sm font-medium text-white shadow-lg transition-transform active:scale-95 disabled:opacity-60"
+                >
+                  {busy ? (
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                      Preparing…
+                    </>
+                  ) : (
+                    "Launch AR"
+                  )}
+                </button>
 
-                  <div
-                    className="mx-auto mt-6 grid h-56 w-56 place-items-center rounded-2xl bg-white p-3 ring-1 ring-black/5"
-                    style={{
-                      boxShadow: `0 16px 40px -16px ${sculpture.accent}88`,
-                    }}
-                  >
-                    {qrDataUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={qrDataUrl}
-                        alt="Scan to view in AR"
-                        className="h-full w-full"
-                      />
-                    )}
-                  </div>
-
-                  <p className="mx-auto mt-6 max-w-xs text-sm leading-relaxed text-black/55">
-                    Scan with your phone&apos;s camera to place{" "}
-                    <span className="font-medium text-black/75">
-                      {sculpture.title}
-                    </span>{" "}
-                    in your space at true scale.
-                  </p>
-                </motion.div>
-              </motion.div>
+                {error && (
+                  <p className="mt-4 text-xs text-red-600">{error}</p>
+                )}
+              </Backdrop>
             )}
           </AnimatePresence>,
           document.body,
@@ -231,5 +283,32 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
     </>
   );
 };
+
+const Backdrop = ({
+  children,
+  onClose,
+}: {
+  children: React.ReactNode;
+  onClose: () => void;
+}) => (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    onClick={onClose}
+    className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40 p-6 backdrop-blur-sm"
+  >
+    <motion.div
+      initial={{ scale: 0.92, y: 16, opacity: 0 }}
+      animate={{ scale: 1, y: 0, opacity: 1 }}
+      exit={{ scale: 0.92, y: 16, opacity: 0 }}
+      transition={{ type: "spring", damping: 24, stiffness: 280 }}
+      onClick={(e) => e.stopPropagation()}
+      className="relative w-full max-w-sm rounded-[1.75rem] bg-[#faf9f6] p-8 text-center shadow-2xl ring-1 ring-black/5"
+    >
+      {children}
+    </motion.div>
+  </motion.div>
+);
 
 export default ARButton;
