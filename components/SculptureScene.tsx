@@ -1,157 +1,172 @@
 "use client";
 
-import { FC, Suspense, useRef, useLayoutEffect, useEffect, useMemo } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { FC, Suspense, useLayoutEffect, useMemo, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
 import {
-    useGLTF,
-    Stage,
-    Float,
-    OrbitControls,
-    PerspectiveCamera,
-    ContactShadows,
-    Html,
-    useProgress
-} from '@react-three/drei';
-import * as THREE from 'three';
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+  useGLTF,
+  OrbitControls,
+  PerspectiveCamera,
+  ContactShadows,
+  Environment,
+  Html,
+  useProgress,
+} from "@react-three/drei";
+import * as THREE from "three";
 
 interface SculptureSceneProps {
-    url: string;
-    offsetX?: number;
-    offsetY?: number;
-    defaultZoom?: number;
+  url: string;
+  offsetX?: number;
+  offsetY?: number;
+  defaultZoom?: number;
 }
 
 const Loader = () => {
-    const { progress } = useProgress();
-    return (
-        <Html center>
-            <div className="flex flex-col items-center justify-center space-y-4 whitespace-nowrap">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-black/10 border-t-white/60" />
-                <div className="text-[9px] uppercase tracking-[0.4em] font-display text-black/30">
-                    Loading {Math.round(progress)}%
-                </div>
-            </div>
-        </Html>
-    );
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div className="flex flex-col items-center justify-center space-y-3">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-black/10 border-t-black/40" />
+        <div className="text-[9px] uppercase tracking-[0.3em] text-black/30">
+          {Math.round(progress)}%
+        </div>
+      </div>
+    </Html>
+  );
 };
 
-const SingleModel: FC<{ url: string; offsetX: number; offsetY: number; scrollContainerRef: React.RefObject<HTMLDivElement | null> }> = ({ url, offsetX, offsetY, scrollContainerRef }) => {
-    const { scene } = useGLTF(url);
-    const { invalidate } = useThree();
-    const groupRef = useRef<THREE.Group>(null);
+/**
+ * Loads a GLB and normalizes it deterministically: the model is centered at the
+ * origin and scaled so its bounding sphere has a diameter of 1 unit. This is the
+ * single source of truth for placement — no <Stage> auto-fitting that could race
+ * with the async load and cause inconsistent framing between reloads.
+ */
+const SingleModel: FC<{ url: string; offsetX: number; offsetY: number }> = ({
+  url,
+  offsetX,
+  offsetY,
+}) => {
+  const { scene } = useGLTF(url);
+  const groupRef = useRef<THREE.Group>(null);
 
+  // Clone so multiple cards using the same model don't share/mutate one object.
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse((obj) => {
+      if ((obj as THREE.Mesh).isMesh) {
+        const mesh = obj as THREE.Mesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+      }
+    });
+    return clone;
+  }, [scene]);
 
-    const clonedScene = useMemo(() => scene.clone(), [scene]);
+  // Center + uniform-scale the cloned model exactly once, synchronously, before
+  // the first paint — so framing is identical on every load.
+  useLayoutEffect(() => {
+    const obj = clonedScene;
+    if (!obj) return;
 
-    useLayoutEffect(() => {
-        if (!clonedScene) return;
+    // Reset any prior transform before measuring.
+    obj.position.set(0, 0, 0);
+    obj.scale.setScalar(1);
+    obj.updateWorldMatrix(true, true);
 
+    const box = new THREE.Box3().setFromObject(obj);
+    const sphere = box.getBoundingSphere(new THREE.Sphere());
+    const radius = sphere.radius || 1;
+    const scale = 1 / (radius * 2);
 
-        const box = new THREE.Box3().setFromObject(clonedScene);
-        const sphere = box.getBoundingSphere(new THREE.Sphere());
-        const scale = 1 / (sphere.radius * 2 || 1);
-
-        clonedScene.position.set(-sphere.center.x * scale, -sphere.center.y * scale, -sphere.center.z * scale);
-        clonedScene.scale.setScalar(scale);
-
-        invalidate();
-    }, [clonedScene, invalidate]);
-
-    useEffect(() => {
-        if (!scrollContainerRef.current || !groupRef.current) return;
-        
-        const ctx = gsap.context(() => {
-            gsap.fromTo(groupRef.current!.rotation,
-                { y: -Math.PI },
-                {
-                    y: Math.PI,
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: scrollContainerRef.current,
-                        start: "top bottom",
-                        end: "bottom top",
-                        scrub: true,
-                    },
-                    onUpdate: () => invalidate()
-                }
-            );
-        });
-
-        return () => ctx.revert();
-    }, [scrollContainerRef, invalidate]);
-
-    return (
-        <group ref={groupRef} position={[offsetX, offsetY, 0]}>
-            <primitive
-                object={clonedScene}
-                castShadow
-                receiveShadow
-            />
-        </group>
+    obj.scale.setScalar(scale);
+    obj.position.set(
+      -sphere.center.x * scale,
+      -sphere.center.y * scale,
+      -sphere.center.z * scale,
     );
+  }, [clonedScene]);
+
+  return (
+    <group ref={groupRef} position={[offsetX, offsetY, 0]}>
+      <primitive object={clonedScene} />
+    </group>
+  );
 };
 
 const SculptureScene: FC<SculptureSceneProps> = ({
-    url,
-    offsetX = 0,
-    offsetY = 0,
-    defaultZoom = 1
+  url,
+  offsetX = 0,
+  offsetY = 0,
+  defaultZoom = 1,
 }) => {
-    const containerRef = useRef<HTMLDivElement>(null);
+  const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
 
-    const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
+  return (
+    <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
+      <Canvas
+        shadows
+        frameloop="always"
+        dpr={[1, 2]}
+        gl={{
+          antialias: true,
+          alpha: true,
+          stencil: false,
+          depth: true,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: false,
+        }}
+        onCreated={({ gl }) => {
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.05;
+        }}
+      >
+        <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
 
-    return (
-        <div ref={containerRef} className="w-full cursor-target! h-full relative cursor-grab active:cursor-grabbing group/sculpture bg-transparent">
+        {/* Deterministic studio lighting — independent of model load order. */}
+        <ambientLight intensity={0.5} />
+        <directionalLight
+          position={[3, 5, 4]}
+          intensity={1.6}
+          castShadow
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+          shadow-bias={-0.0002}
+        />
+        <directionalLight position={[-4, 2, -3]} intensity={0.5} />
 
-            <Canvas
-                shadows
-                frameloop="demand"
-                dpr={[1, 2]}
-                gl={{ antialias: true, alpha: true, stencil: false, depth: true }}
-                className="w-full h-full cursor-target!"
-            >
-                <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
-                <ambientLight intensity={0.6} />
+        <Suspense fallback={<Loader />}>
+          <SingleModel url={url} offsetX={offsetX} offsetY={offsetY} />
+          {/* Reflections / specular for the bronze patina. */}
+          <Environment preset="city" />
+        </Suspense>
 
-                <Suspense fallback={<Loader />}>
-                    <Stage
-                        intensity={0.25}
-                        environment="city"
-                        adjustCamera={false}
-                    >
-                        <Float
-                            speed={1.6}
-                            rotationIntensity={0.6}
-                            floatIntensity={0.5}
-                        >
-                            <SingleModel url={url} offsetX={offsetX} offsetY={offsetY} scrollContainerRef={containerRef} />
-                        </Float>
-                    </Stage>
+        <ContactShadows
+          position={[0, -0.55, 0]}
+          opacity={0.32}
+          scale={5}
+          blur={2.2}
+          far={2}
+          resolution={512}
+        />
 
-                    <OrbitControls
-                        enableZoom={false}
-                        enablePan={false}
-                        autoRotate={false}
-                        maxPolarAngle={Math.PI / 1.6}
-                        minPolarAngle={Math.PI / 3}
-                    />
-
-                    <ContactShadows
-                        position={[0, -0.6, 0]}
-                        opacity={0.3}
-                        scale={5}
-                        blur={2}
-                        far={2}
-                    />
-                </Suspense>
-            </Canvas>
-        </div>
-    );
+        <OrbitControls
+          makeDefault
+          enableZoom={false}
+          enablePan={false}
+          autoRotate
+          autoRotateSpeed={1.4}
+          enableDamping
+          dampingFactor={0.08}
+          maxPolarAngle={Math.PI / 1.6}
+          minPolarAngle={Math.PI / 3}
+        />
+      </Canvas>
+    </div>
+  );
 };
+
+// Warm the GLB cache so models are ready before the card scrolls into view.
+useGLTF.preload("/sculptures/Lady.glb");
+useGLTF.preload("/sculptures/LordKrishna.glb");
+useGLTF.preload("/sculptures/Pandit.glb");
 
 export default SculptureScene;

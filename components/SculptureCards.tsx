@@ -1,61 +1,42 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import FadeContent from "./FadeContent";
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGLTF } from "@react-three/drei";
-
+import { useRef, useState, useEffect } from "react";
 
 const SculptureScene = dynamic(() => import("./SculptureScene"), {
   ssr: false,
 });
-const ScrollFloat = dynamic(() => import("./ScrollFloat"), { ssr: false });
-
-gsap.registerPlugin(ScrollTrigger);
 
 const cards = [
   {
     id: 1,
-    title: "Dancing Shiva",
+    title: "Telangana Woman",
     description:
-      "Nataraja, the cosmic dancer, representing the rhythmic cycle of creation, preservation, and destruction.",
-    modelUrl: "/sculptures/DancingShiva.glb",
-    accent: "#8ea4ff",
-    offsetY: 0,
-    offsetX: 0,
-    defaultZoom: 2.8,
-  },
-  {
-    id: 2,
-    title: "Lady Sculpture",
-    description:
-      "A classical rendering of elegant form, celebrating proportion, posture, and natural drapery.",
+      "The iconic subject of Vaikuntam's world — a rural woman adorned with vermilion bindi, almond eyes, and traditional jewellery, capturing the dignity and sensuality of Telangana heritage in three dimensions.",
     modelUrl: "/sculptures/Lady.glb",
-    accent: "#ff8d76",
+    accent: "#d4a574",
     offsetY: -0.1,
     offsetX: 0,
     defaultZoom: 2.2,
   },
   {
-    id: 3,
+    id: 2,
     title: "Lord Krishna",
     description:
-      "An artistic capture of traditional heritage, capturing poise, peace, and celestial grace.",
+      "Rooted in the mythology that shaped his childhood village theatre, Vaikuntam brings celestial grace and folk intimacy together — poise, peace, and primary colours meeting bronze patina.",
     modelUrl: "/sculptures/LordKrishna.glb",
-    accent: "#62d4c8",
+    accent: "#e67e22",
     offsetY: 0,
     offsetX: 0,
     defaultZoom: 3,
   },
   {
-    id: 4,
-    title: "Pandit Bust",
+    id: 3,
+    title: "Sacred Gaze",
     description:
-      "A detailed portrait bust of a scholar, highlighting the subtle interplay of light and shadow on stone textures.",
+      "From Vaikuntam's celebrated series of sculptural heads in patinated bronze — almond eyes and ornate adornments embodying what curator Uma Nair calls 'Dravidian dignity in tone and tenor.'",
     modelUrl: "/sculptures/Pandit.glb",
-    accent: "#facc15",
+    accent: "#8b6914",
     offsetY: 0,
     offsetX: 0,
     defaultZoom: 2.2,
@@ -71,7 +52,6 @@ const SculptureCardItem = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const parallaxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -90,58 +70,50 @@ const SculptureCardItem = ({
   return (
     <div
       ref={ref}
-      className="w-full h-screen flex flex-col items-center justify-center"
+      className="w-full min-h-screen flex flex-col items-center justify-center py-16"
     >
-      <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24">
-        <FadeContent
-          blur={true}
-          duration={1500}
-          ease="power4.out"
-          threshold={0.5}
-          yOffset={80}
-          className={`flex-1 space-y-6 px-6 lg:px-0 text-center lg:text-left ${isEven ? "lg:order-1" : "lg:order-2"}`}
+      <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
+        <div
+          className={`flex-1 space-y-5 px-6 lg:px-0 text-center lg:text-left ${isEven ? "lg:order-1" : "lg:order-2"}`}
         >
-          <div className="flex items-center justify-center lg:justify-start gap-4">
-            <div
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: card.accent }}
-            />
-            <span className="text-[10px] uppercase tracking-[0.4em] text-black/30">
-              Specimen {card.id.toString().padStart(2, "0")}
-            </span>
-          </div>
-          <h3 className="text-4xl lg:text-7xl font-display uppercase tracking-[-0.03em] text-black">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-black/40">
+            {card.id.toString().padStart(2, "0")}
+          </span>
+          <h3 className="text-3xl lg:text-6xl font-display tracking-[-0.03em] text-black">
             {card.title}
           </h3>
-          <p className="max-w-md mx-auto lg:mx-0 text-base lg:text-lg leading-relaxed text-black/50">
+          <p className="max-w-md mx-auto lg:mx-0 text-base leading-relaxed text-black/50">
             {card.description}
           </p>
-          <div className="pt-4">
-            <button className="text-[10px] uppercase tracking-[0.3em] text-black/30 hover:text-black transition-colors border-b border-black/10 pb-1">
-              Explore Details
-            </button>
-          </div>
-        </FadeContent>
+        </div>
 
-        <FadeContent
-          blur={true}
-          duration={1800}
-          delay={200}
-          threshold={0.5}
-          yOffset={80}
-          className={`flex-1 cursor-target w-full h-[500px] lg:h-[700px] relative ${isEven ? "lg:order-2" : "lg:order-1"}`}
+        <div
+          className={`flex-1 w-full ${isEven ? "lg:order-2" : "lg:order-1"}`}
         >
-          <div ref={parallaxRef} className="w-full h-full">
-            {isVisible && (
+          <div className="relative w-full h-[500px] lg:h-[700px] overflow-hidden rounded-[2rem]">
+            {/* Soft accent backdrop so the sculpture always reads against a stage */}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-[2rem]"
+              style={{
+                background: `radial-gradient(120% 90% at 50% 30%, ${card.accent}22 0%, ${card.accent}10 35%, transparent 70%)`,
+              }}
+            />
+            <div className="pointer-events-none absolute inset-0 rounded-[2rem] ring-1 ring-black/5" />
+
+            {isVisible ? (
               <SculptureScene
                 url={card.modelUrl}
                 offsetX={card.offsetX}
                 offsetY={card.offsetY}
                 defaultZoom={card.defaultZoom}
               />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-black/10 border-t-black/30" />
+              </div>
             )}
           </div>
-        </FadeContent>
+        </div>
       </div>
     </div>
   );
@@ -150,16 +122,6 @@ const SculptureCardItem = ({
 const SculptureCards = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      cards.forEach((c) => {
-        try {
-          useGLTF.preload(c.modelUrl);
-        } catch (e) {}
-      });
-    }
-  }, []);
-
   return (
     <section
       ref={sectionRef}
@@ -167,21 +129,6 @@ const SculptureCards = () => {
       id="collection"
     >
       <div className="mx-auto max-w-7xl relative z-10">
-        <div className="mb-24 px-4 text-center">
-          <p className="text-[10px] uppercase tracking-[0.42em] text-black/40 mb-4">
-            Curated Collection
-          </p>
-          <ScrollFloat
-            animationDuration={1.2}
-            ease="back.inOut(2)"
-            stagger={0.03}
-            containerClassName="text-center"
-            textClassName="font-display block text-4xl font-semibold uppercase tracking-[-0.05em] text-black sm:text-5xl lg:text-[5.4rem]"
-          >
-            Sculptural Masterpieces
-          </ScrollFloat>
-        </div>
-
         <div className="flex flex-col pb-64">
           {cards.map((card, index) => (
             <SculptureCardItem key={card.id} card={card} index={index} />

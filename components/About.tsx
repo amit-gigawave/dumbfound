@@ -1,53 +1,49 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const ScrollFloat = dynamic(() => import("./ScrollFloat"), { ssr: false });
-
 const stats = [
-  { value: "150+", label: "Sculptures installed" },
-  { value: "30+", label: "Global clients" },
-  { value: "15", label: "Years in practice" },
+  { value: "600+", label: "Works at auction" },
+  { value: "80+", label: "Years of artistry" },
+  { value: "1993", label: "National Award" },
 ];
 
 export default function About() {
   return (
     <section
       id="about"
-      className="relative z-20 overflow-hidden bg-transparent px-6 py-24 text-black lg:px-16"
+      className="relative overflow-hidden bg-background px-6 py-28 text-black lg:px-16"
     >
-      <div className="relative mx-auto max-w-7xl flex flex-col items-center justify-center">
-        <div className="max-w-4xl">
-          <p className="mb-5 text-[10px] uppercase tracking-[0.42em] text-black/60">
-            About The Studio
-          </p>
-          <ScrollFloat
-            containerClassName="text-left"
-            textClassName="font-display block text-4xl font-medium tracking-[-0.03em] text-black sm:text-5xl lg:text-[3.5rem] leading-[1.1]"
-          >
-            Precision That Reveals Itself On Scroll
-          </ScrollFloat>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-black/80 sm:text-lg text-center mx-auto">
-            Each principle enters only when the page has room for it. The
-            section keeps its natural height, and the story unfolds in thirds
-            instead of arriving as one crowded slab.
-          </p>
+      <div className="mx-auto max-w-4xl">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.4em] text-black/50">
+          The Artist
+        </p>
+        <h2 className="font-display text-4xl font-medium tracking-[-0.03em] text-black sm:text-5xl lg:text-[3.5rem] leading-[1.1]">
+          &ldquo;I am a part of what I paint.&rdquo;
+        </h2>
+        <p className="mt-8 max-w-2xl text-base leading-8 text-black/70 sm:text-lg">
+          Born in 1942 in Burugupalli, Telangana, Thota Vaikuntam has spent over
+          eight decades capturing the dignity, beauty, and vibrant spirit of
+          rural Telangana women — translating bold primary colours and folk
+          traditions into paintings, serigraphs, and striking bronze sculptures
+          exhibited across New York, London, Dubai, and beyond.
+        </p>
+        <p className="mt-4 max-w-2xl text-base leading-8 text-black/70 sm:text-lg">
+          Trained under K.G. Subramanyan at M.S. University of Baroda, his
+          visual language is unmistakable: almond-shaped eyes, vermilion bindis,
+          ornate jewellery, and rich primary colours that celebrate Telangana
+          heritage with unflinching authenticity.
+        </p>
 
-          <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3 mx-auto">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-[1.35rem] border border-white/60 bg-white/40 p-6 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:bg-white/60 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
-              >
-                <div className="font-display text-3xl text-black">
-                  {stat.value}
-                </div>
-                <div className="mt-2 text-[10px] uppercase tracking-[0.26em] text-black/60">
-                  {stat.label}
-                </div>
+        <div className="mt-14 grid max-w-xl grid-cols-3 gap-6">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <div className="font-display text-3xl text-black">
+                {stat.value}
               </div>
-            ))}
-          </div>
+              <div className="mt-2 text-[11px] uppercase tracking-[0.2em] text-black/50">
+                {stat.label}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

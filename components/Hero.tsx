@@ -1,73 +1,150 @@
 "use client";
 
-import { useRef } from "react";
-import BlurText from "./BlurText";
+import dynamic from "next/dynamic";
+import { useRef, useEffect, useState } from "react";
+import { heroScrollStore } from "./heroScrollStore";
+
+const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
 export default function Hero() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const modelRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const rightTextRef = useRef<HTMLDivElement>(null);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (!spacerRef.current) return;
+      const rect = spacerRef.current.getBoundingClientRect();
+      const scrollable = spacerRef.current.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+      const rawProgress = Math.max(0, Math.min(1, -rect.top / scrollable));
+      const animProgress = Math.min(1, rawProgress / 0.45);
+
+      heroScrollStore.progress = animProgress;
+      setDone(rawProgress >= 0.95);
+
+      if (modelRef.current) {
+        const moveX = animProgress * -45;
+        modelRef.current.style.transform = `translateX(${moveX}vw)`;
+      }
+
+      if (textRef.current) {
+        const opacity = 1 - animProgress * 2.5;
+        const moveUp = animProgress * -150;
+        textRef.current.style.opacity = `${Math.max(0, opacity)}`;
+        textRef.current.style.transform = `translateY(${moveUp}px)`;
+      }
+
+      if (titleRef.current) {
+        const titleP = Math.max(0, (animProgress - 0.3) / 0.5);
+        const moveDown = (1 - titleP) * 40;
+        titleRef.current.style.opacity = `${Math.min(1, titleP)}`;
+        titleRef.current.style.transform = `translateY(${moveDown}px)`;
+      }
+
+      if (rightTextRef.current) {
+        const textP = Math.max(0, (animProgress - 0.45) / 0.55);
+        const moveUp = (1 - textP) * 60;
+        rightTextRef.current.style.opacity = `${Math.min(1, textP)}`;
+        rightTextRef.current.style.transform = `translateY(${moveUp}px)`;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <section
-      id="home"
-      ref={scrollContainerRef}
-      className="relative z-10 flex min-h-screen items-center justify-center overflow-hidden py-0 pointer-events-none"
-    >
-      <video
-        className="absolute inset-0 w-full h-full object-cover -z-10 pointer-events-none"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260503_162107_3cd240af-dff4-4396-b8b7-22e25c9adb1c.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
-      <div className="flex flex-col items-center text-center max-w-4xl mx-auto px-6 text-white gap-7 mt-16">
-        <h1 className="text-[clamp(36px,4.4vw,72px)] leading-[0.95] tracking-[-0.022em] font-normal m-0 text-white text-center w-full">
-          <span className="font-sans block">
-            <BlurText
-              text="DUMBFOUND SCULPTURE STUDIO"
-              startDelay={200}
-              delay={50}
-              animateBy="words"
-              direction="top"
-              className="font-medium"
-            />
-          </span>
-          <span className="mt-[0.2em] block">
-            <span className="font-serif italic text-[1.14em] tracking-[-0.01em] mr-[0.25em]">
-              <BlurText
-                text="Elevating modern spaces"
-                startDelay={800}
-                delay={50}
-                animateBy="words"
-                direction="top"
-                className=""
-              />
+    <section id="home">
+      <div ref={spacerRef} style={{ height: "250vh", position: "relative" }}>
+        <div
+          className="flex items-center justify-center"
+          style={{
+            position: done ? "absolute" : "fixed",
+            top: done ? "auto" : 0,
+            bottom: done ? 0 : "auto",
+            left: 0,
+            right: 0,
+            height: "100vh",
+            zIndex: 10,
+            pointerEvents: done ? "none" : "auto",
+          }}
+        >
+          {/* Section title - fades in at top center */}
+          <div
+            ref={titleRef}
+            className="absolute top-20 left-0 right-0 text-center pointer-events-none"
+            style={{ opacity: 0, willChange: "transform, opacity" }}
+          >
+            <p className="text-[10px] uppercase tracking-[0.4em] text-black/40 mb-3">
+              The Sculpture Collection
+            </p>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-medium tracking-[-0.03em] text-black">
+              Bronze &amp; Form
+            </h2>
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between w-full max-w-7xl mx-auto px-6 gap-8">
+            {/* Hero text - fades out and goes up */}
+            <div
+              ref={textRef}
+              className="flex-1 text-center lg:text-left max-w-xl"
+              style={{ willChange: "transform, opacity" }}
+            >
+              <p className="text-[11px] uppercase tracking-[0.4em] text-black/40 mb-4">
+                Indian Contemporary Artist &amp; Sculptor
+              </p>
+              <h1 className="text-[clamp(36px,5vw,72px)] leading-[0.95] tracking-[-0.03em] font-display font-medium text-black">
+                Thota
+                <br />
+                Vaikuntam
+              </h1>
+              <p className="mt-6 text-base sm:text-lg leading-relaxed text-black/50 max-w-md mx-auto lg:mx-0">
+                Where Telangana&#39;s soul takes form in bronze and colour —
+                bold primary hues, almond eyes, and vermilion bindis rendered
+                across eight decades of art.
+              </p>
+              <a
+                href="#collection"
+                className="inline-block mt-8 border border-black/20 text-black px-8 py-3 text-[12px] uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all duration-300"
+              >
+                View Sculptures
+              </a>
+            </div>
+
+            {/* 3D Model - slides left */}
+            <div
+              ref={modelRef}
+              className="flex-1 w-full h-[600px] sm:h-[700px] lg:h-[850px]"
+              style={{ willChange: "transform" }}
+            >
+              <HeroScene />
+            </div>
+          </div>
+
+          {/* Right side text - appears after model slides left */}
+          <div
+            ref={rightTextRef}
+            className="absolute right-8 lg:right-16 xl:right-24 top-1/2 -translate-y-1/2 max-w-md text-left pointer-events-none"
+            style={{ opacity: 0, willChange: "transform, opacity" }}
+          >
+            <span className="text-[10px] uppercase tracking-[0.4em] text-black/40">
+              01
             </span>
-            <span className="font-sans">
-              <BlurText
-                text="through"
-                startDelay={1000}
-                delay={50}
-                animateBy="words"
-                direction="top"
-                className="font-normal"
-              />
-            </span>
-          </span>
-          <span className="mt-[0.2em] font-sans block">
-            <BlurText
-              text="the silent poetry of timeless form."
-              startDelay={1200}
-              delay={50}
-              animateBy="words"
-              direction="top"
-              className="font-normal"
-            />
-          </span>
-        </h1>
-        <div className="pointer-events-auto mt-7">
-          <button className="bg-white text-black px-[25px] py-[15px] text-[13px] font-semibold rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.18)] hover:scale-105 hover:shadow-[0_15px_40px_rgba(255,255,255,0.15)] transition-all duration-300">
-            Explore Our Work
-          </button>
+            <h3 className="mt-3 text-3xl lg:text-5xl font-display tracking-[-0.03em] text-black">
+              Dancing Shiva
+            </h3>
+            <p className="mt-5 text-base leading-relaxed text-black/50 max-w-sm">
+              Vaikuntam&#39;s interpretation of Nataraja — the cosmic dancer
+              rendered in his signature bold contours, channelling the rhythmic
+              energy of Telangana&#39;s temple frieze traditions into sculptural
+              form.
+            </p>
+          </div>
         </div>
       </div>
     </section>

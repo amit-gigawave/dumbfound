@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import clsx from "clsx";
 import MobileMenu from "./MobileMenu";
 
@@ -10,7 +10,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -18,62 +18,65 @@ export default function Navbar() {
 
   const navLinks = [
     { label: "Home", href: "#home" },
-    { label: "About", href: "#about" },
+    { label: "The Artist", href: "#about" },
+    { label: "Sculptures", href: "#collection" },
     { label: "Gallery", href: "#gallery" },
     { label: "Contact", href: "#contact" },
   ];
 
   return (
     <>
-      <nav className="navbar fixed top-0 left-0 w-full z-50 pt-2! pointer-events-none">
-
-        <div className="logo-container pointer-events-auto">
-          <div className="logo-placeholder">
-            <div className="logo-icon">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="8" cy="8" r="4" fill="white" fillOpacity="0.8" />
-                <circle cx="16" cy="8" r="4" fill="white" fillOpacity="0.8" />
-                <circle cx="8" cy="16" r="4" fill="white" fillOpacity="0.8" />
-                <circle cx="16" cy="16" r="4" fill="white" fillOpacity="0.8" />
-              </svg>
+      <nav
+        className={clsx(
+          "fixed top-0 left-0 w-full z-50 transition-all duration-700 pointer-events-none flex justify-center",
+          isScrolled ? "pt-4 md:pt-6" : "pt-6 md:pt-8",
+        )}
+      >
+        <div className="flex items-center justify-between w-full max-w-[1400px] px-6 md:px-12 pointer-events-auto">
+          {/* Logo */}
+          <a
+            href="#home"
+            className="group flex items-center gap-4 transition-transform duration-300 hover:scale-[1.02]"
+          >
+            <div className="flex items-center justify-center w-11 h-11 rounded-full bg-foreground text-background font-bold tracking-widest text-sm shadow-[0_8px_16px_rgba(0,0,0,0.1)] transition-transform duration-700 group-hover:rotate-[360deg]">
+              TV
             </div>
-            <span className="brand-name">
-              <a href="#home">Dumbfound</a>
+            <span className="font-serif text-xl font-medium tracking-tight text-foreground hidden sm:block transition-opacity duration-300 group-hover:opacity-80">
+              Thota Vaikuntam
             </span>
+          </a>
+
+          {/* Desktop Navigation */}
+          <div
+            className={clsx(
+              "hidden md:flex items-center transition-all duration-700",
+              "bg-white/40 hover:bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.04)]",
+              "p-1.5 rounded-full",
+            )}
+          >
+            <div className="flex items-center gap-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="relative px-6 py-2.5 rounded-full text-sm font-medium text-foreground/80 transition-all duration-300 hover:text-foreground hover:bg-white/60 hover:shadow-sm"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
           </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="md:hidden flex h-12 w-12 items-center justify-center rounded-full bg-white/40 backdrop-blur-xl border border-white/40 text-foreground shadow-sm transition-all duration-300 hover:bg-white/60 hover:scale-105 active:scale-95"
+            aria-label="Open menu"
+          >
+            <Menu size={20} strokeWidth={2.5} />
+          </button>
         </div>
-
-
-        <div className="nav-main glass pill hidden md:flex pointer-events-auto ">
-          <div className="nav-links">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="nav-link text-black!"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-        </div>
-
-
-        <button
-          onClick={() => setIsOpen(true)}
-          className="md:hidden pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-white/10 border border-white/10 backdrop-blur-md text-white transition-colors hover:bg-white/20"
-        >
-          <Menu size={22} />
-        </button>
       </nav>
-
 
       <MobileMenu
         isOpen={isOpen}
