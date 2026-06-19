@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useRef, useEffect, useState } from "react";
 import { heroScrollStore } from "./heroScrollStore";
+import BlurText from "./BlurText";
 
 const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
@@ -99,9 +100,18 @@ export default function Hero() {
                 Indian Contemporary Artist &amp; Sculptor
               </p>
               <h1 className="text-[clamp(36px,5vw,72px)] leading-[0.95] tracking-[-0.03em] font-display font-medium text-black">
-                Thota
-                <br />
-                Vaikuntam
+                <span className="block">
+                  <BlurText text="Thota" animateBy="letters" delay={70} stepDuration={0.4} />
+                </span>
+                <span className="block">
+                  <BlurText
+                    text="Vaikuntam"
+                    animateBy="letters"
+                    delay={70}
+                    startDelay={350}
+                    stepDuration={0.4}
+                  />
+                </span>
               </h1>
               <p className="mt-6 text-base sm:text-lg leading-relaxed text-black/50 max-w-md mx-auto lg:mx-0">
                 Where Telangana&#39;s soul takes form in bronze and colour —

@@ -56,15 +56,15 @@ export default function Footer() {
           </video>
 
           <div className="footer-logo">
-            <div className="footer-logo-mark">D</div>
-            <span className="footer-logo-name">Dumbfound</span>
+            <div className="footer-logo-mark">TV</div>
+            <span className="footer-logo-name">Thota Vaikuntam</span>
           </div>
 
           <div className="footer-tagline-container">
             <p className="footer-tagline">
-              Crafting the silent poetry of timeless form,
+              Where Telangana's soul takes form
               <br />
-              <span>through digital and physical mastery.</span>
+              <span>in bronze, colour, and timeless dignity.</span>
             </p>
           </div>
 
@@ -98,7 +98,7 @@ export default function Footer() {
         <div className="footer-right">
           <div className="footer-lucky-graphic">
             <div className="lucky-cube">
-              <span className="lucky-cube-mark">D</span>
+              <span className="lucky-cube-mark">TV</span>
             </div>
             <div className="lucky-text-row">
               <svg
@@ -117,34 +117,34 @@ export default function Footer() {
                 <path d="M18 5 L 12 5" />
                 <path d="M18 5 L 18 11" />
               </svg>
-              <span className="lucky-text">View Gallery?</span>
+              <span className="lucky-text">View Sculptures?</span>
             </div>
           </div>
 
           <div className="footer-right-top">
             <div className="footer-col">
-              <div className="footer-col-title">Navigation</div>
-              <a href="#gallery">Gallery</a>
-              <a href="#about">About</a>
-              <a href="#contact">Studio</a>
+              <div className="footer-col-title">Explore</div>
+              <a href="#collection">Sculptures</a>
+              <a href="#about">The Artist</a>
+              <a href="#contact">Contact</a>
             </div>
             <div className="footer-col">
-              <div className="footer-col-title">Locations</div>
-              <a href="#">London</a>
-              <a href="#">Tokyo</a>
+              <div className="footer-col-title">Exhibited In</div>
+              <a href="#">New Delhi</a>
               <a href="#">New York</a>
+              <a href="#">London</a>
             </div>
           </div>
 
           <div className="footer-bottom">
             <div className="footer-copyright">
-              © 2026 Dumbfound tech. All rights reserved.
+              © 2026 Thota Vaikuntam. All rights reserved.
             </div>
             <div className="footer-cta-mini">
               <h4>
-                Timeless form moves fast.
+                New works and exhibitions.
                 <br />
-                <strong>Stay ahead with Dumbfound.</strong>
+                <strong>Stay connected with the artist.</strong>
               </h4>
               <div className="footer-subscribe-row">
                 <input type="email" placeholder="Enter email address" />
@@ -167,9 +167,9 @@ export default function Footer() {
             x="500"
             y="240"
             textAnchor="middle"
-            fontSize="320"
+            fontSize="240"
           >
-            Dumbfound
+            Vaikuntam
           </text>
         </svg>
       </div>

@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useRef, useState, useEffect } from "react";
+import BlurText from "./BlurText";
 
 const SculptureScene = dynamic(() => import("./SculptureScene"), {
   ssr: false,
@@ -80,7 +81,12 @@ const SculptureCardItem = ({
             {card.id.toString().padStart(2, "0")}
           </span>
           <h3 className="text-3xl lg:text-6xl font-display tracking-[-0.03em] text-black">
-            {card.title}
+            <BlurText
+              text={card.title}
+              animateBy="words"
+              delay={90}
+              stepDuration={0.4}
+            />
           </h3>
           <p className="max-w-md mx-auto lg:mx-0 text-base leading-relaxed text-black/50">
             {card.description}
@@ -88,31 +94,20 @@ const SculptureCardItem = ({
         </div>
 
         <div
-          className={`flex-1 w-full ${isEven ? "lg:order-2" : "lg:order-1"}`}
+          className={`flex-1 w-full h-[600px] sm:h-[700px] lg:h-[850px] ${isEven ? "lg:order-2" : "lg:order-1"}`}
         >
-          <div className="relative w-full h-[500px] lg:h-[700px] overflow-hidden rounded-[2rem]">
-            {/* Soft accent backdrop so the sculpture always reads against a stage */}
-            <div
-              className="pointer-events-none absolute inset-0 rounded-[2rem]"
-              style={{
-                background: `radial-gradient(120% 90% at 50% 30%, ${card.accent}22 0%, ${card.accent}10 35%, transparent 70%)`,
-              }}
+          {isVisible ? (
+            <SculptureScene
+              url={card.modelUrl}
+              offsetX={card.offsetX}
+              offsetY={card.offsetY}
+              defaultZoom={card.defaultZoom}
             />
-            <div className="pointer-events-none absolute inset-0 rounded-[2rem] ring-1 ring-black/5" />
-
-            {isVisible ? (
-              <SculptureScene
-                url={card.modelUrl}
-                offsetX={card.offsetX}
-                offsetY={card.offsetY}
-                defaultZoom={card.defaultZoom}
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-black/10 border-t-black/30" />
-              </div>
-            )}
-          </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-black/10 border-t-black/30" />
+            </div>
+          )}
         </div>
       </div>
     </div>

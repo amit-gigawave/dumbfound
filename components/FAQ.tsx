@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import BlurText from "./BlurText";
 
 const faqs = [
   {
@@ -31,6 +33,18 @@ const faqs = [
   },
 ];
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const listContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+};
+
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -39,62 +53,167 @@ export default function FAQ() {
   };
 
   return (
-    <section className="relative z-10 overflow-hidden px-6 py-20 lg:px-16 text-foreground">
-      <div className="mx-auto max-w-7xl grid gap-16 lg:grid-cols-[1fr_1.2fr]">
-        <div>
-          <div className="inline-flex rounded-full border border-black/10 bg-black/5 px-3 py-1 mb-8">
+    <section className="relative z-10 overflow-hidden px-6 py-24 lg:px-16 text-foreground">
+      {/* soft warm glow to tie into the palette */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 0.6, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2, ease: EASE }}
+        className="pointer-events-none absolute -top-24 right-[-10%] h-[420px] w-[420px] rounded-full blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,158,109,0.18) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl grid gap-16 lg:grid-cols-[1fr_1.2fr]">
+        <motion.div
+          variants={listContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          className="lg:sticky lg:top-28 lg:self-start"
+        >
+          <motion.div
+            variants={fadeUp}
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3 py-1 mb-8"
+          >
+            <motion.span
+              className="h-1.5 w-1.5 rounded-full bg-[#f2741f]"
+              animate={{ opacity: [1, 0.4, 1], scale: [1, 1.4, 1] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/80">
               FAQ
             </span>
-          </div>
+          </motion.div>
           <h2 className="font-display text-4xl sm:text-[3.5rem] leading-[1.1] font-medium tracking-tight mb-6 text-black">
-            Frequently Asked
-            <br />
-            Questions
+            <span className="block">
+              <BlurText
+                text="Frequently Asked"
+                animateBy="words"
+                delay={120}
+                stepDuration={0.4}
+              />
+            </span>
+            <span className="block">
+              <BlurText
+                text="Questions"
+                animateBy="words"
+                delay={120}
+                startDelay={350}
+                stepDuration={0.4}
+              />
+            </span>
           </h2>
-          <p className="max-w-md text-sm sm:text-[0.95rem] leading-7 text-black/50">
+          <motion.p
+            variants={fadeUp}
+            className="max-w-md text-sm sm:text-[0.95rem] leading-7 text-black/50"
+          >
             Everything you need to know about our process in one place—commissions,
             materials, installations, and more, all answered for you.
-          </p>
-        </div>
+          </motion.p>
 
-        <div className="flex flex-col gap-3">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl overflow-hidden transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+          {/* Still curious? — warm CTA card */}
+          <motion.div
+            variants={fadeUp}
+            className="mt-10 max-w-md rounded-2xl border border-[#f2741f]/15 bg-gradient-to-br from-[#fff3ea] to-[#fbf7f0] p-6"
+          >
+            <h3 className="font-display text-lg font-medium text-black">
+              Still have a question?
+            </h3>
+            <p className="mt-1.5 text-sm leading-6 text-black/50">
+              Our studio team is happy to walk you through a commission.
+            </p>
+            <motion.a
+              href="#contact"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ffd3be] to-[#ff9e6d] px-5 py-2.5 text-[0.8rem] font-semibold text-[#5a2e16] shadow-[0_4px_16px_rgba(255,158,109,0.35)]"
             >
-              <button
-                onClick={() => toggleOpen(index)}
-                className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 focus:outline-none"
-              >
-                <span className="font-medium text-[0.95rem] text-black">
-                  {faq.question}
-                </span>
-                <span className="text-black/50 shrink-0">
-                  {openIndex === index ? (
-                    <X className="w-4 h-4" />
-                  ) : (
-                    <Plus className="w-4 h-4" />
-                  )}
-                </span>
-              </button>
-              <div
-                className={`grid transition-all duration-300 ease-in-out ${
-                  openIndex === index
-                    ? "grid-rows-[1fr] opacity-100"
-                    : "grid-rows-[0fr] opacity-0"
+              Talk to the studio
+              <ArrowRight className="h-3.5 w-3.5" />
+            </motion.a>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          variants={listContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-60px" }}
+          className="flex flex-col gap-3"
+        >
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <motion.div
+                key={index}
+                layout
+                variants={fadeUp}
+                transition={{ layout: { duration: 0.4, ease: EASE } }}
+                className={`group rounded-2xl border bg-white overflow-hidden ${
+                  isOpen
+                    ? "border-[#f2741f]/25 shadow-[0_10px_30px_rgba(242,116,31,0.10)]"
+                    : "border-black/5 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-black/10"
                 }`}
               >
-                <div className="overflow-hidden">
-                  <div className="px-6 pb-6 text-sm leading-relaxed text-black/60">
-                    {faq.answer}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                <motion.button
+                  layout="position"
+                  onClick={() => toggleOpen(index)}
+                  aria-expanded={isOpen}
+                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 focus:outline-none"
+                >
+                  <span className="flex items-center gap-4">
+                    <span
+                      className={`font-display text-sm transition-colors ${
+                        isOpen ? "text-[#f2741f]" : "text-black/30"
+                      }`}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-medium text-[0.95rem] text-black">
+                      {faq.question}
+                    </span>
+                  </span>
+                  <motion.span
+                    animate={{ rotate: isOpen ? 90 : 0 }}
+                    transition={{ duration: 0.3, ease: EASE }}
+                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors duration-300 ${
+                      isOpen
+                        ? "bg-gradient-to-br from-[#ffd3be] to-[#ff9e6d] text-[#5a2e16]"
+                        : "bg-black/5 text-black/50 group-hover:bg-black/10"
+                    }`}
+                  >
+                    {isOpen ? (
+                      <X className="w-4 h-4" />
+                    ) : (
+                      <Plus className="w-4 h-4" />
+                    )}
+                  </motion.span>
+                </motion.button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.38, ease: EASE }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 pl-[3.75rem] text-sm leading-relaxed text-black/60">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
   );

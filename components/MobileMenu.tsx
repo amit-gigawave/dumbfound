@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Phone, Mail, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -130,7 +131,7 @@ export default function MobileMenu({
             {/* Links */}
             <div className="space-y-3 mb-6">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
                   href={link.href}
                   onClick={onClose}
@@ -143,7 +144,7 @@ export default function MobileMenu({
                     <ChevronUp size={14} className="-mb-1" />
                     <ChevronDown size={14} />
                   </div> */}
-                </a>
+                </Link>
               ))}
             </div>
 
