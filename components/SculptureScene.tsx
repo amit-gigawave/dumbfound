@@ -1,6 +1,14 @@
 "use client";
 
-import { FC, Suspense, useLayoutEffect, useMemo, useRef } from "react";
+import {
+  FC,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   useGLTF,
@@ -192,9 +200,25 @@ const SculptureScene: FC<SculptureSceneProps> = ({
   interactive = false,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  // Pause the render loop while the canvas is scrolled out of view so multiple
+  // gallery canvases don't all burn GPU/CPU at once.
+  const [onScreen, setOnScreen] = useState(true);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setOnScreen(entry.isIntersecting),
+      { rootMargin: "120px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div
+      ref={wrapRef}
       className={`w-full h-full relative ${
         interactive
           ? "cursor-grab active:cursor-grabbing"
@@ -202,9 +226,9 @@ const SculptureScene: FC<SculptureSceneProps> = ({
       }`}
     >
       <Canvas
-        shadows
-        frameloop="always"
-        dpr={[1, 2]}
+        shadows={interactive}
+        frameloop={onScreen ? "always" : "never"}
+        dpr={[1, 1.5]}
         gl={{
           antialias: true,
           alpha: true,
@@ -226,7 +250,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
         <directionalLight
           position={[3, 5, 4]}
           intensity={1.6}
-          castShadow
+          castShadow={interactive}
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
           shadow-bias={-0.0002}
@@ -265,11 +289,5 @@ const SculptureScene: FC<SculptureSceneProps> = ({
     </div>
   );
 };
-
-// Warm the GLB cache so models are ready before the card scrolls into view.
-useGLTF.preload("/sculptures/Lady.glb");
-useGLTF.preload("/sculptures/LordKrishna.glb");
-useGLTF.preload("/sculptures/Pandit.glb");
-useGLTF.preload("/sculptures/DancingShiva.glb");
 
 export default SculptureScene;

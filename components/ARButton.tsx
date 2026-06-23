@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import QRCode from "qrcode";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Smartphone } from "lucide-react";
 import type { Sculpture } from "@/lib/sculptures";
@@ -93,6 +92,7 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
   }, []);
 
   const openQr = useCallback(async () => {
+    const { default: QRCode } = await import("qrcode");
     const target = new URL(window.location.href);
     target.searchParams.set("ar", "1");
     const data = await QRCode.toDataURL(target.href, {
