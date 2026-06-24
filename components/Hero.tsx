@@ -14,8 +14,21 @@ export default function Hero() {
   const titleRef = useRef<HTMLDivElement>(null);
   const rightTextRef = useRef<HTMLDivElement>(null);
   const [done, setDone] = useState(false);
+  // The scroll-pinned slide choreography is desktop-only; mobile gets a simple
+  // stacked layout instead (no 250vh pin, no off-screen model slide).
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 1024,
+  );
 
   useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 1024);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const onScroll = () => {
       if (!spacerRef.current) return;
       const rect = spacerRef.current.getBoundingClientRect();
@@ -57,7 +70,49 @@ export default function Hero() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <section
+        id="home"
+        className="relative flex flex-col items-center px-6 pt-28 pb-10 text-center"
+      >
+        <p className="text-[11px] uppercase tracking-[0.4em] text-black/40 mb-4">
+          Indian Contemporary Artist &amp; Sculptor
+        </p>
+        <h1 className="text-[clamp(38px,11vw,64px)] leading-[0.95] tracking-[-0.03em] font-display font-medium text-black">
+          <span className="block">
+            <BlurText text="Thota" animateBy="letters" delay={70} stepDuration={0.4} />
+          </span>
+          <span className="block">
+            <BlurText
+              text="Vaikuntam"
+              animateBy="letters"
+              delay={70}
+              startDelay={350}
+              stepDuration={0.4}
+            />
+          </span>
+        </h1>
+        <p className="mt-5 max-w-md text-base leading-relaxed text-black/50">
+          Where Telangana&#39;s soul takes form in bronze and colour — bold
+          primary hues, almond eyes, and vermilion bindis rendered across eight
+          decades of art.
+        </p>
+        <a
+          href="#collection"
+          className="mt-7 inline-block border border-black/20 px-8 py-3 text-[12px] uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-black hover:text-white"
+        >
+          View Sculptures
+        </a>
+
+        <div className="mt-6 h-[55vh] min-h-[360px] w-full">
+          <HeroScene />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="home">

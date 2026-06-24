@@ -274,14 +274,12 @@ const SculptureScene: FC<SculptureSceneProps> = ({
 
         <OrbitControls
           makeDefault
-          enableZoom={interactive}
+          enableZoom={false}
           enablePan={interactive}
           autoRotate={!interactive}
           autoRotateSpeed={1.4}
           enableDamping
           dampingFactor={0.08}
-          minDistance={interactive ? camZ * 0.4 : undefined}
-          maxDistance={interactive ? camZ * 2.5 : undefined}
           maxPolarAngle={interactive ? Math.PI : Math.PI / 1.6}
           minPolarAngle={interactive ? 0 : Math.PI / 3}
         />

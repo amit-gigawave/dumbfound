@@ -71,11 +71,11 @@ const SculptureCardItem = ({
   return (
     <div
       ref={ref}
-      className="w-full min-h-screen flex flex-col items-center justify-center py-16"
+      className="w-full flex flex-col items-center justify-center py-10 lg:min-h-screen lg:py-16"
     >
-      <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
+      <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-20">
         <div
-          className={`flex-1 space-y-5 px-6 lg:px-0 text-center lg:text-left ${isEven ? "lg:order-1" : "lg:order-2"}`}
+          className={`w-full lg:flex-1 space-y-5 px-6 lg:px-0 text-center lg:text-left ${isEven ? "lg:order-1" : "lg:order-2"}`}
         >
           <span className="text-[10px] uppercase tracking-[0.4em] text-black/40">
             {card.id.toString().padStart(2, "0")}
@@ -94,7 +94,7 @@ const SculptureCardItem = ({
         </div>
 
         <div
-          className={`flex-1 w-full h-[600px] sm:h-[700px] lg:h-[850px] ${isEven ? "lg:order-2" : "lg:order-1"}`}
+          className={`w-full h-[58vh] min-h-[380px] lg:h-[850px] lg:flex-1 ${isEven ? "lg:order-2" : "lg:order-1"}`}
         >
           {isVisible ? (
             <SculptureScene
@@ -124,7 +124,7 @@ const SculptureCards = () => {
       id="collection"
     >
       <div className="mx-auto max-w-7xl relative z-10">
-        <div className="flex flex-col pb-64">
+        <div className="flex flex-col pb-24 lg:pb-64">
           {cards.map((card, index) => (
             <SculptureCardItem key={card.id} card={card} index={index} />
           ))}

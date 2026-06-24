@@ -62,14 +62,36 @@ const resolveUsdz = async (sculpture: Sculpture): Promise<string> => {
     import("three/examples/jsm/exporters/USDZExporter.js"),
   ]);
 
+  const THREE = await import("three");
+
   const loader = new GLTFLoader();
   const draco = new DRACOLoader();
   draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
   loader.setDRACOLoader(draco);
 
   const gltf = await loader.loadAsync(toAbs(sculpture.modelUrl));
+  const root = gltf.scene;
+
+  // The GLBs are authored in arbitrary units (~5–8 "units" tall). AR Quick Look
+  // reads USDZ units as METERS, so unscaled the sculpture appears giant and the
+  // camera sits inside it. Normalize to a real-world height and rest it on the
+  // ground (bottom at y=0, centred on x/z) so it places cleanly on a surface.
+  const TARGET_HEIGHT_M = 0.6;
+  let box = new THREE.Box3().setFromObject(root);
+  const size = box.getSize(new THREE.Vector3());
+  const scale = size.y > 0 ? TARGET_HEIGHT_M / size.y : 1;
+  root.scale.multiplyScalar(scale);
+  root.updateMatrixWorld(true);
+
+  box = new THREE.Box3().setFromObject(root);
+  const center = box.getCenter(new THREE.Vector3());
+  root.position.x -= center.x;
+  root.position.z -= center.z;
+  root.position.y -= box.min.y;
+  root.updateMatrixWorld(true);
+
   const exporter = new USDZExporter();
-  const usdz = await exporter.parseAsync(gltf.scene);
+  const usdz = await exporter.parseAsync(root);
   const blob = new Blob([usdz as BlobPart], { type: "model/vnd.usdz+zip" });
   return URL.createObjectURL(blob);
 };

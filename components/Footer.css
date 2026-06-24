@@ -23,6 +23,7 @@
 /* Left Card — warm charcoal with sculpture video */
 .footer-left {
   position: relative;
+  min-width: 0;
   min-height: 360px;
   border-radius: 28px;
   padding: 32px;
@@ -171,6 +172,7 @@
 /* Right Card — warm off-white */
 .footer-right {
   background: #fbf7f0;
+  min-width: 0;
   border: 1px solid rgba(21, 20, 21, 0.05);
   border-radius: 28px;
   padding: 40px;
@@ -406,7 +408,7 @@
 /* Breakpoints */
 @media (max-width: 860px) {
   .footer-wrapper {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .footer-left {
     min-height: auto;
@@ -416,31 +418,39 @@
 
 @media (max-width: 560px) {
   .footer-section {
-    padding-top: 56px;
+    padding: 48px 16px 0;
+  }
+  .footer-left {
+    padding: 24px;
+  }
+  .footer-tagline {
+    font-size: 16px;
   }
   .footer-right {
     padding: 24px;
   }
   .footer-right-top {
-    gap: 40px;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .footer-col-title {
+    font-size: 19px;
+    margin-bottom: 14px;
   }
   .footer-bottom {
     flex-direction: column-reverse;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 24px;
+  }
+  .footer-cta-mini {
+    width: 100%;
   }
   .footer-subscribe-row {
     width: 100%;
+    max-width: none;
   }
+  /* Decorative badge overlaps/overflows the card on small screens — hide it */
   .footer-lucky-graphic {
-    right: 12px;
-    top: -28px;
-  }
-  .lucky-cube {
-    width: 72px;
-    height: 72px;
-  }
-  .lucky-cube-mark {
-    font-size: 32px;
+    display: none;
   }
 }

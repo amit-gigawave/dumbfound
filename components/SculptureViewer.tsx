@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { ArrowLeft, RotateCcw, Hand, ZoomIn } from "lucide-react";
+import { ArrowLeft, RotateCcw, Hand } from "lucide-react";
 import type { Sculpture } from "@/lib/sculptures";
 import BlurText from "./BlurText";
 import ARButton from "./ARButton";
@@ -18,7 +18,7 @@ const SculptureScene = dynamic(() => import("./SculptureScene"), {
 
 const SculptureViewer = ({ sculpture }: { sculpture: Sculpture }) => {
   return (
-    <main className="relative min-h-screen w-full overflow-hidden page-gradient lg:h-screen">
+    <main className="relative min-h-screen w-full overflow-x-hidden page-gradient lg:h-screen lg:overflow-hidden">
       {/* Accent ambience */}
       <div
         className="pointer-events-none absolute inset-0"
@@ -73,16 +73,13 @@ const SculptureViewer = ({ sculpture }: { sculpture: Sculpture }) => {
               <Hand size={13} /> Drag to rotate
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <ZoomIn size={13} /> Scroll to zoom
-            </span>
-            <span className="inline-flex items-center gap-1.5">
               <RotateCcw size={13} /> Right-drag to pan
             </span>
           </div>
         </div>
 
         {/* Canvas column — sculpture has the full stage to itself */}
-        <div className="relative h-[58vh] w-full flex-1 lg:h-full">
+        <div className="relative h-[60vh] min-h-[360px] w-full lg:h-full lg:flex-1">
           <SculptureScene
             url={sculpture.modelUrl}
             offsetX={sculpture.offsetX}

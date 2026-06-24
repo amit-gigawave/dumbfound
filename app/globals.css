@@ -54,10 +54,16 @@ html {
   color: var(--foreground);
   color-scheme: light;
   scroll-padding-top: 6rem;
+  /* Prevent any stray full-bleed element from causing horizontal scroll on
+     mobile. `clip` (not `hidden`) avoids creating a scroll container, so it
+     doesn't break sticky/fixed positioning or Lenis smooth scroll. */
+  overflow-x: clip;
 }
 
 body {
   min-height: 100vh;
+  max-width: 100%;
+  overflow-x: clip;
   font-family: var(--font-lora), Georgia, serif;
 }
 
