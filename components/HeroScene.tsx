@@ -5,11 +5,13 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Stage, OrbitControls, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { heroScrollStore } from "./heroScrollStore";
+import { DRACO_PATH } from "./three/modelLoader";
+import StudioEnvironment from "./three/StudioEnvironment";
 
 const WIRE_COLOR = "#a08060";
 
 const Model = () => {
-  const { scene } = useGLTF("/sculptures/DancingShivaHero.glb");
+  const { scene } = useGLTF("/sculptures/DancingShivaHero.glb", DRACO_PATH);
   const groupRef = useRef<THREE.Group>(null);
   const progressRef = useRef(0);
   const boundsRef = useRef<{ min: number; max: number } | null>(null);
@@ -119,7 +121,9 @@ export default function HeroScene() {
         <pointLight position={[0, 0, 8]} intensity={4} color="#ffffff" />
 
         <Suspense fallback={null}>
-          <Stage adjustCamera intensity={0.5} environment="city">
+          {/* Procedural reflections instead of Stage's downloaded "city" HDR. */}
+          <StudioEnvironment />
+          <Stage adjustCamera intensity={0.5} environment={null}>
             <Model />
           </Stage>
           <OrbitControls

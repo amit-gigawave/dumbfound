@@ -37,8 +37,8 @@ export default function GalleryPage() {
             </span>
           </h1>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-black/50">
-            Each piece is a fully interactive 3D model. Select a sculpture to
-            rotate and study it from every angle.
+            Each piece is a fully interactive 3D model. Hover to preview it in
+            motion, then open it to rotate, zoom and study every angle.
           </p>
         </header>
 

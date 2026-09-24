@@ -450,3 +450,13 @@ h3,
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
+
+/* Gallery card: indeterminate loading bar while a hovered model downloads */
+@keyframes card-load {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}

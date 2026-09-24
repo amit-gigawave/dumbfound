@@ -15,16 +15,18 @@ import {
   OrbitControls,
   PerspectiveCamera,
   ContactShadows,
-  Environment,
   Html,
   useProgress,
 } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
+import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
+import StudioEnvironment from "./three/StudioEnvironment";
 
 // Bronze tone for the wireframe scaffold during the reveal (matches the hero).
 const WIRE_COLOR = "#a08060";
 // Seconds-ish pacing of the materialize animation (higher = faster).
-const REVEAL_SPEED = 0.35;
+const REVEAL_SPEED = 0.7;
 
 interface SculptureSceneProps {
   url: string;
@@ -37,6 +39,17 @@ interface SculptureSceneProps {
    * zoom/pan off, and pointer events pass through so a parent link stays clickable.
    */
   interactive?: boolean;
+  /**
+   * "thumbnail" renders a static, transparent, reveal-free frame for the
+   * thumbnail generator (scripts/make-thumbnails.mjs).
+   */
+  mode?: "viewer" | "thumbnail";
+  /** Play the wireframe "materialize" intro (first view per session only). */
+  reveal?: boolean;
+  /** Receives the OrbitControls instance (e.g. for a "reset view" button). */
+  controlsRef?: React.RefObject<OrbitControlsImpl | null>;
+  /** Fires once the model has been loaded and drawn. */
+  onReady?: () => void;
 }
 
 const Loader = () => {
@@ -63,35 +76,47 @@ const Loader = () => {
  * single source of truth for placement — no <Stage> auto-fit that could race
  * with the async load and cause inconsistent framing between reloads.
  */
-const RevealModel: FC<{ url: string; offsetX: number; offsetY: number }> = ({
-  url,
-  offsetX,
-  offsetY,
-}) => {
-  const { scene } = useGLTF(url);
+const RevealModel: FC<{
+  url: string;
+  offsetX: number;
+  offsetY: number;
+  reveal: boolean;
+  onReady?: () => void;
+}> = ({ url, offsetX, offsetY, reveal, onReady }) => {
+  const { scene } = useGLTF(url, DRACO_PATH);
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Group>(null);
 
-  const progressRef = useRef(0);
+  const readyRef = useRef(false);
   const boundsRef = useRef<{ min: number; max: number } | null>(null);
   const frameCount = useRef(0);
 
+  // Skip the reveal when disabled or already shown this session, so returning
+  // to a model (or opening one preloaded from the grid) is instant.
+  const [willReveal] = useState(() => reveal && !hasRevealed(url));
+  const progressRef = useRef(willReveal ? 0 : 1);
+
   // Reveal is driven by three world-space horizontal clip planes (as in the hero).
+  // Initial constants: everything hidden until the reveal starts, or — when
+  // skipping it — wireframe hidden and texture fully visible.
+  const initialConstant = willReveal ? -9999 : 9999;
   const wireClipBottom = useMemo(
-    () => new THREE.Plane(new THREE.Vector3(0, -1, 0), -9999),
-    [],
+    () => new THREE.Plane(new THREE.Vector3(0, -1, 0), initialConstant),
+    [initialConstant],
   );
   const wireClipTop = useMemo(
     () => new THREE.Plane(new THREE.Vector3(0, 1, 0), -9999),
     [],
   );
   const texClip = useMemo(
-    () => new THREE.Plane(new THREE.Vector3(0, -1, 0), -9999),
-    [],
+    () => new THREE.Plane(new THREE.Vector3(0, -1, 0), initialConstant),
+    [initialConstant],
   );
 
   // Wireframe scaffold clone — only visible in the band above the solid fill.
+  // Not built at all when the reveal is skipped.
   const wireScene = useMemo(() => {
+    if (!willReveal) return null;
     const clone = scene.clone(true);
     clone.traverse((child) => {
       if (child instanceof THREE.Mesh) {
@@ -105,7 +130,7 @@ const RevealModel: FC<{ url: string; offsetX: number; offsetY: number }> = ({
       }
     });
     return clone;
-  }, [scene, wireClipBottom, wireClipTop]);
+  }, [scene, willReveal, wireClipBottom, wireClipTop]);
 
   // Textured clone — the real surface, revealed from the floor up.
   const texScene = useMemo(() => {
@@ -150,6 +175,14 @@ const RevealModel: FC<{ url: string; offsetX: number; offsetY: number }> = ({
   useFrame((_, delta) => {
     frameCount.current++;
 
+    if (!readyRef.current && frameCount.current >= 2) {
+      readyRef.current = true;
+      markRevealed(url);
+      onReady?.();
+    }
+    // Reveal disabled: planes stay at their "show everything" defaults.
+    if (progressRef.current >= 1 && !boundsRef.current) return;
+
     // Measure the real world-space vertical bounds once the transform settles.
     if (!boundsRef.current) {
       if (frameCount.current < 3 || !groupRef.current) return;
@@ -185,7 +218,7 @@ const RevealModel: FC<{ url: string; offsetX: number; offsetY: number }> = ({
   return (
     <group ref={groupRef} position={[offsetX, offsetY, 0]}>
       <group ref={innerRef}>
-        <primitive object={wireScene} />
+        {wireScene && <primitive object={wireScene} />}
         <primitive object={texScene} />
       </group>
     </group>
@@ -198,7 +231,12 @@ const SculptureScene: FC<SculptureSceneProps> = ({
   offsetY = 0,
   defaultZoom = 1,
   interactive = false,
+  mode = "viewer",
+  reveal = true,
+  controlsRef,
+  onReady,
 }) => {
+  const isThumb = mode === "thumbnail";
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
   const wrapRef = useRef<HTMLDivElement>(null);
   // Pause the render loop while the canvas is scrolled out of view so multiple
@@ -221,7 +259,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
       ref={wrapRef}
       className={`w-full h-full relative ${
         interactive
-          ? "cursor-grab active:cursor-grabbing"
+          ? "cursor-grab active:cursor-grabbing touch-none"
           : "pointer-events-none"
       }`}
     >
@@ -235,7 +273,8 @@ const SculptureScene: FC<SculptureSceneProps> = ({
           stencil: false,
           depth: true,
           powerPreference: "high-performance",
-          preserveDrawingBuffer: false,
+          // The thumbnail generator screenshots the canvas.
+          preserveDrawingBuffer: isThumb,
           localClippingEnabled: true,
         }}
         onCreated={({ gl }) => {
@@ -257,10 +296,17 @@ const SculptureScene: FC<SculptureSceneProps> = ({
         />
         <directionalLight position={[-4, 2, -3]} intensity={0.5} />
 
-        <Suspense fallback={<Loader />}>
-          <RevealModel url={url} offsetX={offsetX} offsetY={offsetY} />
-          {/* Reflections / specular for the bronze patina. */}
-          <Environment preset="city" />
+        {/* Reflections / specular for the bronze patina — procedural, no HDR download. */}
+        <StudioEnvironment intensity={0.9} />
+
+        <Suspense fallback={isThumb ? null : <Loader />}>
+          <RevealModel
+            url={url}
+            offsetX={offsetX}
+            offsetY={offsetY}
+            reveal={reveal && !isThumb}
+            onReady={onReady}
+          />
         </Suspense>
 
         <ContactShadows
@@ -273,10 +319,13 @@ const SculptureScene: FC<SculptureSceneProps> = ({
         />
 
         <OrbitControls
+          ref={controlsRef}
           makeDefault
-          enableZoom={false}
+          enableZoom={interactive}
+          minDistance={camZ * 0.4}
+          maxDistance={camZ * 2}
           enablePan={interactive}
-          autoRotate={!interactive}
+          autoRotate={!interactive && !isThumb}
           autoRotateSpeed={1.4}
           enableDamping
           dampingFactor={0.08}
