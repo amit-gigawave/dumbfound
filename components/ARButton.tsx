@@ -53,7 +53,9 @@ const openQuickLook = (usdzUrl: string) => {
  * Build a USDZ for iOS Quick Look. Uses a prebuilt `usdzUrl` if one is supplied,
  * otherwise converts the GLB to USDZ in-browser with three's USDZExporter.
  */
-const resolveUsdz = async (sculpture: Sculpture): Promise<string> => {
+type WithModel = Sculpture & { modelUrl: string };
+
+const resolveUsdz = async (sculpture: WithModel): Promise<string> => {
   if (sculpture.usdzUrl) return toAbs(sculpture.usdzUrl);
 
   const [{ GLTFLoader }, { DRACOLoader }, { USDZExporter }] = await Promise.all([
@@ -96,7 +98,7 @@ const resolveUsdz = async (sculpture: Sculpture): Promise<string> => {
   return URL.createObjectURL(blob);
 };
 
-const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
+const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
   const [mounted, setMounted] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState("");
@@ -145,7 +147,7 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
       openQuickLook(usdz);
     } catch (e) {
       console.error(e);
-      setError("Could not prepare the AR model. Please try again.");
+      setError("Could not prepare the work for your space. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -162,62 +164,20 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
 
   return (
     <>
-      <motion.button
+      <button
+        type="button"
         onClick={onButtonClick}
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-black px-7 py-3.5 text-sm font-medium text-white shadow-[0_10px_30px_-8px_rgba(21,20,21,0.5)] ring-1 ring-white/10"
+        className="group inline-flex items-center gap-2 text-[13px] tracking-[0.04em] text-ink transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
       >
-        {/* animated accent glow */}
-        <span
-          className="pointer-events-none absolute -inset-12 opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-100"
-          style={{
-            background: `radial-gradient(40% 60% at 30% 50%, ${sculpture.accent}66, transparent 70%)`,
-          }}
-        />
-        {/* shimmer sweep */}
-        <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
-
-        {/* rotating AR cube */}
-        <span className="relative grid h-5 w-5 place-items-center">
-          <motion.svg
-            viewBox="0 0 24 24"
-            fill="none"
-            className="h-5 w-5"
-            animate={{ rotateY: [0, 360] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            <path
-              d="M12 2 21 7v10l-9 5-9-5V7l9-5Z"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M12 2v20M3 7l9 5 9-5"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinejoin="round"
-              opacity="0.7"
-            />
-          </motion.svg>
+        {/* a plinth with a sculpture silhouette — "in your space" */}
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-4 w-4">
+          <path d="M9 5.5a3 3 0 1 1 6 0c0 1.7-1.3 2.4-1.3 4.2V13h-3.4V9.7C10.3 7.9 9 7.2 9 5.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+          <path d="M6 16h12v4H6z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+        </svg>
+        <span className="border-b border-current/30 pb-0.5 group-hover:border-current">
+          See it in your space
         </span>
-
-        <span className="relative tracking-wide">View in AR</span>
-
-        {/* pulsing live dot */}
-        <span className="relative ml-0.5 flex h-1.5 w-1.5">
-          <span
-            className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
-            style={{ background: sculpture.accent }}
-          />
-          <span
-            className="relative inline-flex h-1.5 w-1.5 rounded-full"
-            style={{ background: sculpture.accent }}
-          />
-        </span>
-      </motion.button>
+      </button>
 
       {mounted &&
         createPortal(
@@ -233,7 +193,7 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
                   <X size={18} />
                 </button>
                 <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
-                  <Smartphone size={13} /> Augmented Reality
+                  <Smartphone size={13} /> In your space
                 </div>
                 <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
                   View on your phone
@@ -268,21 +228,21 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
                   </button>
                 )}
                 <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
-                  <Smartphone size={13} /> Augmented Reality
+                  <Smartphone size={13} /> In your space
                 </div>
                 <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
                   {sculpture.title}
                 </h3>
                 <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-black/55">
                   {busy
-                    ? "Preparing the 3D model for AR…"
-                    : "Tap below, then point your camera at the floor to place the sculpture at true scale."}
+                    ? "Preparing the work…"
+                    : "Tap below, then point your camera at the floor to place the work at true scale."}
                 </p>
 
                 <button
                   onClick={launchAR}
                   disabled={busy}
-                  className="mx-auto mt-7 inline-flex items-center gap-2 rounded-full bg-black px-8 py-3.5 text-sm font-medium text-white shadow-lg transition-transform active:scale-95 disabled:opacity-60"
+                  className="mx-auto mt-7 inline-flex items-center gap-2 rounded-full bg-ink px-8 py-3.5 text-sm font-medium text-paper transition-transform active:scale-95 disabled:opacity-60"
                 >
                   {busy ? (
                     <>
@@ -290,7 +250,7 @@ const ARButton = ({ sculpture }: { sculpture: Sculpture }) => {
                       Preparing…
                     </>
                   ) : (
-                    "Launch AR"
+                    "Place it in my room"
                   )}
                 </button>
 
@@ -326,7 +286,7 @@ const Backdrop = ({
       exit={{ scale: 0.92, y: 16, opacity: 0 }}
       transition={{ type: "spring", damping: 24, stiffness: 280 }}
       onClick={(e) => e.stopPropagation()}
-      className="relative w-full max-w-sm rounded-[1.75rem] bg-[#faf9f6] p-8 text-center shadow-2xl ring-1 ring-black/5"
+      className="relative w-full max-w-sm rounded-md bg-paper p-8 text-center shadow-2xl ring-1 ring-black/5"
     >
       {children}
     </motion.div>

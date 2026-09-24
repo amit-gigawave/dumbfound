@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback } from "react";
 import type { Sculpture } from "@/lib/sculptures";
+import { FIT_CARD } from "./three/modelLoader";
 
 const SculptureScene = dynamic(() => import("./SculptureScene"), { ssr: false });
 
@@ -16,7 +17,7 @@ declare global {
 }
 
 /** Fixed-size, transparent render of one model for the thumbnail generator. */
-const ThumbnailStage = ({ sculpture }: { sculpture: Sculpture }) => {
+const ThumbnailStage = ({ sculpture }: { sculpture: Sculpture & { modelUrl: string } }) => {
   const onReady = useCallback(() => {
     // Give the environment map and shadows a couple of frames to settle.
     setTimeout(() => {
@@ -32,10 +33,8 @@ const ThumbnailStage = ({ sculpture }: { sculpture: Sculpture }) => {
     >
       <SculptureScene
         url={sculpture.modelUrl}
-        offsetX={sculpture.offsetX}
-        offsetY={sculpture.offsetY}
-        defaultZoom={sculpture.defaultZoom}
         mode="thumbnail"
+        fit={FIT_CARD}
         onReady={onReady}
       />
     </div>

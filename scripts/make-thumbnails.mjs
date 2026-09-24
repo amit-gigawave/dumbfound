@@ -55,7 +55,7 @@ try {
   await page.setViewport({ width: 1200, height: 1100, deviceScaleFactor: 1 });
 
   for (const { slug, modelUrl } of entries) {
-    const res = await page.goto(`${BASE}/gallery/thumb/${slug}`, { waitUntil: "networkidle0" });
+    const res = await page.goto(`${BASE}/artworks/thumb/${slug}`, { waitUntil: "networkidle0" });
     if (!res?.ok()) throw new Error(`${slug}: thumbnail route returned ${res?.status()}`);
     await page.waitForFunction(() => window.__thumbReady === true, { timeout: 120_000, polling: 250 });
 

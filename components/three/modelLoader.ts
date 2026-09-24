@@ -3,6 +3,15 @@ import { useGLTF } from "@react-three/drei";
 /** Self-hosted Draco decoder (copied by scripts/copy-draco.mjs). */
 export const DRACO_PATH = "/draco/";
 
+/**
+ * How much of the frame a sculpture fills (see SculptureScene `fit`).
+ * Thumbnails and hover previews MUST share FIT_CARD (and the 4:5 aspect) so the
+ * 3D preview lines up with the thumbnail when it fades in.
+ * Re-run `npm run thumbnails` after changing it.
+ */
+export const FIT_CARD = 0.86;
+export const FIT_VIEWER = 0.8;
+
 const requested = new Set<string>();
 const revealed = new Set<string>();
 

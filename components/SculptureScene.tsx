@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   useGLTF,
   OrbitControls,
@@ -46,6 +46,12 @@ interface SculptureSceneProps {
   mode?: "viewer" | "thumbnail";
   /** Play the wireframe "materialize" intro (first view per session only). */
   reveal?: boolean;
+  /**
+   * Auto-frame the model: center it and place the camera so the sculpture fills
+   * this fraction of the canvas (e.g. 0.85). Ignores offsetX/offsetY/defaultZoom.
+   * Thumbnails, hover previews and the viewer share it so they line up exactly.
+   */
+  fit?: number;
   /** Receives the OrbitControls instance (e.g. for a "reset view" button). */
   controlsRef?: React.RefObject<OrbitControlsImpl | null>;
   /** Fires once the model has been loaded and drawn. */
@@ -81,9 +87,14 @@ const RevealModel: FC<{
   offsetX: number;
   offsetY: number;
   reveal: boolean;
+  fit?: number;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, onReady }) => {
+}> = ({ url, offsetX, offsetY, reveal, fit, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
+  const get = useThree((state) => state.get);
+  const fittedRef = useRef(!fit);
+  // Size of the normalized model; used to frame the camera and place the floor shadow.
+  const [extent, setExtent] = useState<{ w: number; h: number; d: number } | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Group>(null);
 
@@ -165,14 +176,40 @@ const RevealModel: FC<{
     const radius = sphere.radius || 1;
     const scale = 1 / (radius * 2);
     obj.scale.setScalar(scale);
-    obj.position.set(
-      -sphere.center.x * scale,
-      -sphere.center.y * scale,
-      -sphere.center.z * scale,
-    );
-  }, [scene]);
+    // Auto-framing centers the bounding box (what the eye sees); the legacy
+    // path keeps the bounding-sphere center so existing placements don't move.
+    const center = fit ? box.getCenter(new THREE.Vector3()) : sphere.center;
+    obj.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+    if (fit) {
+      const size = box.getSize(new THREE.Vector3()).multiplyScalar(scale);
+      setExtent({ w: size.x, h: size.y, d: size.z });
+    }
+  }, [scene, fit]);
 
   useFrame((_, delta) => {
+    // Frame the camera once the model size and the default controls are known.
+    if (!fittedRef.current) {
+      const { camera, controls, size } = get();
+      if (!extent || !controls || !(camera instanceof THREE.PerspectiveCamera)) return;
+      const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      const tanH = tanV * (size.width / size.height);
+      // Fit height, and the wider of width/depth so turning stays mostly in frame;
+      // the extra term accounts for the front of the model sitting nearer the camera.
+      const half = Math.max(extent.w, extent.d) / 2;
+      const dist =
+        Math.max(extent.h / 2 / (tanV * fit!), half / (tanH * fit!)) + half * 0.5;
+      camera.position.set(0, 0, dist);
+      camera.lookAt(0, 0, 0);
+      const orbit = controls as unknown as OrbitControlsImpl;
+      orbit.target.set(0, 0, 0);
+      orbit.minDistance = dist * 0.35;
+      orbit.maxDistance = dist * 2.5;
+      orbit.update();
+      orbit.saveState(); // "Reset view" returns here
+      fittedRef.current = true;
+      return;
+    }
+
     frameCount.current++;
 
     if (!readyRef.current && frameCount.current >= 2) {
@@ -216,11 +253,21 @@ const RevealModel: FC<{
   });
 
   return (
-    <group ref={groupRef} position={[offsetX, offsetY, 0]}>
+    <group ref={groupRef} position={fit ? [0, 0, 0] : [offsetX, offsetY, 0]}>
       <group ref={innerRef}>
         {wireScene && <primitive object={wireScene} />}
         <primitive object={texScene} />
       </group>
+      {extent && (
+        <ContactShadows
+          position={[0, -extent.h / 2 - 0.002, 0]}
+          opacity={0.3}
+          scale={Math.max(extent.w, extent.d) * 2.5}
+          blur={2.5}
+          far={extent.h * 0.6}
+          resolution={512}
+        />
+      )}
     </group>
   );
 };
@@ -233,6 +280,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
   interactive = false,
   mode = "viewer",
   reveal = true,
+  fit,
   controlsRef,
   onReady,
 }) => {
@@ -305,25 +353,28 @@ const SculptureScene: FC<SculptureSceneProps> = ({
             offsetX={offsetX}
             offsetY={offsetY}
             reveal={reveal && !isThumb}
+            fit={fit}
             onReady={onReady}
           />
         </Suspense>
 
-        <ContactShadows
-          position={[0, -0.6, 0]}
-          opacity={0.22}
-          scale={4}
-          blur={3}
-          far={1.5}
-          resolution={512}
-        />
+        {/* Auto-framed models render their own shadow at their base. */}
+        {!fit && (
+          <ContactShadows
+            position={[0, -0.6, 0]}
+            opacity={0.22}
+            scale={4}
+            blur={3}
+            far={1.5}
+            resolution={512}
+          />
+        )}
 
         <OrbitControls
           ref={controlsRef}
           makeDefault
           enableZoom={interactive}
-          minDistance={camZ * 0.4}
-          maxDistance={camZ * 2}
+          {...(!fit && { minDistance: camZ * 0.4, maxDistance: camZ * 2 })}
           enablePan={interactive}
           autoRotate={!interactive && !isThumb}
           autoRotateSpeed={1.4}

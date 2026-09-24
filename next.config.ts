@@ -11,6 +11,13 @@ const staticAsset = [
 ];
 
 const nextConfig: NextConfig = {
+  // The collection used to live at /gallery.
+  async redirects() {
+    return [
+      { source: "/gallery", destination: "/artworks", permanent: true },
+      { source: "/gallery/:path*", destination: "/artworks/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [
       { source: "/sculptures/:path*", headers: staticAsset },
