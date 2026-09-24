@@ -5,7 +5,9 @@ import { useCallback } from "react";
 import type { Sculpture } from "@/lib/sculptures";
 import { FIT_CARD } from "./three/modelLoader";
 
-const SculptureScene = dynamic(() => import("./SculptureScene"), { ssr: false });
+const SculptureScene = dynamic(() => import("./SculptureScene"), {
+  ssr: false,
+});
 
 export const THUMB_WIDTH = 800;
 export const THUMB_HEIGHT = 1000;
@@ -17,7 +19,11 @@ declare global {
 }
 
 /** Fixed-size, transparent render of one model for the thumbnail generator. */
-const ThumbnailStage = ({ sculpture }: { sculpture: Sculpture & { modelUrl: string } }) => {
+const ThumbnailStage = ({
+  sculpture,
+}: {
+  sculpture: Sculpture & { modelUrl: string };
+}) => {
   const onReady = useCallback(() => {
     // Give the environment map and shadows a couple of frames to settle.
     setTimeout(() => {

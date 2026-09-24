@@ -10,7 +10,9 @@ export default function NewsletterForm() {
   const [done, setDone] = useState(false);
 
   if (done) {
-    return <p className="text-sm text-stone">Thank you — you&apos;re on the list.</p>;
+    return (
+      <p className="text-sm text-stone">Thank you — you&apos;re on the list.</p>
+    );
   }
 
   return (
@@ -31,7 +33,10 @@ export default function NewsletterForm() {
         placeholder="Your email address"
         className="min-w-0 flex-1 bg-transparent py-2.5 text-[15px] outline-none placeholder:text-stone/70"
       />
-      <button type="submit" className="text-[12px] uppercase tracking-[0.14em] hover:text-accent">
+      <button
+        type="submit"
+        className="text-[12px] uppercase tracking-[0.14em] hover:text-accent"
+      >
         Subscribe
       </button>
     </form>

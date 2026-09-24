@@ -48,6 +48,7 @@ export const artists: Artist[] = [
     place: "Burugupalli, Telangana",
     medium: "Painting, bronze",
     role: "Painter and sculptor",
+    portrait: "/artists/thota-vaikuntam.webp",
     summary:
       "Thota Vaikuntam grew up in Burugupalli, a village in Telangana, where the travelling theatre troupes of his childhood — men playing the women's roles — first fascinated him. Trained in Hyderabad and at Baroda under K.G. Subramanyan, he has spent six decades painting the women and men of rural Telangana in bold colour, and has lately given them form in bronze.",
     bio: [

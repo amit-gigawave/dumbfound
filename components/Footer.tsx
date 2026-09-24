@@ -52,12 +52,17 @@ export default function Footer() {
       </section>
 
       <div className="border-t border-rule">
-        <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-8 px-[clamp(16px,4vw,40px)] pb-12 pt-14 md:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div
+          data-reveal-stagger
+          className="mx-auto grid max-w-[1200px] grid-cols-2 gap-8 px-[clamp(16px,4vw,40px)] pb-12 pt-14 md:grid-cols-[1.4fr_repeat(4,1fr)]"
+        >
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="font-display text-[22px]">
               {site.name}
             </Link>
-            <p className="font-text mt-2.5 max-w-[32ch] text-[15px] text-stone">{site.tagline}</p>
+            <p className="font-text mt-2.5 max-w-[32ch] text-[15px] text-stone">
+              {site.tagline}
+            </p>
           </div>
           {columns().map((col) => (
             <div key={col.title}>
@@ -65,7 +70,10 @@ export default function Footer() {
               <ul className="grid gap-2 text-sm text-stone">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <Link href={l.href} className="transition-colors hover:text-ink">
+                    <Link
+                      href={l.href}
+                      className="transition-colors hover:text-ink"
+                    >
                       {l.label}
                     </Link>
                   </li>

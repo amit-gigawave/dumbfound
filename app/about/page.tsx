@@ -42,27 +42,36 @@ const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 export default function AboutPage() {
   return (
     <main>
-      <section className={`${wrap} pb-[clamp(48px,7vw,90px)] pt-[clamp(56px,9vw,120px)]`}>
+      <section
+        data-reveal-stagger
+        className={`${wrap} pb-[clamp(48px,7vw,90px)] pt-[clamp(56px,9vw,120px)]`}
+      >
         <span className="label">About</span>
         <h1 className="mt-5 max-w-[18ch] text-[clamp(36px,5.2vw,68px)] leading-[1.06] tracking-[-0.01em]">
           Every work has a maker, <em className="text-accent">and a story.</em>
         </h1>
         <div className="font-text mt-8 grid max-w-[62ch] gap-5 text-lg leading-[1.75] text-stone">
           <p>
-            {site.name} brings together artists and their work — established names and new
-            voices, in every medium — and presents each piece with the care of a catalogue:
-            who made it, what it is made of, and the story it carries.
+            {site.name} brings together artists and their work — established
+            names and new voices, in every medium — and presents each piece with
+            the care of a catalogue: who made it, what it is made of, and the
+            story it carries.
           </p>
           <p>
-            Where a work exists in three dimensions, you can also turn it in the round and
-            place it in your own space.
+            Where a work exists in three dimensions, you can also turn it in the
+            round and place it in your own space.
           </p>
         </div>
       </section>
 
-      <section id="viewing" className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)]`}>
+      <section
+        id="viewing"
+        className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)]`}
+      >
         <SectionHeader title="Questions" />
-        <FAQ items={faq} />
+        <div data-reveal>
+          <FAQ items={faq} />
+        </div>
         <p className="mt-8 text-sm text-stone">
           Something else?{" "}
           <Link href="/contact" className="text-link">
@@ -71,12 +80,15 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section id="privacy" className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)]`}>
+      <section
+        id="privacy"
+        className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)]`}
+      >
         <SectionHeader title="Privacy" />
         <p className="font-text max-w-[62ch] text-[17px] leading-[1.75] text-stone">
           {/* TODO: replace with the approved privacy policy. */}
-          We only use the details you send us to reply to your enquiry or, if you ask, to
-          send our occasional letter. We do not sell or share them.
+          We only use the details you send us to reply to your enquiry or, if
+          you ask, to send our occasional letter. We do not sell or share them.
         </p>
       </section>
     </main>

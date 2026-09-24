@@ -21,10 +21,16 @@ const detectPlatform = (): Platform => {
 };
 
 const toAbs = (path: string) =>
-  typeof window === "undefined" ? path : new URL(path, window.location.origin).href;
+  typeof window === "undefined"
+    ? path
+    : new URL(path, window.location.origin).href;
 
 /** Launch Android Scene Viewer with the GLB. */
-const launchSceneViewer = (glbAbsUrl: string, title: string, fallback: string) => {
+const launchSceneViewer = (
+  glbAbsUrl: string,
+  title: string,
+  fallback: string,
+) => {
   const params = new URLSearchParams({
     file: glbAbsUrl,
     mode: "ar_preferred",
@@ -58,11 +64,13 @@ type WithModel = Sculpture & { modelUrl: string };
 const resolveUsdz = async (sculpture: WithModel): Promise<string> => {
   if (sculpture.usdzUrl) return toAbs(sculpture.usdzUrl);
 
-  const [{ GLTFLoader }, { DRACOLoader }, { USDZExporter }] = await Promise.all([
-    import("three/examples/jsm/loaders/GLTFLoader.js"),
-    import("three/examples/jsm/loaders/DRACOLoader.js"),
-    import("three/examples/jsm/exporters/USDZExporter.js"),
-  ]);
+  const [{ GLTFLoader }, { DRACOLoader }, { USDZExporter }] = await Promise.all(
+    [
+      import("three/examples/jsm/loaders/GLTFLoader.js"),
+      import("three/examples/jsm/loaders/DRACOLoader.js"),
+      import("three/examples/jsm/exporters/USDZExporter.js"),
+    ],
+  );
 
   const THREE = await import("three");
 
@@ -111,7 +119,8 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
     setMounted(true);
     platformRef.current = detectPlatform();
     // Arrived from a QR scan → show a tap prompt (iOS/Android AR needs a gesture).
-    const wantsAR = new URLSearchParams(window.location.search).get("ar") === "1";
+    const wantsAR =
+      new URLSearchParams(window.location.search).get("ar") === "1";
     if (wantsAR && platformRef.current !== "desktop") setArPromptOpen(true);
   }, []);
 
@@ -171,8 +180,18 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
       >
         {/* a plinth with a sculpture silhouette — "in your space" */}
         <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-4 w-4">
-          <path d="M9 5.5a3 3 0 1 1 6 0c0 1.7-1.3 2.4-1.3 4.2V13h-3.4V9.7C10.3 7.9 9 7.2 9 5.5Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-          <path d="M6 16h12v4H6z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+          <path
+            d="M9 5.5a3 3 0 1 1 6 0c0 1.7-1.3 2.4-1.3 4.2V13h-3.4V9.7C10.3 7.9 9 7.2 9 5.5Z"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M6 16h12v4H6z"
+            stroke="currentColor"
+            strokeWidth="1.3"
+            strokeLinejoin="round"
+          />
         </svg>
         <span className="border-b border-current/30 pb-0.5 group-hover:border-current">
           See it in your space
@@ -200,16 +219,24 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
                 </h3>
                 <div
                   className="mx-auto mt-6 grid h-56 w-56 place-items-center rounded-2xl bg-white p-3 ring-1 ring-black/5"
-                  style={{ boxShadow: `0 16px 40px -16px ${sculpture.accent}88` }}
+                  style={{
+                    boxShadow: `0 16px 40px -16px ${sculpture.accent}88`,
+                  }}
                 >
                   {qrDataUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={qrDataUrl} alt="Scan to view in AR" className="h-full w-full" />
+                    <img
+                      src={qrDataUrl}
+                      alt="Scan to view in AR"
+                      className="h-full w-full"
+                    />
                   )}
                 </div>
                 <p className="mx-auto mt-6 max-w-xs text-sm leading-relaxed text-black/55">
                   Scan with your phone&apos;s camera to place{" "}
-                  <span className="font-medium text-black/75">{sculpture.title}</span>{" "}
+                  <span className="font-medium text-black/75">
+                    {sculpture.title}
+                  </span>{" "}
                   in your space at true scale.
                 </p>
               </Backdrop>
@@ -254,9 +281,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
                   )}
                 </button>
 
-                {error && (
-                  <p className="mt-4 text-xs text-red-600">{error}</p>
-                )}
+                {error && <p className="mt-4 text-xs text-red-600">{error}</p>}
               </Backdrop>
             )}
           </AnimatePresence>,

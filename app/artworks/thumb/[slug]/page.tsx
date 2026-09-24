@@ -23,5 +23,9 @@ export default async function ThumbnailPage({
   // Only works with a 3D model get a generated thumbnail.
   if (!sculpture?.modelUrl) notFound();
 
-  return <ThumbnailStage sculpture={{ ...sculpture, modelUrl: sculpture.modelUrl }} />;
+  return (
+    <ThumbnailStage
+      sculpture={{ ...sculpture, modelUrl: sculpture.modelUrl }}
+    />
+  );
 }

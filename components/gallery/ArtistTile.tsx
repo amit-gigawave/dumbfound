@@ -6,17 +6,20 @@ import { initials, type Artist } from "@/lib/artists";
 const ArtistTile = ({ artist }: { artist: Artist }) => {
   const body = (
     <>
-      <div className="relative grid aspect-[4/5] place-items-center overflow-hidden border border-rule bg-plate">
+      <div className="relative grid aspect-square place-items-center overflow-hidden border border-rule bg-plate transition-colors duration-500 group-hover:bg-[#ebe7df]">
         {artist.portrait ? (
           <Image
             src={artist.portrait}
             alt={artist.name}
             fill
             sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover grayscale-[0.15] transition-transform duration-700 group-hover:scale-[1.03]"
+            className="object-cover grayscale-[0.6] transition-[transform,filter] duration-700 group-hover:scale-[1.04] group-hover:grayscale-0"
           />
         ) : (
-          <span aria-hidden className="font-display text-[42px] text-[#b6afa3]">
+          <span
+            aria-hidden
+            className="font-display text-[42px] text-[#b6afa3] transition-transform duration-700 group-hover:scale-110"
+          >
             {initials(artist.name)}
           </span>
         )}

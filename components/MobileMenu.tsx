@@ -36,7 +36,9 @@ export default function MobileMenu({
       className="fixed inset-0 z-[60] flex flex-col bg-paper px-[clamp(16px,4vw,40px)] md:hidden"
     >
       <div className="flex h-[76px] items-center justify-between border-b border-rule">
-        <span className="font-display text-[26px] leading-none">{site.name}</span>
+        <span className="font-display text-[26px] leading-none">
+          {site.name}
+        </span>
         <button
           type="button"
           onClick={onClose}
@@ -47,7 +49,11 @@ export default function MobileMenu({
       </div>
 
       <nav aria-label="Main" className="mt-10 grid gap-2">
-        <Link href="/" onClick={onClose} className="font-display text-4xl leading-snug">
+        <Link
+          href="/"
+          onClick={onClose}
+          className="font-display text-4xl leading-snug"
+        >
           Home
         </Link>
         {site.nav.map((link) => (

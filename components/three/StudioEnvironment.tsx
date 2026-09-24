@@ -9,7 +9,11 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
  * Procedural studio reflections built on the GPU — replaces drei's
  * `preset="city"`, which downloads a ~1.5 MB HDR from a third-party CDN.
  */
-export default function StudioEnvironment({ intensity = 1 }: { intensity?: number }) {
+export default function StudioEnvironment({
+  intensity = 1,
+}: {
+  intensity?: number;
+}) {
   // Read the live store inside the effect: mutating scene.environment is the
   // intended three.js API, it just shouldn't go through a hook return value.
   const get = useThree((state) => state.get);

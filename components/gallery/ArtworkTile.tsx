@@ -22,7 +22,7 @@ const ArtworkTile = ({
   const artist = getArtist(work.artistSlug);
   return (
     <Link href={`/artworks/${work.slug}`} className="group grid gap-3.5">
-      <div className="relative grid aspect-[4/5] place-items-center overflow-hidden border border-rule bg-plate">
+      <div className="relative grid aspect-[4/5] place-items-center overflow-hidden border border-rule bg-plate transition-colors duration-500 group-hover:bg-[#ebe7df]">
         <Image
           src={work.thumbnail}
           alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
@@ -40,6 +40,10 @@ const ArtworkTile = ({
         <span className="text-[13px] text-stone">
           {work.year} · {work.material}
         </span>
+        <span
+          aria-hidden
+          className="mt-2 block h-px w-0 bg-accent transition-[width] duration-500 ease-out group-hover:w-12"
+        />
       </div>
     </Link>
   );

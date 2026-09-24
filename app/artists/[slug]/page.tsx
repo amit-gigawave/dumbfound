@@ -73,7 +73,10 @@ export default async function ArtistPage({
           / {artist.name}
         </p>
 
-        <div className="grid items-start gap-12 border-b border-rule pb-14 pt-7 md:grid-cols-[minmax(0,1fr)_240px]">
+        <div
+          data-reveal-stagger
+          className="grid items-start gap-12 border-b border-rule pb-14 pt-7 md:grid-cols-[minmax(0,1fr)_240px]"
+        >
           <div>
             <h1 className="text-[clamp(40px,5.5vw,68px)] leading-[1.05] text-accent">
               {artist.name}
@@ -109,7 +112,7 @@ export default async function ArtistPage({
             </div>
           </div>
 
-          <div className="relative order-first grid aspect-[4/5] w-full max-w-[220px] place-items-center overflow-hidden border border-rule bg-plate md:order-none md:max-w-none">
+          <div className="relative order-first grid aspect-square w-full max-w-[220px] place-items-center overflow-hidden border border-rule bg-plate md:order-none md:max-w-none">
             {artist.portrait ? (
               <Image
                 src={artist.portrait}
@@ -132,7 +135,10 @@ export default async function ArtistPage({
 
       {leadQuote && (
         <div className={wrap}>
-          <figure className="border-b border-rule py-[clamp(56px,7vw,88px)] text-center">
+          <figure
+            data-reveal
+            className="border-b border-rule py-[clamp(56px,7vw,88px)] text-center"
+          >
             <blockquote className="mx-auto max-w-[24ch] font-display text-[clamp(28px,3.6vw,44px)] italic leading-[1.2]">
               “{leadQuote.text}”
             </blockquote>
@@ -151,14 +157,20 @@ export default async function ArtistPage({
       )}
 
       <div className={wrap}>
-        <div className="grid gap-10 border-b border-rule py-14 md:grid-cols-3">
+        <div
+          data-reveal-stagger
+          className="grid gap-10 border-b border-rule py-14 md:grid-cols-3"
+        >
           <FactList title="Education" items={artist.education} />
           <FactList title="Honours" items={artist.honours} />
           <FactList title="Collections" items={artist.collections} />
         </div>
 
         {moreQuotes.length > 0 && (
-          <div className="grid gap-10 border-b border-rule py-14 md:grid-cols-2">
+          <div
+            data-reveal-stagger
+            className="grid gap-10 border-b border-rule py-14 md:grid-cols-2"
+          >
             {moreQuotes.map((q) => (
               <figure key={q.text}>
                 <blockquote className="font-display text-2xl italic leading-snug">
@@ -181,7 +193,10 @@ export default async function ArtistPage({
 
         <section id="works" className="scroll-mt-28 py-[clamp(64px,8vw,104px)]">
           <SectionHeader title="Works" />
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div
+            data-reveal-stagger
+            className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {works.map((work) => (
               <ArtworkTile
                 key={work.slug}

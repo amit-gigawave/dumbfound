@@ -94,7 +94,11 @@ const RevealModel: FC<{
   const get = useThree((state) => state.get);
   const fittedRef = useRef(!fit);
   // Size of the normalized model; used to frame the camera and place the floor shadow.
-  const [extent, setExtent] = useState<{ w: number; h: number; d: number } | null>(null);
+  const [extent, setExtent] = useState<{
+    w: number;
+    h: number;
+    d: number;
+  } | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Group>(null);
 
@@ -190,14 +194,16 @@ const RevealModel: FC<{
     // Frame the camera once the model size and the default controls are known.
     if (!fittedRef.current) {
       const { camera, controls, size } = get();
-      if (!extent || !controls || !(camera instanceof THREE.PerspectiveCamera)) return;
+      if (!extent || !controls || !(camera instanceof THREE.PerspectiveCamera))
+        return;
       const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
       const tanH = tanV * (size.width / size.height);
       // Fit height, and the wider of width/depth so turning stays mostly in frame;
       // the extra term accounts for the front of the model sitting nearer the camera.
       const half = Math.max(extent.w, extent.d) / 2;
       const dist =
-        Math.max(extent.h / 2 / (tanV * fit!), half / (tanH * fit!)) + half * 0.5;
+        Math.max(extent.h / 2 / (tanV * fit!), half / (tanH * fit!)) +
+        half * 0.5;
       camera.position.set(0, 0, dist);
       camera.lookAt(0, 0, 0);
       const orbit = controls as unknown as OrbitControlsImpl;
@@ -234,7 +240,10 @@ const RevealModel: FC<{
     }
 
     if (progressRef.current >= 1) return;
-    progressRef.current = Math.min(1, progressRef.current + delta * REVEAL_SPEED);
+    progressRef.current = Math.min(
+      1,
+      progressRef.current + delta * REVEAL_SPEED,
+    );
     const p = progressRef.current;
     const { min, max } = boundsRef.current;
     const range = max - min;
