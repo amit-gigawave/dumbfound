@@ -22,9 +22,4 @@ export const site = {
     { label: "Facebook", href: "#" },
     { label: "X", href: "#" },
   ],
-
-  newsletter: {
-    title: "Receive news of new artists and works",
-    note: "An occasional letter, never more than once a month.",
-  },
 } as const;

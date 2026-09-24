@@ -220,7 +220,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
                 <div
                   className="mx-auto mt-6 grid h-56 w-56 place-items-center rounded-2xl bg-white p-3 ring-1 ring-black/5"
                   style={{
-                    boxShadow: `0 16px 40px -16px ${sculpture.accent}88`,
+                    boxShadow: `0 16px 40px -16px ${sculpture.accent ?? "#8e3b24"}88`,
                   }}
                 >
                   {qrDataUrl && (

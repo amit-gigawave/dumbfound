@@ -5,7 +5,7 @@ import {
   sculptures,
   getSculpture,
   getWorksByArtist,
-  isTodo,
+  hasValue,
 } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import ArtworkStage from "@/components/gallery/ArtworkStage";
@@ -54,15 +54,15 @@ export default async function ArtworkPage({
     (w) => w.slug !== work.slug,
   );
 
-  // Unconfirmed catalogue fields ("TODO: …") are left out rather than shown.
+  // Optional fields are only listed when filled in (never "TODO" placeholders).
   const details = (
     [
       ["Medium", work.material],
       ["Dimensions", work.dimensions],
       ["Edition", work.edition],
       ["Collection", work.location],
-    ] as [string, string][]
-  ).filter(([, value]) => !isTodo(value));
+    ] as [string, string | undefined][]
+  ).filter((row): row is [string, string] => hasValue(row[1]));
 
   return (
     <main className={wrap}>
@@ -104,7 +104,7 @@ export default async function ArtworkPage({
           <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#3a3833]">
             {work.description}
           </p>
-          {!isTodo(work.longDescription) && (
+          {hasValue(work.longDescription) && (
             <p className="font-text mt-4 text-[17px] leading-[1.75] text-[#3a3833]">
               {work.longDescription}
             </p>

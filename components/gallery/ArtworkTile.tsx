@@ -22,7 +22,7 @@ const ArtworkTile = ({
   const artist = getArtist(work.artistSlug);
   return (
     <Link href={`/artworks/${work.slug}`} className="group grid gap-3.5">
-      <div className="relative grid aspect-[4/5] place-items-center overflow-hidden border border-rule bg-plate transition-colors duration-500 group-hover:bg-[#ebe7df]">
+      <div className="relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-colors duration-500 group-hover:bg-[#ebe7df]">
         <Image
           src={work.thumbnail}
           alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}

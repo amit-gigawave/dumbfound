@@ -58,6 +58,11 @@ export default async function ArtistPage({
 
   const works = getWorksByArtist(artist.slug);
   const [leadQuote, ...moreQuotes] = artist.quotes;
+  const hasFacts =
+    artist.education.length +
+      artist.honours.length +
+      artist.collections.length >
+    0;
 
   return (
     <main>
@@ -112,7 +117,7 @@ export default async function ArtistPage({
             </div>
           </div>
 
-          <div className="relative order-first grid aspect-square w-full max-w-[220px] place-items-center overflow-hidden border border-rule bg-plate md:order-none md:max-w-none">
+          <div className="relative isolate order-first grid aspect-square w-full max-w-[220px] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate md:order-none md:max-w-none">
             {artist.portrait ? (
               <Image
                 src={artist.portrait}
@@ -157,14 +162,16 @@ export default async function ArtistPage({
       )}
 
       <div className={wrap}>
-        <div
-          data-reveal-stagger
-          className="grid gap-10 border-b border-rule py-14 md:grid-cols-3"
-        >
-          <FactList title="Education" items={artist.education} />
-          <FactList title="Honours" items={artist.honours} />
-          <FactList title="Collections" items={artist.collections} />
-        </div>
+        {hasFacts && (
+          <div
+            data-reveal-stagger
+            className="grid gap-10 border-b border-rule py-14 md:grid-cols-3"
+          >
+            <FactList title="Education" items={artist.education} />
+            <FactList title="Honours" items={artist.honours} />
+            <FactList title="Collections" items={artist.collections} />
+          </div>
+        )}
 
         {moreQuotes.length > 0 && (
           <div

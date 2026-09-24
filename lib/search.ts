@@ -18,7 +18,10 @@ interface Entry extends SearchResult {
 
 /** Lower-case and strip accents so "Ramkinkar" matches "Rāmkiṅkar". */
 const normalise = (s: string) =>
-  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
 const index: Entry[] = [
   ...artists
@@ -49,7 +52,7 @@ const index: Entry[] = [
           w.year,
           w.material,
           w.description,
-          ...w.tags,
+          ...(w.tags ?? []),
         ].join(" "),
       ),
     };

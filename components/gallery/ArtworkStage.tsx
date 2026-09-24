@@ -76,7 +76,7 @@ export default function ArtworkStage({
     <div>
       <div
         ref={stageRef}
-        className="relative aspect-[4/5] w-full overflow-hidden border border-rule bg-plate"
+        className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[14px] border border-rule bg-plate"
       >
         <Image
           src={work.thumbnail}

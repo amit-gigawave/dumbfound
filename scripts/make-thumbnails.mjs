@@ -1,43 +1,46 @@
-// Renders a WebP thumbnail for every sculpture and prints GLB stats.
+// Renders a WebP thumbnail for works that have a 3D model.
 //
-//   npm run dev            (in another terminal)
-//   npm run thumbnails     [-- --base http://localhost:3000]
+//   npm run dev                      (in another terminal — the site must be running)
+//   npm run thumbnails               all works with a model
+//   npm run thumbnails -- my-slug    just that work
+//   npm run thumbnails -- --base http://localhost:3100    if the site is on another port
 //
 // Output: public/thumbnails/<slug>.webp (transparent, 800×1000).
-import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import puppeteer from "puppeteer";
 
-const baseArg = process.argv.indexOf("--base");
-const BASE = baseArg > -1 ? process.argv[baseArg + 1] : "http://localhost:3000";
+const args = process.argv.slice(2);
+const baseAt = args.indexOf("--base");
+const BASE = baseAt > -1 ? args[baseAt + 1] : "http://localhost:3000";
+const wanted = args.filter((a, i) => !a.startsWith("--") && i !== baseAt + 1);
 const OUT = "public/thumbnails";
 
-// Read slug + modelUrl pairs straight from the catalogue source.
-const catalogue = readFileSync("lib/sculptures.ts", "utf8");
-// Each sculpture entry starts with `{` then `slug:`; the artist object's slug
-// is skipped because it isn't the first key of its object literal.
-const entries = [
-  ...catalogue.matchAll(/\{\s*slug: "([^"]+)",[^{}]*?modelUrl: "([^"]+)"/g),
-].map(([, slug, modelUrl]) => ({ slug, modelUrl }));
-if (entries.length === 0) throw new Error("No sculptures found in lib/sculptures.ts");
+// Load the catalogue itself (Node can read the .ts file directly).
+const { sculptures } = await import(pathToFileURL(resolve("lib/sculptures.ts")).href);
 
-/** Triangle count from the GLB's JSON chunk (works with Draco-compressed meshes). */
-const glbStats = (modelUrl) => {
-  const path = `public${modelUrl}`;
-  const buf = readFileSync(path);
-  const jsonLen = buf.readUInt32LE(12);
-  const gltf = JSON.parse(buf.subarray(20, 20 + jsonLen).toString("utf8"));
-  let triangles = 0;
-  for (const mesh of gltf.meshes ?? []) {
-    for (const prim of mesh.primitives) {
-      const acc = prim.indices ?? prim.attributes.POSITION;
-      triangles += gltf.accessors[acc].count / 3;
-    }
+const withModels = sculptures.filter((w) => w.modelUrl);
+const entries = wanted.length ? withModels.filter((w) => wanted.includes(w.slug)) : withModels;
+
+for (const slug of wanted) {
+  if (!withModels.some((w) => w.slug === slug)) {
+    console.error(`No work with a 3D model called "${slug}" in lib/sculptures.ts.`);
+    process.exit(1);
   }
-  return {
-    triangles: Math.round(triangles),
-    fileSizeKB: Math.round(statSync(path).size / 1024),
-  };
-};
+}
+if (entries.length === 0) {
+  console.log("No works with a 3D model — nothing to do.");
+  process.exit(0);
+}
+
+// Fail early, with a useful message, if the site isn't running.
+try {
+  await fetch(BASE, { signal: AbortSignal.timeout(5000) });
+} catch {
+  console.error(`Could not reach ${BASE}. Start the site first with "npm run dev" (in another terminal).`);
+  process.exit(1);
+}
 
 mkdirSync(OUT, { recursive: true });
 const browser = await puppeteer.launch({
@@ -54,10 +57,13 @@ try {
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 1100, deviceScaleFactor: 1 });
 
-  for (const { slug, modelUrl } of entries) {
+  for (const { slug } of entries) {
     const res = await page.goto(`${BASE}/artworks/thumb/${slug}`, { waitUntil: "networkidle0" });
     if (!res?.ok()) throw new Error(`${slug}: thumbnail route returned ${res?.status()}`);
-    await page.waitForFunction(() => window.__thumbReady === true, { timeout: 120_000, polling: 250 });
+    await page.waitForFunction(() => window.__thumbReady === true, {
+      timeout: 120_000,
+      polling: 250,
+    });
 
     const dataUrl = await page.evaluate(() => {
       const canvas = document.querySelector("#thumb-stage canvas");
@@ -67,8 +73,7 @@ try {
 
     const file = `${OUT}/${slug}.webp`;
     writeFileSync(file, Buffer.from(dataUrl.split(",")[1], "base64"));
-    const stats = glbStats(modelUrl);
-    console.log(`${file}  stats: { triangles: ${stats.triangles}, fileSizeKB: ${stats.fileSizeKB} }`);
+    console.log(`Created ${file}`);
   }
 } finally {
   await browser.close();
