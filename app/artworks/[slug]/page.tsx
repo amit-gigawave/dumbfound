@@ -67,11 +67,11 @@ export default async function ArtworkPage({
   return (
     <main className={wrap}>
       <p className="pt-8 text-xs tracking-[0.04em] text-stone">
-        <Link href="/" className="hover:text-ink">
+        <Link href="/" className="hover:text-accent">
           Home
         </Link>{" "}
         /{" "}
-        <Link href="/artworks" className="hover:text-ink">
+        <Link href="/artworks" className="hover:text-accent">
           Artworks
         </Link>{" "}
         / {work.title}
@@ -96,16 +96,18 @@ export default async function ArtworkPage({
               {artist.name}
             </Link>
           )}
-          <h1 className="mt-3 text-[clamp(36px,4.4vw,54px)] italic leading-[1.08]">
+          <h1 className="heading-caps mt-3 text-[clamp(34px,4.4vw,56px)] leading-[1.1] tracking-[0.04em]">
             {work.title}
           </h1>
-          <p className="mt-2 text-sm text-stone">{work.year}</p>
+          <p className="mt-2.5 text-xs uppercase tracking-[0.14em] text-stone">
+            {work.year}
+          </p>
 
-          <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#3a3833]">
+          <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
             {work.description}
           </p>
           {hasValue(work.longDescription) && (
-            <p className="font-text mt-4 text-[17px] leading-[1.75] text-[#3a3833]">
+            <p className="font-text mt-4 text-[17px] leading-[1.75] text-[#333333]">
               {work.longDescription}
             </p>
           )}
@@ -122,10 +124,7 @@ export default async function ArtworkPage({
             ))}
           </dl>
 
-          <Link
-            href={`/contact?work=${work.slug}`}
-            className="mt-8 inline-block bg-ink px-6 py-3.5 text-xs uppercase tracking-[0.16em] text-paper transition-colors hover:bg-accent"
-          >
+          <Link href={`/contact?work=${work.slug}`} className="btn mt-8">
             Enquire about this work <span className="nudge">→</span>
           </Link>
         </div>

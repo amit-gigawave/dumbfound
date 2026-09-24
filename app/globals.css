@@ -1,27 +1,31 @@
 @import "tailwindcss";
 
 /*
- * Catalogue palette — quiet paper, ink, one oxide-red accent.
- * Tailwind classes: bg-paper, text-ink, text-stone, border-rule, bg-plate, text-accent.
+ * Gallery palette — two colours only: black and red. Off-white paper and
+ * neutral greys are just tints of black; red is the single accent.
+ * Tailwind classes: bg-paper, text-ink, text-stone, border-rule, bg-plate,
+ * text-accent, bg-deep, text-deep-ink, text-deep-muted.
  */
 @theme inline {
-  --color-paper: #fbfaf7;
-  --color-ink: #1c1b19;
-  --color-stone: #6b6760;
-  --color-rule: #e4e0d8;
-  --color-plate: #f1eee8;
-  --color-accent: #8e3b24;
-  --color-black: #1c1b19;
+  --color-paper: #fafafa;
+  --color-ink: #111111;
+  --color-stone: #5c5c5c;
+  --color-rule: #e4e4e4;
+  --color-plate: #f0f0f0;
+  --color-accent: #b3261e;
+  --color-black: #111111;
+  --color-deep-ink: #f2f2f2;
+  --color-deep-muted: #a3a3a3;
 
   --font-sans:
     var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-marcellus), Georgia, "Times New Roman", serif;
   --font-text: var(--font-lora), Georgia, serif;
 }
 
 html {
-  background: #fbfaf7;
-  color: #1c1b19;
+  background: #fafafa;
+  color: #111111;
   color-scheme: light;
   scroll-padding-top: 6rem;
   /* `clip` (not `hidden`) stops stray full-bleed elements causing sideways
@@ -33,7 +37,7 @@ body {
   min-height: 100vh;
   max-width: 100%;
   overflow-x: clip;
-  background: #fbfaf7;
+  background: #fafafa;
   font-family:
     var(--font-inter),
     system-ui,
@@ -47,7 +51,7 @@ h1,
 h2,
 h3,
 .font-display {
-  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+  font-family: var(--font-marcellus), Georgia, "Times New Roman", serif;
   font-weight: 400;
   text-wrap: balance;
 }
@@ -56,30 +60,75 @@ h3,
   font-family: var(--font-lora), Georgia, serif;
 }
 
-/* Small uppercase catalogue label */
+/* Small spaced-out uppercase label (accent colour by default) */
 .label {
   font-family: var(--font-inter), system-ui, sans-serif;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 500;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #8e3b24;
+  color: #b3261e;
+}
+
+/* Large capital-letter display heading */
+.heading-caps {
+  font-family: var(--font-marcellus), Georgia, serif;
+  text-transform: uppercase;
 }
 
 /* Underlined text link */
 .text-link {
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   border-bottom: 1px solid currentColor;
-  padding-bottom: 2px;
+  padding-bottom: 3px;
   transition: color 0.2s ease;
 }
 .text-link:hover {
-  color: #8e3b24;
+  color: #b3261e;
+}
+
+/* Outlined button — fills on hover. Inside .deep it inverts for dark grounds. */
+.btn {
+  display: inline-block;
+  border: 1px solid #b3261e;
+  color: #b3261e;
+  padding: 13px 26px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
+.btn:hover {
+  background: #b3261e;
+  color: #ffffff;
+}
+/* On black, the button is white and fills red on hover. */
+.deep .btn {
+  border-color: #f2f2f2;
+  color: #f2f2f2;
+}
+.deep .btn:hover {
+  background: #d63a2f;
+  border-color: #d63a2f;
+  color: #ffffff;
+}
+
+/* Deep charcoal-green contrast band */
+.deep {
+  background: linear-gradient(135deg, #161616, #0a0a0a);
+  color: #f2f2f2;
+}
+.deep .label {
+  color: #ef5a4d;
 }
 
 :focus-visible {
-  outline: 2px solid #1c1b19;
+  outline: 2px solid #b3261e;
   outline-offset: 3px;
 }
 

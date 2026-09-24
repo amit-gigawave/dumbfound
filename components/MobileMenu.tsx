@@ -35,14 +35,14 @@ export default function MobileMenu({
       aria-label="Menu"
       className="fixed inset-0 z-[60] flex flex-col bg-paper px-[clamp(16px,4vw,40px)] md:hidden"
     >
-      <div className="flex h-[76px] items-center justify-between border-b border-rule">
+      <div className="flex h-[84px] items-center justify-between border-b border-rule">
         <span className="font-display text-[26px] leading-none">
           {site.name}
         </span>
         <button
           type="button"
           onClick={onClose}
-          className="text-[13px] uppercase tracking-[0.08em]"
+          className="text-[11px] uppercase tracking-[0.22em]"
         >
           Close
         </button>
@@ -52,7 +52,7 @@ export default function MobileMenu({
         <Link
           href="/"
           onClick={onClose}
-          className="font-display text-4xl leading-snug"
+          className="font-display text-3xl uppercase leading-snug tracking-[0.06em]"
         >
           Home
         </Link>
@@ -62,7 +62,7 @@ export default function MobileMenu({
             href={link.href}
             onClick={onClose}
             aria-current={isActive(link.href) ? "page" : undefined}
-            className={`font-display text-4xl leading-snug ${isActive(link.href) ? "text-accent" : ""}`}
+            className={`font-display text-3xl uppercase leading-snug tracking-[0.06em] ${isActive(link.href) ? "text-accent" : ""}`}
           >
             {link.label}
           </Link>
@@ -73,7 +73,7 @@ export default function MobileMenu({
         <p>{site.email}</p>
         <p className="mt-2 flex gap-5">
           {site.social.map((s) => (
-            <a key={s.label} href={s.href} className="hover:text-ink">
+            <a key={s.label} href={s.href} className="hover:text-accent">
               {s.label}
             </a>
           ))}

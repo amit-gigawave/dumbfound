@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Lora } from "next/font/google";
+import { Inter, Marcellus, Lora } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,16 +8,15 @@ import { site } from "@/lib/site";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  weight: "400",
 });
 
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -33,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} ${lora.variable}`}
+      className={`${inter.variable} ${marcellus.variable} ${lora.variable}`}
       suppressHydrationWarning
     >
       <head>

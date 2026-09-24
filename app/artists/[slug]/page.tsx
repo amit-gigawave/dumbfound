@@ -38,7 +38,7 @@ const FactList = ({ title, items }: { title: string; items: Fact[] }) =>
         {items.map((f) => (
           <li key={f.what} className="flex gap-3">
             {f.when && (
-              <span className="w-[76px] shrink-0 text-stone">{f.when}</span>
+              <span className="w-[76px] shrink-0 text-accent">{f.when}</span>
             )}
             <span>{f.what}</span>
           </li>
@@ -68,11 +68,11 @@ export default async function ArtistPage({
     <main>
       <div className={wrap}>
         <p className="pt-8 text-xs tracking-[0.04em] text-stone">
-          <Link href="/" className="hover:text-ink">
+          <Link href="/" className="hover:text-accent">
             Home
           </Link>{" "}
           /{" "}
-          <Link href="/artists" className="hover:text-ink">
+          <Link href="/artists" className="hover:text-accent">
             Artists
           </Link>{" "}
           / {artist.name}
@@ -83,10 +83,10 @@ export default async function ArtistPage({
           className="grid items-start gap-12 border-b border-rule pb-14 pt-7 md:grid-cols-[minmax(0,1fr)_240px]"
         >
           <div>
-            <h1 className="text-[clamp(40px,5.5vw,68px)] leading-[1.05] text-accent">
+            <h1 className="heading-caps text-[clamp(38px,5.6vw,72px)] leading-[1.06] tracking-[0.05em]">
               {artist.name}
             </h1>
-            <p className="mt-2.5 text-sm tracking-[0.02em] text-stone">
+            <p className="mt-3 text-xs uppercase tracking-[0.14em] text-stone">
               {artist.born}, {artist.place} · {artist.role}
             </p>
 
@@ -96,13 +96,13 @@ export default async function ArtistPage({
             >
               <a
                 href="#profile"
-                className="-mb-px border-b-2 border-ink pb-2.5"
+                className="-mb-px border-b-2 border-accent pb-2.5 text-accent"
               >
                 Profile
               </a>
               <a
                 href="#works"
-                className="-mb-px border-b-2 border-transparent pb-2.5 text-stone hover:text-ink"
+                className="-mb-px border-b-2 border-transparent pb-2.5 text-stone hover:text-accent"
               >
                 Works
               </a>
@@ -129,7 +129,7 @@ export default async function ArtistPage({
             ) : (
               <span
                 aria-hidden
-                className="font-display text-[56px] text-[#b6afa3]"
+                className="font-display text-[56px] text-[#bdbdbd]"
               >
                 {initials(artist.name)}
               </span>
@@ -139,26 +139,26 @@ export default async function ArtistPage({
       </div>
 
       {leadQuote && (
-        <div className={wrap}>
+        <section className="deep">
           <figure
             data-reveal
-            className="border-b border-rule py-[clamp(56px,7vw,88px)] text-center"
+            className={`${wrap} py-[clamp(70px,9vw,120px)] text-center`}
           >
-            <blockquote className="mx-auto max-w-[24ch] font-display text-[clamp(28px,3.6vw,44px)] italic leading-[1.2]">
+            <blockquote className="mx-auto max-w-[26ch] font-display text-[clamp(26px,3.6vw,44px)] leading-[1.25] tracking-[0.03em]">
               “{leadQuote.text}”
             </blockquote>
-            <figcaption className="mt-5 text-[11px] uppercase tracking-[0.16em] text-stone">
+            <figcaption className="mt-5 text-[10.5px] uppercase tracking-[0.22em] text-[#a3a3a3]">
               <a
                 href={leadQuote.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-ink"
+                className="transition-colors hover:text-[#ef5a4d]"
               >
                 {leadQuote.source}
               </a>
             </figcaption>
           </figure>
-        </div>
+        </section>
       )}
 
       <div className={wrap}>
@@ -180,7 +180,7 @@ export default async function ArtistPage({
           >
             {moreQuotes.map((q) => (
               <figure key={q.text}>
-                <blockquote className="font-display text-2xl italic leading-snug">
+                <blockquote className="font-display text-2xl leading-snug tracking-[0.02em]">
                   “{q.text}”
                 </blockquote>
                 <figcaption className="mt-3 text-[11px] uppercase tracking-[0.16em] text-stone">
@@ -188,7 +188,7 @@ export default async function ArtistPage({
                     href={q.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-ink"
+                    className="hover:text-accent"
                   >
                     {q.source}
                   </a>

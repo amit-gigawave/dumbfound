@@ -23,8 +23,8 @@ import * as THREE from "three";
 import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 
-// Bronze tone for the wireframe scaffold during the reveal (matches the hero).
-const WIRE_COLOR = "#a08060";
+// Neutral grey for the wireframe scaffold during the reveal.
+const WIRE_COLOR = "#5c5c5c";
 // Seconds-ish pacing of the materialize animation (higher = faster).
 const REVEAL_SPEED = 0.7;
 

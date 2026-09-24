@@ -11,7 +11,7 @@ const TOPICS = [
 ] as const;
 
 const field =
-  "w-full border-b border-rule bg-transparent py-2.5 text-[15px] outline-none transition-colors placeholder:text-stone/60 focus:border-ink";
+  "w-full border-b border-rule bg-transparent py-2.5 text-[15px] outline-none transition-colors placeholder:text-stone/60 focus:border-accent";
 
 /**
  * Enquiry form. Not connected to email yet — submitting shows the thank-you
@@ -83,10 +83,7 @@ export default function Contact({ workTitle }: { workTitle?: string }) {
       </label>
 
       <div>
-        <button
-          type="submit"
-          className="bg-ink px-6 py-3.5 text-xs uppercase tracking-[0.16em] text-paper transition-colors hover:bg-accent"
-        >
+        <button type="submit" className="btn">
           Send message <span className="nudge">→</span>
         </button>
       </div>

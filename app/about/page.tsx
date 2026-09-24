@@ -47,8 +47,8 @@ export default function AboutPage() {
         className={`${wrap} pb-[clamp(48px,7vw,90px)] pt-[clamp(56px,9vw,120px)]`}
       >
         <span className="label">About</span>
-        <h1 className="mt-5 max-w-[18ch] text-[clamp(36px,5.2vw,68px)] leading-[1.06] tracking-[-0.01em]">
-          Every work has a maker, <em className="text-accent">and a story.</em>
+        <h1 className="heading-caps mt-5 max-w-[16ch] text-[clamp(34px,5.2vw,64px)] leading-[1.1] tracking-[0.04em]">
+          Every work has a maker, and a story.
         </h1>
         <div className="font-text mt-8 grid max-w-[62ch] gap-5 text-lg leading-[1.75] text-stone">
           <p>

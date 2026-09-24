@@ -43,7 +43,7 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-rule bg-paper/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-[76px] max-w-[1200px] items-center justify-between gap-5 px-[clamp(16px,4vw,40px)]">
+        <div className="mx-auto flex h-[84px] max-w-[1200px] items-center justify-between gap-5 px-[clamp(16px,4vw,40px)]">
           <Link
             href="/"
             className="font-display text-[26px] leading-none tracking-[0.01em]"
@@ -58,10 +58,10 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   aria-current={isActive(link.href) ? "page" : undefined}
-                  className={`nav-link py-1.5 text-[13px] uppercase tracking-[0.06em] ${
+                  className={`nav-link py-1.5 text-[11px] uppercase tracking-[0.22em] ${
                     isActive(link.href)
-                      ? "text-ink"
-                      : "text-stone hover:text-ink"
+                      ? "text-accent"
+                      : "text-ink/75 hover:text-accent"
                   }`}
                 >
                   {link.label}
@@ -74,10 +74,10 @@ export default function Navbar() {
               onClick={openSearch}
               aria-label="Search artists and artworks"
               title="Search ( / )"
-              className="flex items-center gap-2 text-stone transition-colors hover:text-ink"
+              className="flex items-center gap-2 text-ink/75 transition-colors hover:text-accent"
             >
               <SearchIcon className="h-[18px] w-[18px]" />
-              <span className="hidden text-[13px] uppercase tracking-[0.06em] lg:inline">
+              <span className="hidden text-[11px] uppercase tracking-[0.22em] lg:inline">
                 Search
               </span>
             </button>
@@ -87,7 +87,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen(true)}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className="text-[13px] uppercase tracking-[0.08em] md:hidden"
+              className="text-[11px] uppercase tracking-[0.22em] md:hidden"
             >
               Menu
             </button>

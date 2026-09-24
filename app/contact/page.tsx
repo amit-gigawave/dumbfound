@@ -28,7 +28,7 @@ export default async function ContactPage({
     >
       <div>
         <span className="label">Contact</span>
-        <h1 className="mt-5 text-[clamp(36px,5vw,60px)] leading-[1.06]">
+        <h1 className="heading-caps mt-5 text-[clamp(34px,5vw,60px)] leading-[1.1] tracking-[0.05em]">
           Write to us
         </h1>
         <p className="font-text mt-6 max-w-[40ch] text-lg leading-[1.75] text-stone">

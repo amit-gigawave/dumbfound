@@ -10,7 +10,7 @@ import { initials, type Artist } from "@/lib/artists";
 const ArtistTile = ({ artist }: { artist: Artist }) => {
   const body = (
     <>
-      <div className="relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-colors duration-[1800ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:bg-[#ebe7df]">
+      <div className="relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-colors duration-[1800ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:bg-[#e8e8e8]">
         {artist.portrait ? (
           <Image
             src={artist.portrait}
@@ -22,7 +22,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
         ) : (
           <span
             aria-hidden
-            className="font-display text-[42px] text-[#b6afa3] transition-transform duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-110"
+            className="font-display text-[42px] text-[#bdbdbd] transition-transform duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-110"
           >
             {initials(artist.name)}
           </span>
@@ -37,8 +37,8 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
       </div>
       <div>
         <h3
-          className={`text-[21px] leading-tight transition-colors duration-[1200ms] ease-[cubic-bezier(0.45,0,0.2,1)] ${
-            artist.placeholder ? "text-[#8a857c]" : "group-hover:text-accent"
+          className={`text-[21px] leading-tight tracking-[0.04em] transition-colors duration-[1200ms] ease-[cubic-bezier(0.45,0,0.2,1)] ${
+            artist.placeholder ? "text-[#8a8a8a]" : "group-hover:text-accent"
           }`}
         >
           {artist.name}
@@ -49,7 +49,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
           {artist.medium}
         </p>
         {artist.placeholder && (
-          <span className="mt-1 block text-[11px] uppercase tracking-[0.14em] text-[#a39e94]">
+          <span className="mt-1 block text-[11px] uppercase tracking-[0.14em] text-[#a0a0a0]">
             Coming soon
           </span>
         )}

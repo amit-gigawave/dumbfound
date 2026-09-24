@@ -131,7 +131,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
     const data = await QRCode.toDataURL(target.href, {
       margin: 1,
       width: 320,
-      color: { dark: "#151415", light: "#00000000" },
+      color: { dark: "#111111", light: "#00000000" },
     });
     setQrDataUrl(data);
     setQrOpen(true);
@@ -176,7 +176,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
       <button
         type="button"
         onClick={onButtonClick}
-        className="group inline-flex items-center gap-2 text-[13px] tracking-[0.04em] text-ink transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className="group inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-ink transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
       >
         {/* a plinth with a sculpture silhouette — "in your space" */}
         <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-4 w-4">
@@ -220,7 +220,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
                 <div
                   className="mx-auto mt-6 grid h-56 w-56 place-items-center rounded-2xl bg-white p-3 ring-1 ring-black/5"
                   style={{
-                    boxShadow: `0 16px 40px -16px ${sculpture.accent ?? "#8e3b24"}88`,
+                    boxShadow: `0 16px 40px -16px ${sculpture.accent ?? "#b3261e"}88`,
                   }}
                 >
                   {qrDataUrl && (

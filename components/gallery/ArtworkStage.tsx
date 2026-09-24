@@ -27,7 +27,7 @@ const IconButton = ({
     onClick={onClick}
     aria-label={label}
     title={label}
-    className="grid h-9 w-9 place-items-center border border-rule bg-paper/90 text-stone transition-colors hover:text-ink"
+    className="grid h-9 w-9 place-items-center border border-rule bg-paper/90 text-stone transition-colors hover:text-accent"
   >
     {children}
   </button>
@@ -133,7 +133,7 @@ export default function ArtworkStage({
             onPointerEnter={() => preloadModel(modelUrl)}
             onFocus={() => preloadModel(modelUrl)}
             aria-pressed={inRound}
-            className="group inline-flex items-center gap-2 text-[13px] tracking-[0.04em] transition-colors hover:text-accent"
+            className="group inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] transition-colors hover:text-accent"
           >
             <span aria-hidden className="text-base leading-none">
               {inRound ? "▢" : "↻"}

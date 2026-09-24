@@ -31,7 +31,7 @@ export default async function ArtworksPage({
       className={`border-b pb-0.5 transition-colors ${
         active
           ? "border-ink text-ink"
-          : "border-transparent text-stone hover:text-ink"
+          : "border-transparent text-stone hover:text-accent"
       }`}
     >
       {label}

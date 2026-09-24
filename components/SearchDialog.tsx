@@ -89,7 +89,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 text-[12px] uppercase tracking-[0.12em] text-stone hover:text-ink"
+              className="shrink-0 text-[12px] uppercase tracking-[0.12em] text-stone hover:text-accent"
             >
               Close
             </button>
@@ -151,9 +151,9 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                               </span>
                               <span className="min-w-0">
                                 <span
-                                  className={`block truncate font-display text-lg ${
-                                    r.kind === "artwork" ? "italic" : ""
-                                  } ${isActive ? "text-accent" : ""}`}
+                                  className={`block truncate font-display text-lg tracking-[0.02em] ${
+                                    isActive ? "text-accent" : ""
+                                  }`}
                                 >
                                   {r.title}
                                 </span>
