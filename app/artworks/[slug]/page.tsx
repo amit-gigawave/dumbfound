@@ -29,12 +29,16 @@ export async function generateMetadata({
 
   const artist = getArtist(work.artistSlug);
   const title = artist ? `${work.title}, ${artist.name}` : work.title;
+  // Works without a written description fall back to their catalogue line.
+  const description =
+    work.description ||
+    [artist?.name, work.material, work.dimensions].filter(Boolean).join(", ");
   return {
     title,
-    description: work.description,
+    description,
     openGraph: {
       title,
-      description: work.description,
+      description,
       images: [{ url: work.thumbnail, width: 800, height: 1000 }],
     },
   };
@@ -99,13 +103,17 @@ export default async function ArtworkPage({
           <h1 className="heading-caps mt-3 text-[clamp(34px,4.4vw,56px)] leading-[1.1] tracking-[0.04em]">
             {work.title}
           </h1>
-          <p className="mt-2.5 text-xs uppercase tracking-[0.14em] text-stone">
-            {work.year}
-          </p>
+          {hasValue(work.year) && (
+            <p className="mt-2.5 text-xs uppercase tracking-[0.14em] text-stone">
+              {work.year}
+            </p>
+          )}
 
-          <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
-            {work.description}
-          </p>
+          {hasValue(work.description) && (
+            <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
+              {work.description}
+            </p>
+          )}
           {hasValue(work.longDescription) && (
             <p className="font-text mt-4 text-[17px] leading-[1.75] text-[#333333]">
               {work.longDescription}

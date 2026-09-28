@@ -38,7 +38,7 @@ const ArtworkTile = ({
           {work.title}
         </span>
         <span className="text-[13px] text-stone">
-          {work.year} · {work.material}
+          {[work.year, work.material].filter(Boolean).join(" · ")}
         </span>
         <span
           aria-hidden
