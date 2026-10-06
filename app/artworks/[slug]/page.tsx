@@ -92,14 +92,17 @@ export default async function ArtworkPage({
         />
 
         <div className="min-[820px]:sticky min-[820px]:top-[100px]">
-          {artist && (
-            <Link
-              href={`/artists/${artist.slug}`}
-              className="label hover:underline"
-            >
-              {artist.name}
-            </Link>
-          )}
+          {artist &&
+            (artist.placeholder ? (
+              <span className="label">{artist.name}</span>
+            ) : (
+              <Link
+                href={`/artists/${artist.slug}`}
+                className="label hover:underline"
+              >
+                {artist.name}
+              </Link>
+            ))}
           <h1 className="heading-caps mt-3 text-[clamp(34px,4.4vw,56px)] leading-[1.1] tracking-[0.04em]">
             {work.title}
           </h1>
@@ -138,7 +141,7 @@ export default async function ArtworkPage({
         </div>
       </div>
 
-      {more.length > 0 && artist && (
+      {more.length > 0 && artist && !artist.placeholder && (
         <section className="pb-[clamp(64px,8vw,104px)]">
           <SectionHeader
             title={`More by ${artist.name}`}

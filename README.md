@@ -1,6 +1,8 @@
-# Dumbfound Sculpture Showcase
+# Sculpted India
 
-A premium interactive sculpture showcase website built with Next.js 16, React Three Fiber, and GSAP animations.
+A premium interactive sculpture showcase website for **Sculpted India** — a pioneering public art initiative advancing modern and contemporary Indian sculpture. Built with Next.js 16, React Three Fiber, and GSAP animations.
+
+Reference: https://www.sculptedindia.com/
 
 ## Features
 
@@ -84,4 +86,4 @@ Place your sculpture model as `sculpture.glb` in the `public/` folder. The model
 
 ## License
 
-All Rights Reserved © 2026 Dumbfound Tech
+All Rights Reserved © 2026 Sculpted India

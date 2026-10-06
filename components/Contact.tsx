@@ -3,10 +3,10 @@
 import { useState } from "react";
 
 const TOPICS = [
-  "A work",
-  "An artist",
-  "Showing my work",
-  "Press",
+  "Exhibitions",
+  "Artworks",
+  "Collaborations",
+  "Patronage",
   "Something else",
 ] as const;
 
