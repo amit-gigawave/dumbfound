@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
 
-/** Minimal footer: name, the main links, copyright. */
+/** Minimal footer: name, contact, copyright. */
 export default function Footer() {
   return (
     <footer className="border-t border-rule bg-plate">
@@ -13,24 +13,18 @@ export default function Footer() {
           {site.name}
         </Link>
 
-        <nav
-          aria-label="Footer"
-          className="flex flex-wrap gap-x-[26px] gap-y-2"
-        >
-          {site.nav.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="transition-colors hover:text-accent"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="flex flex-col items-end gap-1 normal-case tracking-normal text-[13px]">
+          <a href={`mailto:${site.email}`} className="transition-colors hover:text-accent">
+            {site.email}
+          </a>
+          <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="transition-colors hover:text-accent">
+            {site.phone}
+          </a>
+        </div>
+      </div>
 
-        <p>
-          © {new Date().getFullYear()} {site.name}
-        </p>
+      <div className="mx-auto max-w-[1200px] border-t border-rule px-[clamp(16px,4vw,40px)] py-5 text-[11px] uppercase tracking-[0.16em] text-stone">
+        © {new Date().getFullYear()} {site.name}. All rights reserved.
       </div>
     </footer>
   );

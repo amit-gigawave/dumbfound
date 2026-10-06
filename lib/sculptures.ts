@@ -285,6 +285,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/artworks/khanna-satwant-sher-singh-cymbal-walae.webp",
+    modelUrl: "/sculptures/Red_Cymbals_Guy_LPoly.glb",
     material: "Bronze",
     year: "",
     dimensions: "14 × 5 × 6 inches",
@@ -309,6 +310,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/artworks/khanna-patinder-rawat-trumpet-walae.webp",
+    modelUrl: "/sculptures/Trumpet_Musician_Orange_LPoly.glb",
     material: "Bronze",
     year: "",
     dimensions: "12 × 5 × 5 inches",
@@ -687,6 +689,16 @@ export const sculptures: Sculpture[] = [
     year: "2026",
     dimensions: "71 × 50 × 30 inches",
   },
+  {
+    slug: "sugandh-elephant-kite",
+    title: "Elephant Kite",
+    description: "",
+    artistSlug: "yashika-sugandh",
+    thumbnail: "/thumbnails/sugandh-elephant-kite.webp",
+    modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb",
+    material: "",
+    year: "",
+  },
   // TV-0009
   {
     slug: "vaikuntam-untitled-tv-0009",
@@ -797,6 +809,28 @@ export const sculptures: Sculpture[] = [
     material: "Fibreglass",
     year: "2025",
     dimensions: "97 × 50 × 72 inches",
+  },
+
+  // ---- Newly scanned heads (USDZ → GLB). Artist/title to be confirmed. ----
+  {
+    slug: "head-a",
+    title: "Untitled (Head A)",
+    description: "",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/head-a.webp",
+    modelUrl: "/sculptures/head-a.glb",
+    material: "",
+    year: "",
+  },
+  {
+    slug: "head-c",
+    title: "Untitled (Head C)",
+    description: "",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/head-c.webp",
+    modelUrl: "/sculptures/head-c.glb",
+    material: "",
+    year: "",
   },
 ];
 

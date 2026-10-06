@@ -341,18 +341,26 @@ Deployment.
 
 ---
 
-# 15. Reference Websites
+# 15. Reference Website
 
-Design inspiration:
+Primary reference:
+
+**https://www.sculptedindia.com/** — the canonical reference for all content, structure, tone, and design direction.
+
+Navigation: About, Artists, Events, Enquiry
+Sections: Hero with sculpture image, Coming Up banner, Featured event, Newsletter, Footer with contact.
+
+Contact:
+* Email: info@sculptedindia.com
+* Raj: +91 99490 74234
+* Sanya: +91 98716 63259
+
+Additional design inspiration:
 
 jasminadenner.com
 digitalsaints.studio
 getty.edu/tracingart
 cosmos.studio
-farmminerals.com
-beyond-aero.com
-d2c-lifescience.com
-gargoyle.site
 
 These sites demonstrate:
 

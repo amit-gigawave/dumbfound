@@ -3,24 +3,27 @@
  * `name` here and it updates the header, footer, page titles and menus.
  */
 export const site = {
-  name: "The Gallery",
-  tagline: "Artists and their work, presented with the care of a catalogue.",
+  name: "Sculpted India",
+  tagline:
+    "A pioneering public art initiative advancing modern and contemporary Indian sculpture — at its fullest scale, ambition, and impact.",
   description:
-    "A gallery of contemporary art — artists and their works, presented with the care of a museum catalogue.",
+    "Sculpted India is a pioneering public art initiative and dedicated platform committed to advancing modern and contemporary Indian sculpture.",
 
   nav: [
-    { label: "Artists", href: "/artists" },
-    { label: "Artworks", href: "/artworks" },
-    { label: "Events", href: "/events" },
     { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Artists", href: "/artists" },
+    { label: "Events", href: "/events" },
+    { label: "Enquiry", href: "/contact" },
   ],
 
-  // TODO: real contact address and social profiles.
-  email: "hello@example.com",
+  email: "info@sculptedindia.com",
+  phone: "+91 98716 63259",
+  contacts: [
+    { name: "General", email: "info@sculptedindia.com", phone: "" },
+    { name: "Raj", email: "", phone: "+91 99490 74234" },
+    { name: "Sanya", email: "", phone: "+91 98716 63259" },
+  ],
   social: [
     { label: "Instagram", href: "#" },
-    { label: "Facebook", href: "#" },
-    { label: "X", href: "#" },
   ],
 } as const;
