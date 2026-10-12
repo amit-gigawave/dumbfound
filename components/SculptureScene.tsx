@@ -28,6 +28,77 @@ const WIRE_COLOR = "#5c5c5c";
 // Seconds-ish pacing of the materialize animation (higher = faster).
 const REVEAL_SPEED = 0.7;
 
+// Adaptive viewer backdrop: a light model gets a dark background and a dark
+// model gets a light one, so the sculpture always stands out with contrast.
+const BG_FOR_LIGHT_MODEL = "#2b2b2b";
+const BG_FOR_DARK_MODEL = "#e9e9e9";
+
+/** Average sRGB colour of an image, downscaled to 16×16. Returns [r,g,b] 0..1. */
+const sampleImageColor = (
+  image: CanvasImageSource | null | undefined,
+): [number, number, number] | null => {
+  if (!image || typeof document === "undefined") return null;
+  try {
+    const size = 16;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(image, 0, 0, size, size);
+    const { data } = ctx.getImageData(0, 0, size, size);
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let weight = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3] / 255;
+      r += (data[i] / 255) * a;
+      g += (data[i + 1] / 255) * a;
+      b += (data[i + 2] / 255) * a;
+      weight += a;
+    }
+    if (weight === 0) return null;
+    return [r / weight, g / weight, b / weight];
+  } catch {
+    return null; // tainted canvas etc. — fall back to the neutral default
+  }
+};
+
+/** Perceived lightness (0 dark .. 1 light) of a model's base colour. */
+const modelLuminance = (root: THREE.Object3D): number => {
+  let sum = 0;
+  let count = 0;
+  root.traverse((child) => {
+    const mesh = child as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    for (const m of mats) {
+      const mat = m as THREE.MeshStandardMaterial;
+      let r = 1;
+      let g = 1;
+      let b = 1;
+      if (mat.color) {
+        r = mat.color.r;
+        g = mat.color.g;
+        b = mat.color.b;
+      }
+      const avg = sampleImageColor(mat.map?.image as CanvasImageSource | undefined);
+      if (avg) {
+        r *= avg[0];
+        g *= avg[1];
+        b *= avg[2];
+      }
+      sum += 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      count++;
+    }
+  });
+  return count ? sum / count : 0.5;
+};
+
+const pickBackground = (lum: number) =>
+  lum >= 0.5 ? BG_FOR_LIGHT_MODEL : BG_FOR_DARK_MODEL;
+
 interface SculptureSceneProps {
   url: string;
   offsetX?: number;
@@ -56,6 +127,8 @@ interface SculptureSceneProps {
   controlsRef?: React.RefObject<OrbitControlsImpl | null>;
   /** Fires once the model has been loaded and drawn. */
   onReady?: () => void;
+  /** Reports the chosen adaptive backdrop colour (so a parent can match it). */
+  onBackground?: (hex: string) => void;
 }
 
 const Loader = () => {
@@ -88,10 +161,24 @@ const RevealModel: FC<{
   offsetY: number;
   reveal: boolean;
   fit?: number;
+  adaptiveBg: boolean;
+  onBackground?: (hex: string) => void;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, fit, onReady }) => {
+}> = ({ url, offsetX, offsetY, reveal, fit, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
   const get = useThree((state) => state.get);
+  const threeScene = useThree((state) => state.scene);
+
+  // Choose a contrasting backdrop from the model's own base colour.
+  const bgHex = useMemo(
+    () => (adaptiveBg ? pickBackground(modelLuminance(scene)) : null),
+    [scene, adaptiveBg],
+  );
+  useLayoutEffect(() => {
+    if (!adaptiveBg) return;
+    threeScene.background = bgHex ? new THREE.Color(bgHex) : null;
+    if (bgHex) onBackground?.(bgHex);
+  }, [threeScene, bgHex, adaptiveBg, onBackground]);
   const fittedRef = useRef(!fit);
   // Size of the normalized model; used to frame the camera and place the floor shadow.
   const [extent, setExtent] = useState<{
@@ -292,6 +379,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
   fit,
   controlsRef,
   onReady,
+  onBackground,
 }) => {
   const isThumb = mode === "thumbnail";
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
@@ -363,6 +451,8 @@ const SculptureScene: FC<SculptureSceneProps> = ({
             offsetY={offsetY}
             reveal={reveal && !isThumb}
             fit={fit}
+            adaptiveBg={!isThumb}
+            onBackground={onBackground}
             onReady={onReady}
           />
         </Suspense>

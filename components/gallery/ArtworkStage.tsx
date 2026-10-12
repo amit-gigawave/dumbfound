@@ -50,6 +50,7 @@ export default function ArtworkStage({
   const [inRound, setInRound] = useState(false);
   const [ready, setReady] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [viewerBg, setViewerBg] = useState<string | null>(null);
 
   const onReady = useCallback(() => setReady(true), []);
   const modelUrl = work.modelUrl;
@@ -76,7 +77,10 @@ export default function ArtworkStage({
     <div>
       <div
         ref={stageRef}
-        className="relative isolate aspect-[4/5] w-full overflow-hidden rounded-[14px] border border-rule bg-plate"
+        className={`relative isolate aspect-[4/5] w-full overflow-hidden rounded-[14px] border border-rule transition-colors duration-500 ${
+          inRound ? "" : "bg-plate"
+        }`}
+        style={inRound ? { backgroundColor: viewerBg ?? "#4b4b4b" } : undefined}
       >
         <Image
           src={work.thumbnail}
@@ -100,6 +104,7 @@ export default function ArtworkStage({
                 fit={FIT_VIEWER}
                 controlsRef={controlsRef}
                 onReady={onReady}
+                onBackground={setViewerBg}
               />
             </div>
             {!ready && (
