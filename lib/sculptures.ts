@@ -832,6 +832,26 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  {
+    slug: "head-e",
+    title: "Untitled (Head E)",
+    description: "",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/head-e.webp",
+    modelUrl: "/sculptures/head-e.glb",
+    material: "",
+    year: "",
+  },
+  {
+    slug: "head-g",
+    title: "Untitled (Head G)",
+    description: "",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/head-g.webp",
+    modelUrl: "/sculptures/head-g.glb?v=2",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
