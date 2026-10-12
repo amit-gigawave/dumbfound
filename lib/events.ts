@@ -35,7 +35,6 @@ export const events: GalleryEvent[] = [
     sourceUrl:
       "https://www.sculptedindia.com/events/between-presence-and-absence-2026.html",
     artistSlugs: ["dhananjay-singh"],
-    workSlug: "singh-i-am-within-you",
   },
   {
     slug: "design-democracy-2026",
