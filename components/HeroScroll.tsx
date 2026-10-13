@@ -4,11 +4,11 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import Magnetic from "./Magnetic";
-import { FIT_VIEWER } from "./three/modelLoader";
+import { heroScrollStore } from "./heroScrollStore";
 
-const SculptureScene = dynamic(() => import("./SculptureScene"), {
-  ssr: false,
-});
+// The first-version hero scene: draws itself in as a wireframe, then holds
+// still and turns only with scroll.
+const HeroScene = dynamic(() => import("./HeroScene"), { ssr: false });
 
 export interface HeroWork {
   slug: string;
@@ -23,13 +23,16 @@ export interface HeroWork {
 
 /** Share of the pinned scroll spent on the move; the rest is a pause to read. */
 const MOVE = 0.55;
+/** How quickly the hero catches up with the scrollbar (higher = snappier). */
+const SMOOTH = 7;
 const clamp = (v: number) => Math.max(0, Math.min(1, v));
 const ease = (t: number) => t * t * (3 - 2 * t);
 
 /**
- * Home hero (desktop): the intro sits left and a featured sculpture turns on
+ * Home hero (desktop): the intro sits left and a featured sculpture stands on
  * the right. While the section is pinned, scrolling slides the sculpture to
- * the left, the intro lifts away, and the work's details appear on the right.
+ * the left (turning it a little), the intro lifts away, and the work's details
+ * appear on the right.
  * Phones and reduced motion get a simple stacked layout. The hidden starting
  * states only apply once JS has marked the page (html.js), so nothing is lost
  * without scripts.
@@ -55,23 +58,47 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
       el.style.opacity = String(opacity);
       el.style.transform = transform;
     };
-    const reset = () =>
+    const reset = () => {
+      heroScrollStore.progress = 0;
       [introRef, modelRef, titleRef, infoRef].forEach(({ current }) => {
         if (!current) return;
         current.style.opacity = "";
         current.style.transform = "";
         current.style.pointerEvents = "";
       });
+    };
 
-    const update = () => {
+    // Scroll sets a target; the shown progress eases toward it every frame,
+    // so the slide glides on (wheel ticks don't step it).
+    let shown = -1;
+    let last = 0;
+
+    const update = (now: number) => {
       frame = 0;
       const pin = pinRef.current;
       if (!pin) return;
-      if (!desktop.matches || still.matches) return reset();
+      if (!desktop.matches || still.matches) {
+        shown = -1;
+        return reset();
+      }
       const r = pin.getBoundingClientRect();
       const scrollable = pin.offsetHeight - window.innerHeight;
-      const p = clamp(clamp(-r.top / scrollable) / MOVE);
+      const target = clamp(clamp(-r.top / scrollable) / MOVE);
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      shown =
+        shown < 0
+          ? target
+          : shown + (target - shown) * (1 - Math.exp(-SMOOTH * dt));
+      if (Math.abs(target - shown) < 0.0005) shown = target;
+      else frame = requestAnimationFrame(update); // still catching up
+
+      const p = shown;
       const move = ease(p);
+      if (heroScrollStore.progress !== p) {
+        heroScrollStore.progress = p; // turns the sculpture as it slides
+        heroScrollStore.invalidate?.();
+      }
 
       set(
         introRef.current,
@@ -87,6 +114,7 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
         infoRef.current.style.pointerEvents = i > 0.6 ? "auto" : "none";
       if (introRef.current)
         introRef.current.style.pointerEvents = p < 0.3 ? "auto" : "none";
+      if (!frame) last = 0;
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -151,12 +179,7 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
             ref={modelRef}
             className="relative h-[58vh] min-h-[340px] will-change-transform lg:absolute lg:inset-y-0 lg:left-1/2 lg:h-auto lg:w-1/2"
           >
-            <SculptureScene
-              url={work.modelUrl}
-              fit={FIT_VIEWER}
-              facing={work.facing}
-              adaptiveBackground={false}
-            />
+            <HeroScene />
           </div>
 
           {/* The work's details — take the right half once the sculpture has moved */}
