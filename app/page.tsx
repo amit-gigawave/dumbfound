@@ -5,6 +5,7 @@ import ArtistTile from "@/components/gallery/ArtistTile";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import Magnetic from "@/components/Magnetic";
+import HeroHeading from "@/components/HeroHeading";
 import Manifesto from "@/components/about/Manifesto";
 import PortraitFan from "@/components/gallery/PortraitFan";
 
@@ -30,21 +31,25 @@ export default function Home() {
 
   return (
     <main>
-      {/* Hero: words only, like a gallery's opening wall text */}
+      {/* Hero: words only, like a gallery's opening wall text. The headline
+          reveals itself line by line (HeroHeading); the rest fades in after. */}
       <section
-        data-reveal-stagger
-        className={`${wrap} pb-[clamp(56px,8vw,100px)] pt-[clamp(70px,11vw,140px)]`}
+        className={`${wrap} pb-[clamp(56px,8vw,100px)] pt-[clamp(70px,11vw,140px)] text-center`}
       >
-        <span className="label">Contemporary art</span>
-        <h1 className="heading-caps mt-[22px] max-w-[15ch] text-[clamp(38px,6vw,80px)] leading-[1.06] tracking-[0.03em]">
-          Art, and the hands that made it.
-        </h1>
-        <p className="font-text mt-[26px] max-w-[52ch] text-[clamp(17px,1.6vw,19px)] leading-relaxed text-stone">
+        <span className="label hero-fade inline-block">Contemporary art</span>
+        <HeroHeading />
+        <p
+          className="hero-fade font-text mx-auto mt-[34px] max-w-[52ch] text-[clamp(17px,1.6vw,19px)] leading-relaxed text-stone"
+          style={{ animationDelay: "750ms" }}
+        >
           A gallery of artists and their works, established names and new
           voices, across every medium, each presented with the care of a museum
           catalogue.
         </p>
-        <div className="mt-[34px] flex flex-wrap items-center gap-[30px]">
+        <div
+          className="hero-fade mt-[34px] flex flex-wrap items-center justify-center gap-[30px]"
+          style={{ animationDelay: "900ms" }}
+        >
           <Magnetic>
             <Link href="/artworks" className="btn">
               View the artworks <span className="nudge">→</span>
