@@ -3,6 +3,21 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 import FAQ, { type FaqItem } from "@/components/FAQ";
 import SectionHeader from "@/components/gallery/SectionHeader";
+import Manifesto from "@/components/about/Manifesto";
+import ExperienceSteps from "@/components/about/ExperienceSteps";
+import StaggerStory from "@/components/about/StaggerStory";
+
+// Lights up word by word on scroll; **key words** turn the accent colour.
+const MANIFESTO =
+  "Sculpture has always been one of the most **powerful and enduring** forms of artistic expression — yet it has often remained on the **periphery** of India's art ecosystem. Sculpted India was founded to **change that.**";
+
+// Rises in word by word; a marker then sweeps across the **key phrases**.
+const STORY = [
+  "Sculpted India is a pioneering public art initiative and dedicated platform committed to advancing modern and contemporary Indian sculpture by giving it the **visibility, recognition, and cultural presence** it has long deserved—placing sculpture at the **centre of contemporary cultural discourse** and creating a platform where the medium can be experienced at its fullest scale, ambition, and impact.",
+  "More than an exhibition platform, Sculpted India serves as a **bridge** between artists, collectors, galleries, institutions, architects, designers, and art enthusiasts. It creates meaningful opportunities for **dialogue, collaboration, and patronage,** fostering a stronger ecosystem around sculpture and encouraging deeper engagement with three-dimensional artistic practice.",
+  "What distinguishes Sculpted India is its **long-term commitment** to the medium. Rather than existing as a one-time exhibition, it is envisioned as a **sustained cultural initiative** dedicated to building visibility, accessibility, and patronage for sculpture across India.",
+  "At its core, Sculpted India is founded on values of excellence, inclusivity, innovation, and cultural stewardship. The mission remains clear: to become **the leading platform** for modern and contemporary Indian sculpture, positioning the medium at the forefront of India's cultural imagination while creating a lasting legacy for artists, audiences, and future generations.",
+];
 
 export const metadata: Metadata = {
   title: "About",
@@ -53,47 +68,34 @@ export default function AboutPage() {
         <p className="font-display mt-5 max-w-[48ch] text-[clamp(18px,2.4vw,24px)] leading-[1.5] text-stone">
           Placing sculpture at the centre of contemporary cultural discourse.
         </p>
-        <div className="font-text mt-8 grid max-w-[62ch] gap-5 text-lg leading-[1.75] text-stone">
-          <p>
-            Sculpted India is a pioneering public art initiative and dedicated
-            platform committed to advancing modern and contemporary Indian
-            sculpture by giving it the visibility, recognition, and cultural
-            presence it has long deserved. While sculpture has always been one of
-            the most powerful and enduring forms of artistic expression, it has
-            often remained on the periphery of India&apos;s broader art
-            ecosystem. Sculpted India was founded to change that
-            narrative&mdash;placing sculpture at the centre of contemporary
-            cultural discourse and creating a platform where the medium can be
-            experienced at its fullest scale, ambition, and impact.
-          </p>
-          <p>
-            More than an exhibition platform, Sculpted India serves as a bridge
-            between artists, collectors, galleries, institutions, architects,
-            designers, and art enthusiasts. It creates meaningful opportunities
-            for dialogue, collaboration, and patronage, fostering a stronger
-            ecosystem around sculpture and encouraging deeper engagement with
-            three-dimensional artistic practice.
-          </p>
-          <p>
-            What distinguishes Sculpted India is its long-term commitment to the
-            medium. Rather than existing as a one-time exhibition, it is
-            envisioned as a sustained cultural initiative dedicated to building
-            visibility, accessibility, and patronage for sculpture across India.
-          </p>
-          <p>
-            At its core, Sculpted India is founded on values of excellence,
-            inclusivity, innovation, and cultural stewardship. The mission
-            remains clear: to become the leading platform for modern and
-            contemporary Indian sculpture, positioning the medium at the
-            forefront of India&apos;s cultural imagination while creating a
-            lasting legacy for artists, audiences, and future generations.
-          </p>
+      </section>
+
+      <section className="border-y border-rule bg-white py-[clamp(70px,10vw,140px)]">
+        <div className={wrap}>
+          <Manifesto text={MANIFESTO} />
+        </div>
+      </section>
+
+      <section className={`${wrap} py-[clamp(56px,8vw,100px)]`}>
+        <div className="grid gap-[clamp(20px,5vw,72px)] md:grid-cols-[200px_1fr]">
+          <span className="label md:sticky md:top-36 md:self-start">Our story</span>
+          <StaggerStory paragraphs={STORY} />
+        </div>
+      </section>
+
+      <section className="border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
+        <div className={wrap}>
+          <span className="label">Experience</span>
+          <h2 className="heading-caps mt-4 text-[clamp(26px,3.4vw,42px)] leading-[1.15] tracking-[0.05em]">
+            From screen to your room
+          </h2>
+          <ExperienceSteps />
         </div>
       </section>
 
       <section
         id="viewing"
-        className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)]`}
+        className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)] pt-[clamp(64px,8vw,104px)]`}
       >
         <SectionHeader title="Questions" />
         <div data-reveal>

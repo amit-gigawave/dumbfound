@@ -10,6 +10,7 @@ export const site = {
     "Sculpted India is a pioneering public art initiative and dedicated platform committed to advancing modern and contemporary Indian sculpture.",
 
   nav: [
+    { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Artists", href: "/artists" },
     { label: "Artworks", href: "/artworks" },
@@ -24,7 +25,5 @@ export const site = {
     { name: "Raj", email: "", phone: "+91 99490 74234" },
     { name: "Sanya", email: "", phone: "+91 98716 63259" },
   ],
-  social: [
-    { label: "Instagram", href: "#" },
-  ],
+  social: [{ label: "Instagram", href: "#" }],
 } as const;

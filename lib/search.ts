@@ -85,12 +85,41 @@ export function search(query: string, limit = 8): SearchResult[] {
     }));
 }
 
-/** A few suggestions to show before anything is typed. */
-export const suggestions = (): SearchResult[] =>
-  index.slice(0, 4).map(({ kind, title, subtitle, href, image }) => ({
-    kind,
-    title,
-    subtitle,
-    href,
-    image,
-  }));
+const strip = ({
+  kind,
+  title,
+  subtitle,
+  href,
+  image,
+}: Entry): SearchResult => ({
+  kind,
+  title,
+  subtitle,
+  href,
+  image,
+});
+
+/** Shown before anything is typed: a few artists with portraits, a few works. */
+export const suggestions = (): SearchResult[] => [
+  ...index
+    .filter((e) => e.kind === "artist" && e.image)
+    .slice(0, 3)
+    .map(strip),
+  ...index
+    .filter((e) => e.kind === "artwork")
+    .slice(0, 3)
+    .map(strip),
+];
+
+/** Quick-search chips: materials and media from the catalogue that return results. */
+export const quickSearches = (): string[] =>
+  [
+    "Bronze",
+    "Painting",
+    "Terracotta",
+    "Wire",
+    "Mythology",
+    "Portrait",
+    "Head",
+    "Watercolour",
+  ].filter((t) => search(t, 1).length > 0);

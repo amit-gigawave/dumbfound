@@ -15,17 +15,25 @@ export function generateStaticParams() {
 
 export default async function ThumbnailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  /** `?facing=90` previews another angle without editing the catalogue. */
+  searchParams: Promise<{ facing?: string }>;
 }) {
   const { slug } = await params;
+  const { facing } = await searchParams;
   const sculpture = getSculpture(slug);
   // Only works with a 3D model get a generated thumbnail.
   if (!sculpture?.modelUrl) notFound();
 
   return (
     <ThumbnailStage
-      sculpture={{ ...sculpture, modelUrl: sculpture.modelUrl }}
+      sculpture={{
+        ...sculpture,
+        modelUrl: sculpture.modelUrl,
+        ...(facing !== undefined && { facing: Number(facing) }),
+      }}
     />
   );
 }

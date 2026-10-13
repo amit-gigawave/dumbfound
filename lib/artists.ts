@@ -201,7 +201,8 @@ export const artists: Artist[] = [
     place: "Bagerhat, Bangladesh; lives in Santiniketan",
     medium: "Bronze, wood, stone",
     role: "Sculptor",
-    // No portrait found — initials are shown.
+    // Portrait: The Daily Star (thedailystar.net, "Gaurab Das' Journey of Shantiniketan…"), photo courtesy the artist — rights unconfirmed
+    portrait: "/artists/gaurab-das.webp",
     summary:
       "Gaurab Das is a Santiniketan-based sculptor working in bronze, wood and stone. His fluid, semi-abstract forms keep returning to connection: mother and child, buffalo and land, body and nature.",
     bio: [
@@ -444,6 +445,8 @@ export const artists: Artist[] = [
     place: "Pandharpur, Maharashtra",
     medium: "Painting, sculpture",
     role: "Painter and sculptor",
+    // Portrait: Suhas Bahulkar, Deepak Ghare, CC BY-SA 4.0 — commons.wikimedia.org/wiki/File:M._F._Husain.jpg
+    portrait: "/artists/mf-husain.webp",
     summary:
       "Maqbool Fida Husain was one of the most celebrated and internationally recognised Indian artists of the twentieth century, often referred to as the Picasso of India.",
     bio: [],
@@ -465,6 +468,8 @@ export const artists: Artist[] = [
     place: "Bhubaneswar, Odisha",
     medium: "Painting, sculpture, mixed media",
     role: "Artist",
+    // Portrait: Kaivalya Panda, CC BY-SA 4.0 — commons.wikimedia.org/wiki/File:Jagannath_Panda.jpg
+    portrait: "/artists/jagannath-panda.webp",
     summary:
       "Jagannath Panda is a contemporary Indian artist whose work explores the tension between urbanisation and nature, tradition and modernity.",
     bio: [],
@@ -483,6 +488,8 @@ export const artists: Artist[] = [
     place: "Kolkata, West Bengal",
     medium: "Sculpture",
     role: "Sculptor",
+    // Portrait: President's Secretariat / PIB, 2014 (Padma Shri), GODL-India — Wikimedia Commons
+    portrait: "/artists/biman-das.webp",
     summary:
       "Biman Das is a senior Indian sculptor based in Kolkata, known for his expressive figurative work in bronze and mixed media.",
     bio: [],
@@ -498,6 +505,8 @@ export const artists: Artist[] = [
     place: "India",
     medium: "Sculpture",
     role: "Sculptor",
+    // Portrait: Dhoomimal Art Centre (dhoomimalartcentre.com/artists/yusuf~78) — © gallery, rights unconfirmed
+    portrait: "/artists/yusuf.webp",
     summary:
       "Yusuf is an Indian sculptor whose work is part of the Sculpted India roster of modern and contemporary artists.",
     bio: [],
@@ -513,6 +522,8 @@ export const artists: Artist[] = [
     place: "India",
     medium: "Sculpture",
     role: "Sculptor",
+    // Portrait: Black Cube Gallery (blackcube.in/artists/46-dileep-sharma) — © gallery
+    portrait: "/artists/dileep-sharma.webp",
     summary:
       "Dileep Sharma is an Indian sculptor whose work explores form and materiality through contemporary sculptural practice.",
     bio: [],
@@ -528,6 +539,8 @@ export const artists: Artist[] = [
     place: "India",
     medium: "Sculpture",
     role: "Sculptor",
+    // Portrait: Black Cube Gallery (blackcube.in/artists/33-ompal-sansanwal) — © gallery
+    portrait: "/artists/ompal-sansanwal.webp",
     summary:
       "Ompal Sansanwal is an Indian sculptor whose work is featured in the Sculpted India initiative for modern and contemporary Indian sculpture.",
     bio: [],

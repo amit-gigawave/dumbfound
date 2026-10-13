@@ -29,6 +29,12 @@ export interface Sculpture {
    * and "See it in your space"; paintings, photographs etc. simply omit it.
    */
   modelUrl?: string;
+  /**
+   * Degrees to turn the model (anticlockwise, seen from above) so it faces the
+   * viewer straight on — for scans saved facing sideways. Used by the thumbnail,
+   * hover preview and viewer; re-run `npm run thumbnails -- <slug>` after changing it.
+   */
+  facing?: number;
   /** Prebuilt USDZ for iPhone AR. Without it, one is generated from the GLB in the browser. */
   usdzUrl?: string;
   /** A short line, e.g. "The iconic muse". Searchable. */
@@ -126,6 +132,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp",
     modelUrl: "/sculptures/Trumpet_Musician_Orange_LPoly.glb",
+    facing: 190,
     material: "Bronze",
     year: "",
     dimensions: "12 × 5 × 5 inches",
@@ -160,6 +167,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-c.webp",
     modelUrl: "/sculptures/head-c.glb",
+    facing: 90,
     material: "",
     year: "",
   },
@@ -180,6 +188,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-g.webp",
     modelUrl: "/sculptures/head-g.glb?v=2",
+    facing: 180,
     material: "",
     year: "",
   },

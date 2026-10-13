@@ -129,6 +129,15 @@ interface SculptureSceneProps {
   onReady?: () => void;
   /** Reports the chosen adaptive backdrop colour (so a parent can match it). */
   onBackground?: (hex: string) => void;
+  /**
+   * Paint a contrasting backdrop behind the model (default on in the viewer).
+   * Hover previews turn it off so the model sits on the tile's own plate.
+   */
+  adaptiveBackground?: boolean;
+  /** Showcase auto-rotate (default on); lets a parent hold the turn until it's ready. */
+  autoRotate?: boolean;
+  /** Degrees to turn the model so it faces the camera (see Sculpture.facing). */
+  facing?: number;
 }
 
 const Loader = () => {
@@ -161,10 +170,11 @@ const RevealModel: FC<{
   offsetY: number;
   reveal: boolean;
   fit?: number;
+  facing: number;
   adaptiveBg: boolean;
   onBackground?: (hex: string) => void;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, fit, adaptiveBg, onBackground, onReady }) => {
+}> = ({ url, offsetX, offsetY, reveal, fit, facing, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
   const get = useThree((state) => state.get);
   const threeScene = useThree((state) => state.scene);
@@ -350,9 +360,12 @@ const RevealModel: FC<{
 
   return (
     <group ref={groupRef} position={fit ? [0, 0, 0] : [offsetX, offsetY, 0]}>
-      <group ref={innerRef}>
-        {wireScene && <primitive object={wireScene} />}
-        <primitive object={texScene} />
+      {/* Turn the centered model about its own vertical axis to face the camera. */}
+      <group rotation={[0, THREE.MathUtils.degToRad(facing), 0]}>
+        <group ref={innerRef}>
+          {wireScene && <primitive object={wireScene} />}
+          <primitive object={texScene} />
+        </group>
       </group>
       {extent && (
         <ContactShadows
@@ -380,6 +393,9 @@ const SculptureScene: FC<SculptureSceneProps> = ({
   controlsRef,
   onReady,
   onBackground,
+  adaptiveBackground = true,
+  autoRotate = true,
+  facing = 0,
 }) => {
   const isThumb = mode === "thumbnail";
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
@@ -451,7 +467,8 @@ const SculptureScene: FC<SculptureSceneProps> = ({
             offsetY={offsetY}
             reveal={reveal && !isThumb}
             fit={fit}
-            adaptiveBg={!isThumb}
+            facing={facing}
+            adaptiveBg={!isThumb && adaptiveBackground}
             onBackground={onBackground}
             onReady={onReady}
           />
@@ -475,7 +492,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
           enableZoom={interactive}
           {...(!fit && { minDistance: camZ * 0.4, maxDistance: camZ * 2 })}
           enablePan={interactive}
-          autoRotate={!interactive && !isThumb}
+          autoRotate={autoRotate && !interactive && !isThumb}
           autoRotateSpeed={1.4}
           enableDamping
           dampingFactor={0.08}

@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Tailwind v4 gives buttons the default arrow; restore the pointing hand
+   (search, chips, tabs, FAQ, topics…). Disabled buttons keep the arrow. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
 /*
  * Gallery palette — two colours only: black and red. Off-white paper and
  * neutral greys are just tints of black; red is the single accent.
@@ -89,9 +98,16 @@ h3,
   color: #b3261e;
 }
 
-/* Outlined button — fills on hover. Inside .deep it inverts for dark grounds. */
+/* Outlined button. On hover the fill wipes in from the left (and out to the
+   right on leave) and the button lifts a little. Inside .deep it starts white
+   for dark grounds. */
 .btn {
-  display: inline-block;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
   border: 1px solid #b3261e;
   color: #b3261e;
   padding: 13px 26px;
@@ -99,23 +115,46 @@ h3,
   letter-spacing: 0.22em;
   text-transform: uppercase;
   transition:
-    background-color 0.35s ease,
-    color 0.35s ease,
-    border-color 0.35s ease;
+    color 0.45s cubic-bezier(0.7, 0, 0.2, 1),
+    border-color 0.35s ease,
+    translate 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: #b3261e;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1);
 }
 .btn:hover {
-  background: #b3261e;
   color: #ffffff;
+  translate: 0 -2px;
+  box-shadow: 0 14px 26px -16px rgba(179, 38, 30, 0.6);
+}
+.btn:hover::before {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+.btn:active {
+  translate: 0 0;
+  box-shadow: none;
 }
 /* On black, the button is white and fills red on hover. */
 .deep .btn {
   border-color: #f2f2f2;
   color: #f2f2f2;
 }
-.deep .btn:hover {
+.deep .btn::before {
   background: #d63a2f;
+}
+.deep .btn:hover {
   border-color: #d63a2f;
   color: #ffffff;
+  box-shadow: 0 14px 26px -16px rgba(214, 58, 47, 0.7);
 }
 
 /* Deep charcoal-green contrast band */
@@ -130,6 +169,13 @@ h3,
 :focus-visible {
   outline: 2px solid #b3261e;
   outline-offset: 3px;
+}
+/* Text fields show focus their own way (accent underline, or the caret in the
+   search palette), so the box outline is dropped there. */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
 }
 
 /* Indeterminate loading bar while a model downloads */
@@ -252,5 +298,56 @@ h3,
   100% {
     background-position: 0 100%;
     background-size: 100% 1px;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Artist grid focus. Hovering one artist dims the rest of the grid
+ * ([data-focus-grid]); the hovered portrait shows in full colour, lifts,
+ * gives a small wiggle and leans toward the cursor (ArtistTile sets the
+ * transform). Dimming targets the tile's
+ * parts, not the tile, so it never fights the scroll-reveal transition.
+ * ------------------------------------------------------------------ */
+.artist-plate {
+  transition:
+    background-color 1.8s cubic-bezier(0.45, 0, 0.2, 1),
+    filter 0.6s ease,
+    opacity 0.6s ease,
+    scale 0.6s cubic-bezier(0.3, 0.7, 0.3, 1),
+    transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1),
+    box-shadow 0.6s ease;
+}
+.artist-caption {
+  transition:
+    filter 0.6s ease,
+    opacity 0.6s ease;
+}
+[data-focus-grid]:has(.artist-tile:hover)
+  .artist-tile:not(:hover)
+  :is(.artist-plate, .artist-caption) {
+  filter: grayscale(1) brightness(0.92);
+  opacity: 0.38;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .artist-tile:hover .artist-plate {
+    scale: 1.05;
+    box-shadow: 0 22px 40px -22px rgba(0, 0, 0, 0.5);
+    animation: artist-wiggle 0.8s ease-in-out;
+  }
+}
+
+@keyframes artist-wiggle {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  25% {
+    rotate: -1.8deg;
+  }
+  50% {
+    rotate: 1.3deg;
+  }
+  75% {
+    rotate: -0.6deg;
   }
 }

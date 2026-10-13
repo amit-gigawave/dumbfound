@@ -71,7 +71,12 @@ export default async function ArtworksPage({
         className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
       >
         {works.map((work, i) => (
-          <ArtworkTile key={work.slug} work={work} priority={i < 3} />
+          <ArtworkTile
+            key={work.slug}
+            work={work}
+            priority={i < 3}
+            showcase
+          />
         ))}
       </div>
     </main>

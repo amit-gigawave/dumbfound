@@ -1,36 +1,187 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
+import { Rotate3d } from "lucide-react";
+import { FIT_CARD, preloadModel } from "../three/modelLoader";
+import { useScrollGesture } from "./useScrollGesture";
+import { tilt, untilt } from "./tilt";
+
+const SculptureScene = dynamic(() => import("../SculptureScene"), {
+  ssr: false,
+});
+
+/** How long the pointer rests on a tile before the 3D work loads. */
+const HOVER_DELAY = 400;
+/** Once loaded: time for the bar to complete and fade before the work starts turning. */
+const TURN_AFTER = 600;
 
 /**
  * Catalogue tile: the work framed on a plate, captioned
  * ARTIST / Title / year · medium. Used on the home page, the artworks grid and
  * artist pages (where the artist line is hidden).
+ *
+ * `showcase` (the artworks grid, featured works) adds motion: while the page
+ * scrolls, a random one or two sculptures make a small gesture; on hover the
+ * plate leans toward the cursor, a hint pill slides up, and works with a 3D
+ * model load (with a progress bar), then turn in the round like a Sketchfab
+ * preview once the bar completes.
  */
 const ArtworkTile = ({
   work,
   showArtist = true,
   priority = false,
+  showcase = false,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
 }: {
   work: Sculpture;
   showArtist?: boolean;
   priority?: boolean;
+  showcase?: boolean;
   sizes?: string;
 }) => {
   const artist = getArtist(work.artistSlug);
+  const sculptureRef = useScrollGesture<HTMLDivElement>(showcase);
+  const modelUrl = showcase ? work.modelUrl : undefined;
+
+  const [hovering, setHovering] = useState(false);
+  const [turning, setTurning] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const onReady = useCallback(() => setReady(true), []);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  // Start turning only after the progress bar has completed.
+  useEffect(() => {
+    if (!ready) return;
+    const t = setTimeout(() => setSpinning(true), TURN_AFTER);
+    return () => clearTimeout(t);
+  }, [ready]);
+
+  const onEnter = () => {
+    if (!modelUrl) return;
+    preloadModel(modelUrl);
+    setHovering(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setTurning(true), HOVER_DELAY);
+  };
+  const onLeave = () => {
+    clearTimeout(timer.current);
+    setHovering(false);
+    setTurning(false);
+    setReady(false);
+    setSpinning(false);
+  };
+
   return (
-    <Link href={`/artworks/${work.slug}`} className="group grid gap-3.5">
-      <div className="relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-colors duration-500 group-hover:bg-[#e8e8e8]">
-        <Image
-          src={work.thumbnail}
-          alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
-          fill
-          sizes={sizes}
-          priority={priority}
-          className="object-contain p-[6%] transition-transform duration-700 ease-out group-hover:scale-[1.035]"
-        />
+    <Link
+      href={`/artworks/${work.slug}`}
+      className="group grid gap-3.5"
+      onPointerEnter={modelUrl ? onEnter : undefined}
+      onPointerLeave={modelUrl ? onLeave : undefined}
+      onFocus={modelUrl ? () => preloadModel(modelUrl) : undefined}
+    >
+      <div
+        data-turning={turning || undefined}
+        onPointerMove={showcase ? (e) => tilt(e, 5) : undefined}
+        onPointerLeave={showcase ? untilt : undefined}
+        className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] group-hover:bg-[#e8e8e8] ${
+          showcase
+            ? "group-hover:shadow-[0_26px_46px_-30px_rgba(0,0,0,.5)]"
+            : ""
+        }`}
+      >
+        {/* The sculpture alone gestures on scroll; the card stays still. */}
+        <div
+          ref={sculptureRef}
+          className="absolute inset-0"
+          style={{ transformOrigin: "50% 88%" }}
+        >
+          <Image
+            src={work.thumbnail}
+            alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className={`object-contain p-[6%] transition-[transform,opacity] duration-700 ease-out group-hover:scale-[1.035] ${
+              turning && ready ? "opacity-0" : "opacity-100"
+            }`}
+          />
+        </div>
+        {turning && modelUrl && (
+          // Same hover scale as the photo, so the cross-fade lines up exactly.
+          <div
+            className={`absolute inset-0 scale-[1.035] transition-opacity duration-500 ${
+              ready ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <SculptureScene
+              url={modelUrl}
+              fit={FIT_CARD}
+              facing={work.facing}
+              reveal={false}
+              adaptiveBackground={false}
+              autoRotate={spinning}
+              onReady={onReady}
+            />
+          </div>
+        )}
+        {modelUrl && (
+          // Hover progress: fills over the hover delay, creeps while the model
+          // loads, completes when it starts turning, then fades out.
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-[3px] bg-rule/60"
+            style={{
+              opacity: hovering && !ready ? 1 : 0,
+              transition: "opacity 300ms ease 150ms",
+            }}
+          >
+            <div
+              className="h-full bg-accent"
+              style={
+                !hovering
+                  ? { width: 0, transition: "none" }
+                  : ready
+                    ? { width: "100%", transition: "width 200ms ease-out" }
+                    : turning
+                      ? {
+                          width: "92%",
+                          transition:
+                            "width 2500ms cubic-bezier(0.1, 0.6, 0.3, 1)",
+                        }
+                      : {
+                          width: "60%",
+                          transition: `width ${HOVER_DELAY}ms linear`,
+                        }
+              }
+            />
+          </div>
+        )}
+        {showcase && (
+          // Hint that slides up on hover; tracks the 3D preview as it loads.
+          <span
+            aria-hidden
+            className="pointer-events-none absolute bottom-3.5 left-3.5 z-10 inline-flex translate-y-3 items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-ink opacity-0 shadow-[0_4px_14px_-6px_rgba(0,0,0,.3)] backdrop-blur-sm transition-[transform,opacity] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] group-hover:translate-y-0 group-hover:opacity-100"
+          >
+            {modelUrl ? (
+              <>
+                <Rotate3d size={12} strokeWidth={1.8} className="text-accent" />
+                {spinning ? "Turning in 3D" : "Loading 3D…"}
+              </>
+            ) : (
+              <>
+                View work <span className="text-accent">→</span>
+              </>
+            )}
+          </span>
+        )}
       </div>
       <div className="grid gap-0.5">
         {showArtist && artist && <span className="label">{artist.name}</span>}
