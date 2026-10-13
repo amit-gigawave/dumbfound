@@ -138,6 +138,19 @@ export const sculptures: Sculpture[] = [
     dimensions: "12 × 5 × 5 inches",
     edition: "3 of 9",
   },
+  // Scan "12 - Krishan Khanna 03" (original in .glb-backup/). Title to be
+  // confirmed: the pose resembles Untitled (KK-0305), but the scan is unpainted
+  // and has no trumpet beside him.
+  {
+    slug: "khanna-untitled-seated-man",
+    title: "Untitled (Seated Man)",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-untitled-seated-man.webp",
+    modelUrl: "/sculptures/khanna-untitled-seated-man.glb",
+    material: "",
+    year: "",
+  },
   {
     slug: "sugandh-elephant-kite",
     title: "Elephant Kite",

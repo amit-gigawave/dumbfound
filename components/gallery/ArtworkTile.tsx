@@ -8,7 +8,7 @@ import type { Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import { Rotate3d } from "lucide-react";
 import { FIT_CARD, preloadModel } from "../three/modelLoader";
-import { useScrollGesture } from "./useScrollGesture";
+import { registerAmbient } from "./ambientTurn";
 import { tilt, untilt } from "./tilt";
 
 const SculptureScene = dynamic(() => import("../SculptureScene"), {
@@ -25,37 +25,65 @@ const TURN_AFTER = 600;
  * ARTIST / Title / year · medium. Used on the home page, the artworks grid and
  * artist pages (where the artist line is hidden).
  *
- * `showcase` (the artworks grid, featured works) adds motion: while the page
- * scrolls, a random one or two sculptures make a small gesture; on hover the
- * plate leans toward the cursor, a hint pill slides up, and works with a 3D
- * model load (with a progress bar), then turn in the round like a Sketchfab
- * preview once the bar completes.
+ * `showcase` (the artworks grid, featured works) adds hover motion: the plate
+ * leans toward the cursor, a hint pill slides up, and works with a 3D model
+ * load (with a progress bar), then turn in the round like a Sketchfab preview
+ * once the bar completes. `ambient` (the artworks grid) also lets a random one
+ * or two visible works start turning on their own for a few seconds.
  */
 const ArtworkTile = ({
   work,
   showArtist = true,
   priority = false,
   showcase = false,
+  ambient = false,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
 }: {
   work: Sculpture;
   showArtist?: boolean;
   priority?: boolean;
   showcase?: boolean;
+  ambient?: boolean;
   sizes?: string;
 }) => {
   const artist = getArtist(work.artistSlug);
-  const sculptureRef = useScrollGesture<HTMLDivElement>(showcase);
   const modelUrl = showcase ? work.modelUrl : undefined;
+  const plateRef = useRef<HTMLDivElement>(null);
 
   const [hovering, setHovering] = useState(false);
-  const [turning, setTurning] = useState(false);
+  const [turning, setTurning] = useState(false); // hover delay has passed
+  const [ambientOn, setAmbientOn] = useState(false); // turning on its own
   const [ready, setReady] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const hoverRef = useRef(false);
+  const turningRef = useRef(false);
   const onReady = useCallback(() => setReady(true), []);
+  const active = turning || ambientOn;
 
   useEffect(() => () => clearTimeout(timer.current), []);
+
+  // Enter the ambient draw; when the turn ends, fall back to the photo unless
+  // the visitor has since hovered in and taken over.
+  useEffect(() => {
+    const el = plateRef.current;
+    if (!ambient || !modelUrl || !el) return;
+    return registerAmbient({
+      el,
+      busy: () => hoverRef.current,
+      start: () => {
+        preloadModel(modelUrl);
+        setAmbientOn(true);
+      },
+      stop: () => {
+        setAmbientOn(false);
+        if (!turningRef.current) {
+          setReady(false);
+          setSpinning(false);
+        }
+      },
+    });
+  }, [ambient, modelUrl]);
 
   // Start turning only after the progress bar has completed.
   useEffect(() => {
@@ -67,16 +95,25 @@ const ArtworkTile = ({
   const onEnter = () => {
     if (!modelUrl) return;
     preloadModel(modelUrl);
+    hoverRef.current = true;
     setHovering(true);
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => setTurning(true), HOVER_DELAY);
+    timer.current = setTimeout(() => {
+      turningRef.current = true;
+      setTurning(true);
+    }, HOVER_DELAY);
   };
   const onLeave = () => {
     clearTimeout(timer.current);
+    hoverRef.current = false;
+    turningRef.current = false;
     setHovering(false);
     setTurning(false);
-    setReady(false);
-    setSpinning(false);
+    // An ambient turn in progress keeps going; otherwise back to the photo.
+    if (!ambientOn) {
+      setReady(false);
+      setSpinning(false);
+    }
   };
 
   return (
@@ -88,7 +125,8 @@ const ArtworkTile = ({
       onFocus={modelUrl ? () => preloadModel(modelUrl) : undefined}
     >
       <div
-        data-turning={turning || undefined}
+        ref={plateRef}
+        data-turning={active || undefined}
         onPointerMove={showcase ? (e) => tilt(e, 5) : undefined}
         onPointerLeave={showcase ? untilt : undefined}
         className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] group-hover:bg-[#e8e8e8] ${
@@ -97,24 +135,17 @@ const ArtworkTile = ({
             : ""
         }`}
       >
-        {/* The sculpture alone gestures on scroll; the card stays still. */}
-        <div
-          ref={sculptureRef}
-          className="absolute inset-0"
-          style={{ transformOrigin: "50% 88%" }}
-        >
-          <Image
-            src={work.thumbnail}
-            alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
-            fill
-            sizes={sizes}
-            priority={priority}
-            className={`object-contain p-[6%] transition-[transform,opacity] duration-700 ease-out group-hover:scale-[1.035] ${
-              turning && ready ? "opacity-0" : "opacity-100"
-            }`}
-          />
-        </div>
-        {turning && modelUrl && (
+        <Image
+          src={work.thumbnail}
+          alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
+          fill
+          sizes={sizes}
+          priority={priority}
+          className={`object-contain p-[6%] transition-[transform,opacity] duration-700 ease-out group-hover:scale-[1.035] ${
+            active && ready ? "opacity-0" : "opacity-100"
+          }`}
+        />
+        {active && modelUrl && (
           // Same hover scale as the photo, so the cross-fade lines up exactly.
           <div
             className={`absolute inset-0 scale-[1.035] transition-opacity duration-500 ${

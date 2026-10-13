@@ -44,7 +44,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-paper text-ink antialiased">
+      {/* Browser extensions (e.g. Grammarly) add attributes to <body> before
+          React loads; don't treat those as hydration errors. */}
+      <body className="bg-paper text-ink antialiased" suppressHydrationWarning>
         <Navbar />
         {children}
         <Footer />

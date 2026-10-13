@@ -76,6 +76,7 @@ export default async function ArtworksPage({
             work={work}
             priority={i < 3}
             showcase
+            ambient
           />
         ))}
       </div>
