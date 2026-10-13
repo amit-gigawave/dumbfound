@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { artists, publishedArtists } from "@/lib/artists";
-import { getFeaturedWorks, sculptures } from "@/lib/sculptures";
+import { getFeaturedWorks, getSculpture, sculptures } from "@/lib/sculptures";
+import HeroScroll, { type HeroWork } from "@/components/HeroScroll";
 import ArtistTile from "@/components/gallery/ArtistTile";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
@@ -9,6 +10,24 @@ import Manifesto from "@/components/about/Manifesto";
 import PortraitFan from "@/components/gallery/PortraitFan";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
+
+/** The sculpture in the hero (needs a 3D model). */
+const HERO_WORK = "dancing-shiva";
+
+const heroWorkFor = (slug: string): HeroWork | undefined => {
+  const w = getSculpture(slug);
+  if (!w?.modelUrl) return undefined;
+  return {
+    slug: w.slug,
+    title: w.title,
+    subtitle: w.subtitle,
+    description: w.description,
+    artist: artists.find((a) => a.slug === w.artistSlug)?.name ?? "",
+    meta: [w.year, w.material].filter(Boolean).join(" · "),
+    modelUrl: w.modelUrl,
+    facing: w.facing,
+  };
+};
 
 // Portraits fanned out beside "Every work has a maker" (missing ones are skipped).
 const FAN = [
@@ -22,6 +41,7 @@ const FAN = [
 export default function Home() {
   const live = publishedArtists();
   const featured = getFeaturedWorks();
+  const heroWork = heroWorkFor(HERO_WORK);
   const fan = FAN.flatMap(
     (slug) => artists.find((a) => a.slug === slug && a.portrait) ?? [],
   );
@@ -30,33 +50,9 @@ export default function Home() {
 
   return (
     <main>
-      {/* Hero: words only, like a gallery's opening wall text */}
-      <section
-        data-reveal-stagger
-        className={`${wrap} pb-[clamp(56px,8vw,100px)] pt-[clamp(70px,11vw,140px)]`}
-      >
-        <span className="label">Contemporary art</span>
-        <h1 className="heading-caps mt-[22px] max-w-[15ch] text-[clamp(38px,6vw,80px)] leading-[1.06] tracking-[0.03em]">
-          Art, and the hands that made it.
-        </h1>
-        <p className="font-text mt-[26px] max-w-[52ch] text-[clamp(17px,1.6vw,19px)] leading-relaxed text-stone">
-          A gallery of artists and their works, established names and new
-          voices, across every medium, each presented with the care of a museum
-          catalogue.
-        </p>
-        <div className="mt-[34px] flex flex-wrap items-center gap-[30px]">
-          <Magnetic>
-            <Link href="/artworks" className="btn">
-              View the artworks <span className="nudge">→</span>
-            </Link>
-          </Magnetic>
-          <Magnetic>
-            <Link href="/artists" className="text-link">
-              Meet the artists <span className="nudge">→</span>
-            </Link>
-          </Magnetic>
-        </div>
-      </section>
+      {/* Hero: intro left, a featured sculpture right; on scroll the
+          sculpture slides left and its details appear (HeroScroll). */}
+      {heroWork && <HeroScroll work={heroWork} />}
 
       <div className="border-y border-rule bg-white">
         <div
