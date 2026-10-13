@@ -49,13 +49,6 @@ export default function MobileMenu({
       </div>
 
       <nav aria-label="Main" className="mt-10 grid gap-2">
-        <Link
-          href="/"
-          onClick={onClose}
-          className="font-display text-3xl uppercase leading-snug tracking-[0.06em]"
-        >
-          Home
-        </Link>
         {site.nav.map((link) => (
           <Link
             key={link.href}

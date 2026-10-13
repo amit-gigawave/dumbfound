@@ -1,16 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { initials, type Artist } from "@/lib/artists";
+import { tilt, untilt } from "./tilt";
 
 /**
  * Portrait (or initials) with name, birth and medium. Placeholders don't link.
- * Hover is deliberately slow: the portrait eases in over ~2s and a thin
- * mount-style frame fades in.
+ * Hover: the portrait eases into full colour over ~2s, the plate lifts with a
+ * small wiggle and leans toward the cursor, and a thin mount-style frame fades
+ * in. In a [data-focus-grid], the other artists dim meanwhile.
  */
 const ArtistTile = ({ artist }: { artist: Artist }) => {
   const body = (
     <>
-      <div className="relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-colors duration-[1800ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:bg-[#e8e8e8]">
+      <div
+        onPointerMove={artist.placeholder ? undefined : tilt}
+        onPointerLeave={artist.placeholder ? undefined : untilt}
+        className="artist-plate relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate group-hover:bg-[#e8e8e8]"
+      >
         {artist.portrait ? (
           <Image
             src={artist.portrait}
@@ -35,7 +43,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
           />
         )}
       </div>
-      <div>
+      <div className="artist-caption">
         <h3
           className={`text-[21px] leading-tight tracking-[0.04em] transition-colors duration-[1200ms] ease-[cubic-bezier(0.45,0,0.2,1)] ${
             artist.placeholder ? "text-[#8a8a8a]" : "group-hover:text-accent"
@@ -58,9 +66,12 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
   );
 
   return artist.placeholder ? (
-    <div className="grid gap-3.5">{body}</div>
+    <div className="artist-tile grid gap-3.5">{body}</div>
   ) : (
-    <Link href={`/artists/${artist.slug}`} className="group grid gap-3.5">
+    <Link
+      href={`/artists/${artist.slug}`}
+      className="artist-tile group grid gap-3.5"
+    >
       {body}
     </Link>
   );

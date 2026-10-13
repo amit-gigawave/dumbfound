@@ -1,7 +1,8 @@
 /*
- * Exhibitions where our artists' work is shown — organised by others, not by
- * us, so every entry names its organiser and links to their own page for the
- * full listing. Source: sculptedindia.com/events.html (2026-09-28).
+ * Exhibitions, fairs and showcases where our artists' work is shown — whether
+ * we organise them or others do. Every entry names its organiser and links to
+ * their own page for the full listing. Source: sculptedindia.com/events.html
+ * (2026-09-28).
  */
 
 export interface GalleryEvent {
@@ -9,7 +10,11 @@ export interface GalleryEvent {
   title: string;
   /** e.g. "Solo Exhibition", "Group Exhibition" */
   kind: string;
+  /** Dates as written for people, e.g. "12–15 October 2026 (preview 11 October, 5pm)". */
   dates: string;
+  /** First and last day, YYYY-MM-DD. Drive "On now", the date block and Add to calendar. */
+  start?: string;
+  end?: string;
   venue: string;
   description: string;
   organiser: string;
@@ -28,6 +33,8 @@ export const events: GalleryEvent[] = [
     title: "Between Presence and Absence",
     kind: "Solo Exhibition",
     dates: "12–15 October 2026 (preview 11 October, 5pm)",
+    start: "2026-10-12",
+    end: "2026-10-15",
     venue: "Travancore Palace, New Delhi",
     description:
       "A solo exhibition of Dhananjay Singh's coiled stainless steel, copper and bronze wire — heads, faces and trees from across his career, from wire trees nearly nine feet tall to smaller bronze and steel works.",
@@ -41,11 +48,14 @@ export const events: GalleryEvent[] = [
     title: "Design Democracy 2026",
     kind: "Group Exhibition",
     dates: "18–20 September 2026",
+    start: "2026-09-18",
+    end: "2026-09-20",
     venue: "HITEX Exhibition Centre, Hyderabad — Booth C20",
     description:
       "Sculpted India's debut showcase at Design Democracy, presenting modern and contemporary Indian sculpture at the intersection of art, architecture and design.",
     organiser: "Sculpted India",
-    sourceUrl: "https://www.sculptedindia.com/events/design-democracy-2026.html",
+    sourceUrl:
+      "https://www.sculptedindia.com/events/design-democracy-2026.html",
     artistSlugs: [
       "krishen-khanna",
       "himmat-shah",

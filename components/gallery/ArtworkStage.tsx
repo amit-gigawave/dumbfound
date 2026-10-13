@@ -102,6 +102,7 @@ export default function ArtworkStage({
                 url={modelUrl}
                 interactive
                 fit={FIT_VIEWER}
+                facing={work.facing}
                 controlsRef={controlsRef}
                 onReady={onReady}
                 onBackground={setViewerBg}

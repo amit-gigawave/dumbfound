@@ -4,12 +4,27 @@ import { getFeaturedWorks, sculptures } from "@/lib/sculptures";
 import ArtistTile from "@/components/gallery/ArtistTile";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
+import Magnetic from "@/components/Magnetic";
+import Manifesto from "@/components/about/Manifesto";
+import PortraitFan from "@/components/gallery/PortraitFan";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
+
+// Portraits fanned out beside "Every work has a maker" (missing ones are skipped).
+const FAN = [
+  "mf-husain",
+  "krishen-khanna",
+  "thota-vaikuntam",
+  "himmat-shah",
+  "jogen-chowdhury",
+];
 
 export default function Home() {
   const live = publishedArtists();
   const featured = getFeaturedWorks();
+  const fan = FAN.flatMap(
+    (slug) => artists.find((a) => a.slug === slug && a.portrait) ?? [],
+  );
   const count = (n: number, one: string, many: string) =>
     `${n} ${n === 1 ? one : many}`;
 
@@ -30,12 +45,16 @@ export default function Home() {
           catalogue.
         </p>
         <div className="mt-[34px] flex flex-wrap items-center gap-[30px]">
-          <Link href="/artworks" className="btn">
-            View the artworks
-          </Link>
-          <Link href="/artists" className="text-link">
-            Meet the artists
-          </Link>
+          <Magnetic>
+            <Link href="/artworks" className="btn">
+              View the artworks <span className="nudge">→</span>
+            </Link>
+          </Magnetic>
+          <Magnetic>
+            <Link href="/artists" className="text-link">
+              Meet the artists <span className="nudge">→</span>
+            </Link>
+          </Magnetic>
         </div>
       </section>
 
@@ -64,6 +83,7 @@ export default function Home() {
         />
         <div
           data-reveal-stagger
+          data-focus-grid
           className="grid grid-cols-2 gap-x-7 gap-y-10 sm:grid-cols-3 lg:grid-cols-5"
         >
           {artists.map((artist) => (
@@ -82,30 +102,48 @@ export default function Home() {
           className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
         >
           {featured.map((work, i) => (
-            <ArtworkTile key={work.slug} work={work} priority={i < 3} />
+            <ArtworkTile
+              key={work.slug}
+              work={work}
+              priority={i < 3}
+              showcase
+            />
           ))}
         </div>
       </section>
 
       {/* Deep contrast band */}
-      <section className="deep">
+      <section className="deep overflow-hidden">
         <div
-          data-reveal-stagger
-          className={`${wrap} grid gap-[22px] py-[clamp(70px,9vw,120px)]`}
+          className={`${wrap} grid items-center gap-[clamp(40px,6vw,80px)] py-[clamp(70px,9vw,120px)] md:grid-cols-[1.1fr_1fr]`}
         >
-          <span className="label">About the gallery</span>
-          <h2 className="heading-caps max-w-[18ch] text-[clamp(28px,4vw,50px)] leading-[1.14] tracking-[0.06em]">
-            Every work has a maker, and a story.
-          </h2>
-          <p className="font-text max-w-[52ch] text-[17px] leading-[1.75] text-[#d0d0d0]">
-            We bring together artists and their work, and present each piece
-            with the care of a catalogue: who made it, what it is made of, and
-            the story it carries.
-          </p>
-          <div>
-            <Link href="/about" className="btn mt-2.5">
-              About us
-            </Link>
+          <div data-reveal-stagger className="grid gap-[22px]">
+            <span className="label">About the gallery</span>
+            <Manifesto
+              as="h2"
+              dark
+              text="Every work has a **maker,** and a **story.**"
+              className="heading-caps max-w-[18ch] text-[clamp(28px,4vw,50px)] leading-[1.14] tracking-[0.06em]"
+            />
+            <p className="font-text max-w-[52ch] text-[17px] leading-[1.75] text-[#d0d0d0]">
+              We bring together artists and their work, and present each piece
+              with the care of a catalogue: who made it, what it is made of, and
+              the story it carries.
+            </p>
+            <div className="mt-2.5 flex flex-wrap items-center gap-7">
+              <Magnetic>
+                <Link href="/about" className="btn">
+                  About us <span className="nudge">→</span>
+                </Link>
+              </Magnetic>
+              <Link href="/artists" className="text-link text-[#d0d0d0]">
+                Meet all {count(live.length, "artist", "artists")}{" "}
+                <span className="nudge">→</span>
+              </Link>
+            </div>
+          </div>
+          <div data-reveal>
+            <PortraitFan artists={fan} />
           </div>
         </div>
       </section>

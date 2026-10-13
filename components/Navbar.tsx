@@ -51,35 +51,43 @@ export default function Navbar() {
             {site.name}
           </Link>
 
-          <div className="flex items-center gap-8">
-            <nav aria-label="Main" className="hidden gap-8 md:flex">
-              {site.nav.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={isActive(link.href) ? "page" : undefined}
-                  className={`nav-link py-1.5 text-[11px] uppercase tracking-[0.22em] ${
-                    isActive(link.href)
-                      ? "text-accent"
-                      : "text-ink/75 hover:text-accent"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+          {/* Three groups — wordmark · links · search — spread evenly by justify-between. */}
+          <nav
+            aria-label="Main"
+            className="hidden gap-5 md:flex lg:gap-6 xl:gap-8"
+          >
+            {site.nav.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`nav-link py-1.5 text-[11px] uppercase tracking-[0.22em] ${
+                  isActive(link.href)
+                    ? "text-accent"
+                    : "text-ink/75 hover:text-accent"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
 
+          <div className="flex items-center gap-5">
             <button
               type="button"
               onClick={openSearch}
               aria-label="Search artists and artworks"
               title="Search ( / )"
-              className="flex items-center gap-2 text-ink/75 transition-colors hover:text-accent"
+              className="group flex items-center gap-2.5 rounded-full border border-rule bg-white/70 p-2 text-ink/75 transition-[border-color,color,box-shadow] duration-300 hover:border-accent/50 hover:text-accent hover:shadow-[0_6px_18px_-10px_rgba(0,0,0,.35)] lg:py-2 lg:pl-3.5 lg:pr-2 xl:w-[230px]"
             >
-              <SearchIcon className="h-[18px] w-[18px]" />
-              <span className="hidden text-[11px] uppercase tracking-[0.22em] lg:inline">
+              <SearchIcon className="h-4 w-4 shrink-0" />
+              <span className="hidden flex-1 text-left text-[12px] tracking-[0.02em] text-stone transition-colors group-hover:text-accent lg:inline">
                 Search
+                <span className="hidden xl:inline"> artists &amp; works</span>
               </span>
+              <kbd className="hidden rounded-[6px] border border-rule bg-paper px-1.5 font-sans text-[11px] leading-5 text-stone lg:inline">
+                /
+              </kbd>
             </button>
 
             <button

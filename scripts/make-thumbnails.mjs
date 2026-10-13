@@ -14,7 +14,9 @@ import puppeteer from "puppeteer";
 const args = process.argv.slice(2);
 const baseAt = args.indexOf("--base");
 const BASE = baseAt > -1 ? args[baseAt + 1] : "http://localhost:3000";
-const wanted = args.filter((a, i) => !a.startsWith("--") && i !== baseAt + 1);
+const wanted = args.filter(
+  (a, i) => !a.startsWith("--") && (baseAt === -1 || i !== baseAt + 1),
+);
 const OUT = "public/thumbnails";
 
 // Load the catalogue itself (Node can read the .ts file directly).

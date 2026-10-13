@@ -200,19 +200,25 @@ export default async function ArtistPage({
 
         <section id="works" className="scroll-mt-28 py-[clamp(64px,8vw,104px)]">
           <SectionHeader title="Works" />
-          <div
-            data-reveal-stagger
-            className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {works.map((work) => (
-              <ArtworkTile
-                key={work.slug}
-                work={work}
-                showArtist={false}
-                sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-              />
-            ))}
-          </div>
+          {works.length > 0 ? (
+            <div
+              data-reveal-stagger
+              className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              {works.map((work) => (
+                <ArtworkTile
+                  key={work.slug}
+                  work={work}
+                  showArtist={false}
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                />
+              ))}
+            </div>
+          ) : (
+            <p data-reveal className="font-text text-[17px] text-stone">
+              No works by {artist.name} are listed yet.
+            </p>
+          )}
         </section>
       </div>
     </main>
