@@ -26,6 +26,16 @@ npm run dev                      # http://localhost:3000
 Only one `next dev` can run per checkout. A second one fails on the `.next/dev/lock` file.
 To test on a phone, open the "Network" address that `npm run dev` prints. AR itself needs the live `https://` site (see [docs/adding-artworks.md](docs/adding-artworks.md#things-to-know-about-ar)).
 
+### Testing AR from your computer
+
+The "View in AR" QR code on desktop is scanned by a phone, so it can't point at `localhost`. Set the public address in `.env.local` (not committed), and the QR code uses it:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://<your-tunnel>.trycloudflare.com
+```
+
+A quick HTTPS tunnel: `cloudflared tunnel --url http://localhost:3000`. Its address changes on every restart, so update `.env.local` too. On the live site, set `NEXT_PUBLIC_SITE_URL` to the real domain, or leave it unset to use the page's own address.
+
 ## Scripts
 
 | Command | What it does |
