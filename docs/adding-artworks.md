@@ -199,4 +199,5 @@ Optional details only appear on the page when filled in. Text that starts with `
 - **"View in AR" only works on the live website**, served over `https://`. It will not work from the local network link.
 - AR opens `public/ar/<slug>.glb`, a copy of the model made by `npm run ar-models`. Phone AR reads model units as metres, while our models come in arbitrary units, so the copy is scaled to the work's **`heightCm`**, turned by `facing`, and stands on the floor.
 - **Works without `heightCm` appear 50 cm tall.** Add the real height for true-to-life size.
-- On **Android** the copy opens in Google Scene Viewer. On **iPhone** it is converted to USDZ in the browser and opens in AR Quick Look.
+- On **Android** AR runs in the browser (WebXR, through Google's `<model-viewer>`, self-hosted in `public/vendor/`). The work shows straight away and settles onto the floor once the phone finds it. Messages guide the visitor while it searches, suggest a better surface if it can't find one, and say when the camera can't see the room. Phones without in-browser AR open Google Scene Viewer instead. On **iPhone** the copy is converted to USDZ in the browser and opens in AR Quick Look.
+- Floors are found fastest when they are **well lit and have some texture or pattern**. Plain, dark or shiny surfaces (a black desk, glossy tiles) can take a long time or not be found at all.

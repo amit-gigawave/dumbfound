@@ -71,7 +71,8 @@ components/
   HeroScene.tsx         3D scene for the hero
   SculptureScene.tsx    Shared 3D viewer (auto-frames models with the `fit` prop)
   ThumbnailStage.tsx    Scene used to render thumbnails
-  ARButton.tsx          AR: Android Scene Viewer, iOS Quick Look (USDZ made in the browser), QR code on desktop
+  ARButton.tsx          AR: Android in-browser AR (WebXRStage, Scene Viewer fallback), iOS Quick Look, QR code on desktop
+  WebXRStage.tsx        Guided in-browser AR session on Android (model-viewer), with on-screen guidance
   SearchDialog.tsx      Site search
   Navbar, Footer, MobileMenu, Contact, FAQ, Magnetic, RevealObserver
   gallery/              Artwork and artist tiles, artwork stage, artist filter, portrait fan
@@ -93,6 +94,7 @@ scripts/
 public/
   sculptures/           GLB models (the web viewer)
   ar/                   AR copies of the models, in metres (built by `npm run ar-models`)
+  vendor/               model-viewer 4.3.1 (Apache-2.0), loaded only for AR on Android
   thumbnails/           Rendered thumbnails of 3D works (WebP)
   artworks/             Photos of works without a model
   artists/              Artist portraits
