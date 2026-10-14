@@ -25,16 +25,22 @@ export const preloadModel = (url: string) => {
 let warmed = false;
 
 /**
- * Once the page is idle, fetch the 3D viewer code and the Draco decoder, so
- * the first hover only has to download the model itself (idempotent).
+ * Once the page is idle, get the hover previews ready: fetch their code and
+ * the Draco decoder, and create the shared renderer with its lighting, so the
+ * first hover only has to load the model itself (idempotent).
  */
 export const warm3D = () => {
   if (warmed || typeof window === "undefined") return;
   warmed = true;
-  const go = () => {
-    import("../SculptureScene");
+  const go = async () => {
     for (const f of ["draco_wasm_wrapper.js", "draco_decoder.wasm"])
       fetch(DRACO_PATH + f).catch(() => {});
+    await import("./TilePreview");
+    const [{ sharedRenderer }, { studioMap }] = await Promise.all([
+      import("./renderer"),
+      import("./StudioEnvironment"),
+    ]);
+    studioMap(sharedRenderer());
   };
   if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 3000 });
   else setTimeout(go, 1500);
