@@ -76,7 +76,8 @@ components/
   Navbar, Footer, MobileMenu, Contact, FAQ, Magnetic, RevealObserver
   gallery/              Artwork and artist tiles, artwork stage, artist filter, portrait fan
   about/ contact/ events/  Page sections
-  three/                Model loader (Draco) and procedural studio lighting
+  three/                Model loader (Draco), studio lighting, and the artwork tiles'
+                        hover previews (TilePreview), which share one WebGL renderer
   lab/                  Components for the /lab pages
 lib/
   site.ts               Name, tagline, navigation, contact details
