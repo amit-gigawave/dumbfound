@@ -1,88 +1,101 @@
 # Sculpted India
 
-A premium interactive sculpture showcase website for **Sculpted India** — a pioneering public art initiative advancing modern and contemporary Indian sculpture. Built with Next.js 16, React Three Fiber, and GSAP animations.
+A catalogue website for artists and their works, with 3D viewing and "see it in your space" AR for works that have a model.
+The platform is multi-artist and not tied to one medium. Each work can be a photograph or a 3D model.
+
+The name, tagline and contact details are set in `lib/site.ts` and used everywhere from there.
 
 Reference: https://www.sculptedindia.com/
 
-## Features
+## Tech stack
 
-- **Smooth Scroll Experience**: Lenis smooth scrolling for buttery-smooth navigation
-- **3D Interactive Sculpture**: Three.js powered 3D model with scroll-linked animations
-- **Cinematic Animations**: GSAP ScrollTrigger animations throughout
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
-- **Performance Optimized**: Dynamic imports, lazy loading, and SSR disabled for 3D content
+- **Framework:** Next.js 16 (App Router, Turbopack), React 19, TypeScript
+- **3D:** three.js, React Three Fiber, drei. Models are Draco-compressed GLBs, and the decoder is self-hosted in `public/draco`.
+- **Motion:** GSAP, Motion, Lenis
+- **Styling:** Tailwind CSS 4
 
-## Tech Stack
+## Getting started
 
-- **Framework**: Next.js 16 (React 19)
-- **3D Graphics**: Three.js, React Three Fiber, Drei
-- **Animations**: GSAP, ScrollTrigger
-- **Smooth Scroll**: Lenis
-- **Styling**: Tailwind CSS 4
-- **Language**: TypeScript
-
-## Getting Started
-
-Install dependencies:
+Needs Node.js 24.
 
 ```bash
-npm install --legacy-peer-deps
+npm install --legacy-peer-deps   # also copies the Draco decoder to public/draco
+npm run dev                      # http://localhost:3000
 ```
 
-Run the development server:
+Only one `next dev` can run per checkout. A second one fails on the `.next/dev/lock` file.
+To test on a phone, open the "Network" address that `npm run dev` prints. AR itself needs the live `https://` site (see [docs/adding-artworks.md](docs/adding-artworks.md#things-to-know-about-ar)).
 
-```bash
-npm run dev
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` / `npm start` | Production build and server |
+| `npm run lint` | ESLint |
+| `npm run add-work` | Interactive helper: adds an artwork, compresses its image or model and makes its thumbnail |
+| `npm run thumbnails -- [slug]` | Renders thumbnails of 3D works with Puppeteer. The dev server must be running. Leave out the slug to redo all of them |
+
+## Routes
+
+| Route | Page |
+| --- | --- |
+| `/` | Home: scroll-driven 3D hero, featured works, artists |
+| `/artists`, `/artists/[slug]` | Artist list and artist pages |
+| `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages with the 3D viewer and AR |
+| `/events` | Upcoming and past exhibitions |
+| `/about` | About the platform |
+| `/contact` | Enquiry form. It opens the visitor's mail app with the message filled in |
+| `/artworks/thumb/[slug]` | Hidden page that `npm run thumbnails` renders thumbnails from |
+| `/lab/*` | Internal design comparison pages. They are not linked anywhere and are not indexed |
+
+`/gallery/*` redirects to `/artworks/*`.
+
+## Project structure
+
+```
+app/                    Routes (see above)
+components/
+  HeroScroll.tsx        Home hero: sculpture that moves with the scroll
+  HeroScene.tsx         3D scene for the hero
+  SculptureScene.tsx    Shared 3D viewer (auto-frames models with the `fit` prop)
+  ThumbnailStage.tsx    Scene used to render thumbnails
+  ARButton.tsx          AR: Android Scene Viewer, iOS Quick Look (USDZ made in the browser), QR code on desktop
+  SearchDialog.tsx      Site search
+  Navbar, Footer, MobileMenu, Contact, FAQ, Magnetic, RevealObserver
+  gallery/              Artwork and artist tiles, artwork stage, artist filter, portrait fan
+  about/ contact/ events/  Page sections
+  three/                Model loader (Draco) and procedural studio lighting
+  lab/                  Components for the /lab pages
+lib/
+  site.ts               Name, tagline, navigation, contact details
+  artists.ts            Artists (facts must be sourced; `placeholder` entries fill the layout)
+  sculptures.ts         Artworks: the catalogue behind every page, search and AR
+  events.ts             Exhibitions
+  search.ts             Search over artists and works
+scripts/
+  add-work.mjs          `npm run add-work`
+  make-thumbnails.mjs   `npm run thumbnails`
+  copy-draco.mjs        postinstall: copies three's Draco decoder to public/draco
+public/
+  sculptures/           GLB models
+  thumbnails/           Rendered thumbnails of 3D works (WebP)
+  artworks/             Photos of works without a model
+  artists/              Artist portraits
+docs/
+  adding-artworks.md    How to add artworks and artists
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Content
 
-## Project Structure
+All content lives in `lib/`. Components don't hold any content.
+To add or change artworks and artists, follow **[docs/adding-artworks.md](docs/adding-artworks.md)**.
 
-```
-├── app/
-│   ├── layout.tsx          # Root layout with Navbar
-│   ├── page.tsx            # Main page with Lenis integration
-│   └── globals.css         # Global styles
-├── components/
-│   ├── Navbar.tsx          # Sticky navigation with glassmorphism
-│   ├── Hero.tsx            # Hero section with GSAP text animations
-│   ├── About.tsx           # About section with stats
-│   ├── Gallery.tsx         # Gallery grid with hover effects
-│   ├── Contact.tsx         # Contact form and info
-│   ├── Scene.tsx           # Three.js 3D scene with scroll animations
-│   └── SceneWrapper.tsx    # Dynamic import wrapper for Scene
-└── public/
-    └── sculpture.glb       # 3D sculpture model
-```
+## Notes
 
-## 3D Model
-
-Place your sculpture model as `sculpture.glb` in the `public/` folder. The model should be:
-
-- Format: GLB (optimized)
-- Size: Under 10MB
-- Optimized polygon count
-
-## Sections
-
-1. **Hero**: Eye-catching intro with 3D sculpture
-2. **About**: Company story and achievements
-3. **Gallery**: Sculpture showcase grid
-4. **Contact**: Contact form and information
-
-## Customization
-
-- Update sculpture model in `/public/sculpture.glb`
-- Modify colors in `globals.css` and component files
-- Adjust animations in Scene.tsx ScrollTrigger configurations
-- Update content in each component
-
-## Performance Notes
-
-- 3D Scene uses dynamic import with SSR disabled
-- Lenis provides hardware-accelerated smooth scrolling
-- GSAP ScrollTrigger syncs 3D animations with scroll position
+- `project.md` is the original design brief. It describes a single-page site that was never built in that form. This README describes the code as it is now.
+- `.glb-backup/` holds the uncompressed source models. It is ignored by git.
+- Static models, thumbnails and the Draco files are cached for a day (`next.config.ts`).
 
 ## License
 
