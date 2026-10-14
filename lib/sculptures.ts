@@ -205,6 +205,17 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "04 - Female with blue saree". TODO: artist, year and medium not known yet.
+  {
+    slug: "female-with-blue-saree",
+    title: "Female with Blue Saree",
+    description: "",
+    artistSlug: "",
+    thumbnail: "/thumbnails/female-with-blue-saree.webp",
+    modelUrl: "/sculptures/female-with-blue-saree.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
