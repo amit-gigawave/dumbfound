@@ -152,6 +152,7 @@ The entries marked `placeholder: true` ("Artist Name") only fill the layout. Del
 | --- | --- |
 | `featured` | `true` shows the work in **Featured works** on the home page |
 | `modelUrl` | The 3D model. Adds "View in the round" and "See it in your space" |
+| `facing` | Degrees to turn the model (anticlockwise, seen from above) so it faces front. For scans saved facing sideways. Run `npm run thumbnails -- <slug>` again after changing it |
 | `usdzUrl` | A ready-made iPhone AR file. Without it, one is generated from the `.glb` |
 | `subtitle` | A short line, e.g. `"The iconic muse"`. Searchable |
 | `longDescription` | Extra paragraph under the description |
