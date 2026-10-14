@@ -85,6 +85,7 @@ public/
   logos/                Wordmark shown in the navbar (from sculptedindia.com)
 docs/
   adding-artworks.md    How to add artworks and artists
+  ar-qr-plan.md         Plan: scan a QR code to see a work in AR (not built yet)
 ```
 
 ## Content
