@@ -35,6 +35,7 @@ To test on a phone, open the "Network" address that `npm run dev` prints. AR its
 | `npm run lint` | ESLint |
 | `npm run add-work` | Interactive helper: adds an artwork, compresses its image or model and makes its thumbnail |
 | `npm run thumbnails -- [slug]` | Renders thumbnails of 3D works with Puppeteer. The dev server must be running. Leave out the slug to redo all of them |
+| `npm run ar-models -- [slug]` | Builds the AR copies of 3D works (`public/ar/`): real size from `heightCm`, facing front, on the floor |
 
 ## Routes
 
@@ -76,9 +77,11 @@ lib/
 scripts/
   add-work.mjs          `npm run add-work`
   make-thumbnails.mjs   `npm run thumbnails`
+  make-ar-models.mjs    `npm run ar-models`
   copy-draco.mjs        postinstall: copies three's Draco decoder to public/draco
 public/
-  sculptures/           GLB models
+  sculptures/           GLB models (the web viewer)
+  ar/                   AR copies of the models, in metres (built by `npm run ar-models`)
   thumbnails/           Rendered thumbnails of 3D works (WebP)
   artworks/             Photos of works without a model
   artists/              Artist portraits

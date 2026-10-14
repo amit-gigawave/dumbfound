@@ -201,6 +201,25 @@ try {
 }
 console.log(`Added "${title}" to ${CATALOGUE}`);
 
+// ---------- AR model (3D works only) ----------
+
+if (is3d) {
+  console.log("\nMaking the AR model…");
+  const ar = spawnSync(
+    process.execPath,
+    [
+      "--disable-warning=ExperimentalWarning",
+      "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON",
+      "scripts/make-ar-models.mjs",
+      slug,
+    ],
+    { stdio: "inherit" },
+  );
+  if (ar.status !== 0) {
+    console.warn(`\nThe AR model could not be made. Fix the problem above, then run:  npm run ar-models -- ${slug}`);
+  }
+}
+
 // ---------- thumbnail (3D works only) ----------
 
 if (is3d) {

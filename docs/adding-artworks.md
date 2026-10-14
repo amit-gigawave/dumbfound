@@ -29,7 +29,7 @@ It asks a few questions, then does the rest:
 What it does for you:
 
 - **Image:** resizes it (max 1600 px on the long side), saves it as WebP to `public/artworks/<slug>.webp`.
-- **3D model:** compresses it (Draco + WebP textures, the same way the existing models were made) into `public/sculptures/<slug>.glb`. The first run downloads the compression tool, so it needs an internet connection and takes about a minute.
+- **3D model:** compresses it (Draco + WebP textures, the same way the existing models were made) into `public/sculptures/<slug>.glb`. The first run downloads the compression tool, so it needs an internet connection and takes about a minute. It also builds the AR copy, `public/ar/<slug>.glb` (see [AR](#things-to-know-about-ar)).
 - Adds the entry to `lib/sculptures.ts` (and puts the file back the way it was if anything goes wrong).
 - **3D model only:** makes the thumbnail image, **if the site is running** (see below).
 
@@ -97,6 +97,12 @@ When it finishes, open `http://localhost:3000/artworks/<slug>` and check the pag
 
    Leave out the slug to redo the thumbnails of every work that has a model.
 
+4. **Make the AR model** (what "View in AR" opens):
+
+   ```bash
+   npm run ar-models -- my-sculpture
+   ```
+
 ### A work without 3D (painting, photograph, drawing, …)
 
 1. Save the photo as `public/artworks/<slug>.webp` (about 1600 px on the long side, under 300 KB).
@@ -152,7 +158,8 @@ The entries marked `placeholder: true` ("Artist Name") only fill the layout. Del
 | --- | --- |
 | `featured` | `true` shows the work in **Featured works** on the home page |
 | `modelUrl` | The 3D model. The work's page opens in 3D (with a 3D / Photo switch) and gets "View in AR" |
-| `facing` | Degrees to turn the model (anticlockwise, seen from above) so it faces front. For scans saved facing sideways. Run `npm run thumbnails -- <slug>` again after changing it |
+| `facing` | Degrees to turn the model (anticlockwise, seen from above) so it faces front. For scans saved facing sideways. Run `npm run thumbnails -- <slug>` and `npm run ar-models -- <slug>` again after changing it |
+| `heightCm` | The work's real height in cm: the size it appears at in AR. Without it, AR uses 50 cm. Run `npm run ar-models -- <slug>` again after changing it |
 | `usdzUrl` | A ready-made iPhone AR file. Without it, one is generated from the `.glb` |
 | `subtitle` | A short line, e.g. `"The iconic muse"`. Searchable |
 | `longDescription` | Extra paragraph under the description |
@@ -171,8 +178,8 @@ Optional details only appear on the page when filled in. Text that starts with `
 - **Images:** any shape works; the site shows them whole on a 4:5 plate, so leave some space around the subject. Clean, evenly lit photos on a plain background look best.
 - **3D models:** upright (Y up), facing front, one object, textures no larger than 2048 px, under 1 MB.
 - **Thumbnails of 3D works** are renders of the model itself (transparent 800 × 1000 WebP), so what visitors see on the grid matches the 3D view.
-- **Removing a work:** delete its entry from `lib/sculptures.ts` and its files (`public/sculptures/<slug>.glb`, `public/thumbnails/<slug>.webp` or `public/artworks/<slug>.webp`).
-- **Replacing a model:** overwrite the `.glb`, then run `npm run thumbnails -- <slug>` again.
+- **Removing a work:** delete its entry from `lib/sculptures.ts` and its files (`public/sculptures/<slug>.glb`, `public/ar/<slug>.glb`, `public/thumbnails/<slug>.webp` or `public/artworks/<slug>.webp`).
+- **Replacing a model:** overwrite the `.glb`, then run `npm run thumbnails -- <slug>` and `npm run ar-models -- <slug>` again.
 
 ---
 
@@ -190,5 +197,6 @@ Optional details only appear on the page when filled in. Text that starts with `
 ## Things to know about AR
 
 - **"View in AR" only works on the live website**, served over `https://`. It will not work from the local network link.
-- On **Android** the `.glb` opens in Google's viewer at the size it was modelled (in metres).
-- On **iPhone** the model is currently scaled to **0.6 m tall**, whatever the real size of the work. Real sizes per work are not supported yet.
+- AR opens `public/ar/<slug>.glb`, a copy of the model made by `npm run ar-models`. Phone AR reads model units as metres, while our models come in arbitrary units, so the copy is scaled to the work's **`heightCm`**, turned by `facing`, and stands on the floor.
+- **Works without `heightCm` appear 50 cm tall.** Add the real height for true-to-life size.
+- On **Android** the copy opens in Google Scene Viewer. On **iPhone** it is converted to USDZ in the browser and opens in AR Quick Look.
