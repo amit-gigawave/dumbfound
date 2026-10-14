@@ -14,6 +14,8 @@ import { DRACO_PATH } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 
 const WIRE_COLOR = "#a08060";
+/** Turn (radians) on load: faces the viewer straight on. Scroll turns it from here. */
+const START_TURN = -Math.PI / 2;
 
 /** Lets the page's scroll handler ask for a new frame (the canvas renders on demand). */
 const ScrollFrames = () => {
@@ -92,7 +94,7 @@ const Model = () => {
     // Turn with scroll, damped so it glides rather than steps; keep asking
     // for frames until it has settled.
     if (groupRef.current) {
-      const target = -2.0 + heroScrollStore.progress * Math.PI * 0.3;
+      const target = START_TURN + heroScrollStore.progress * Math.PI * 0.3;
       const y = groupRef.current.rotation.y;
       const settled = frameCount.current === 1 || Math.abs(target - y) < 0.0005;
       groupRef.current.rotation.y = settled
@@ -136,7 +138,7 @@ const Model = () => {
   });
 
   return (
-    <group ref={groupRef} rotation={[0, -1.1, 0]}>
+    <group ref={groupRef} rotation={[0, START_TURN, 0]}>
       <group ref={wireRef}>
         <primitive object={wireScene} />
       </group>
