@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Smartphone } from "lucide-react";
 import { arModelUrl, type Sculpture } from "@/lib/sculptures";
 import { DRACO_PATH } from "./three/modelLoader";
+import WebXRStage, { webXRSupported, type WebXRStageHandle } from "./WebXRStage";
 
 type Platform = "android" | "ios" | "desktop";
 
@@ -94,10 +95,14 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const platformRef = useRef<Platform>("desktop");
+  // Android with in-browser AR: our own guided session (see WebXRStage).
+  const [webXR, setWebXR] = useState(false);
+  const xrRef = useRef<WebXRStageHandle>(null);
 
   useEffect(() => {
     setMounted(true);
     platformRef.current = detectPlatform();
+    if (platformRef.current === "android") webXRSupported().then(setWebXR);
     // Arrived from a QR scan → show a tap prompt (iOS/Android AR needs a gesture).
     const wantsAR =
       new URLSearchParams(window.location.search).get("ar") === "1";
@@ -124,16 +129,36 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
     setQrOpen(true);
   }, []);
 
+  const launchSceneViewer_ = useCallback(
+    () =>
+      launchSceneViewer(
+        toAbs(arModelUrl(sculpture)),
+        sculpture.title,
+        window.location.href.replace(/[?&]ar=1/, ""),
+      ),
+    [sculpture],
+  );
+
+  // Once AR is open, the QR prompt has done its job: close it and drop ?ar=1,
+  // so leaving AR (or reloading) returns to the plain page.
+  const arStarted = useCallback(() => {
+    setArPromptOpen(false);
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("ar")) {
+      url.searchParams.delete("ar");
+      window.history.replaceState(window.history.state, "", url);
+    }
+  }, []);
+
   /** Fire AR. Must be called from within a user gesture (tap/click). */
   const launchAR = useCallback(async () => {
     const platform = platformRef.current;
     setError(null);
     if (platform === "android") {
-      launchSceneViewer(
-        toAbs(arModelUrl(sculpture)),
-        sculpture.title,
-        window.location.href.replace(/[?&]ar=1/, ""),
-      );
+      if (!xrRef.current?.launch()) {
+        launchSceneViewer_();
+        arStarted();
+      }
       return;
     }
     // iOS
@@ -147,7 +172,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
     } finally {
       setBusy(false);
     }
-  }, [sculpture]);
+  }, [sculpture, launchSceneViewer_, arStarted]);
 
   const onButtonClick = useCallback(() => {
     if (platformRef.current === "desktop") openQr();
@@ -184,6 +209,16 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
           View in AR
         </span>
       </button>
+
+      {webXR && (
+        <WebXRStage
+          ref={xrRef}
+          src={toAbs(arModelUrl(sculpture))}
+          title={sculpture.title}
+          onStart={arStarted}
+          onFail={launchSceneViewer_}
+        />
+      )}
 
       {mounted &&
         createPortal(
