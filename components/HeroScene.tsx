@@ -19,7 +19,12 @@ const START_TURN = -1.3;
 /** Over the scroll the work turns a little toward its details on the right… */
 const SCROLL_TURN = 0.3;
 /** …and grows by this share. */
-const SCROLL_GROW = 0.18;
+const SCROLL_GROW = 0.12;
+/**
+ * Camera framing (drei Stage margin): sized for the largest the work gets on
+ * scroll, plus a little air for the turn, so it never leaves its frame.
+ */
+const FRAME_MARGIN = (1 + SCROLL_GROW) * 1.04;
 /** On load it pops in from this scale, overshooting slightly, over POP_TIME seconds. */
 const POP_FROM = 0.85;
 const POP_TIME = 1.1;
@@ -207,7 +212,7 @@ export default function HeroScene() {
           <ScrollFrames />
           {/* One soft contact shadow (below); Stage's own would double it. */}
           <Stage
-            adjustCamera={0.85}
+            adjustCamera={FRAME_MARGIN}
             intensity={0.5}
             environment={null}
             shadows={false}
