@@ -2,7 +2,7 @@
 
 **Goal:** a visitor scans a printed QR code (a gallery wall label, catalogue, poster, invitation) with their phone. The work then stands in their room at its real size, with one tap and no app to install.
 
-Status: plan, not built yet. Written 2026-10-14.
+Status: written 2026-10-14. **Done so far:** the AR size fix (problems 1, 3 and part of 5). AR opens metre-scaled copies from `npm run ar-models`. Works without `heightCm` show at 50 cm, and every work still needs its real height.
 
 ---
 

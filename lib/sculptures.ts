@@ -32,9 +32,15 @@ export interface Sculpture {
   /**
    * Degrees to turn the model (anticlockwise, seen from above) so it faces the
    * viewer straight on — for scans saved facing sideways. Used by the thumbnail,
-   * hover preview and viewer; re-run `npm run thumbnails -- <slug>` after changing it.
+   * hover preview, viewer and AR; re-run `npm run thumbnails -- <slug>` and
+   * `npm run ar-models -- <slug>` after changing it.
    */
   facing?: number;
+  /**
+   * Real height in centimetres: the size the work appears at in AR. Unknown
+   * heights use AR_DEFAULT_CM. Re-run `npm run ar-models -- <slug>` after changing it.
+   */
+  heightCm?: number;
   /** Prebuilt USDZ for iPhone AR. Without it, one is generated from the GLB in the browser. */
   usdzUrl?: string;
   /** A short line, e.g. "The iconic muse". Searchable. */
@@ -51,6 +57,12 @@ export interface Sculpture {
   /** Tint for the AR dialog; defaults to the site accent. */
   accent?: string;
 }
+
+/** AR height for works whose real height (`heightCm`) isn't known yet. */
+export const AR_DEFAULT_CM = 50;
+
+/** The AR copy of a work's model, built by `npm run ar-models`. */
+export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
 
 export const sculptures: Sculpture[] = [
   {

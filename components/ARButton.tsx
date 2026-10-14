@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Smartphone } from "lucide-react";
-import type { Sculpture } from "@/lib/sculptures";
+import { arModelUrl, type Sculpture } from "@/lib/sculptures";
+import { DRACO_PATH } from "./three/modelLoader";
 
 type Platform = "android" | "ios" | "desktop";
 
@@ -57,7 +58,8 @@ const openQuickLook = (usdzUrl: string) => {
 
 /**
  * Build a USDZ for iOS Quick Look. Uses a prebuilt `usdzUrl` if one is supplied,
- * otherwise converts the GLB to USDZ in-browser with three's USDZExporter.
+ * otherwise converts the work's AR model (already in metres, facing front and
+ * standing on the floor; see scripts/make-ar-models.mjs) in the browser.
  */
 type WithModel = Sculpture & { modelUrl: string };
 
@@ -72,36 +74,14 @@ const resolveUsdz = async (sculpture: WithModel): Promise<string> => {
     ],
   );
 
-  const THREE = await import("three");
-
   const loader = new GLTFLoader();
   const draco = new DRACOLoader();
-  draco.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
+  draco.setDecoderPath(DRACO_PATH);
   loader.setDRACOLoader(draco);
 
-  const gltf = await loader.loadAsync(toAbs(sculpture.modelUrl));
-  const root = gltf.scene;
-
-  // The GLBs are authored in arbitrary units (~5–8 "units" tall). AR Quick Look
-  // reads USDZ units as METERS, so unscaled the sculpture appears giant and the
-  // camera sits inside it. Normalize to a real-world height and rest it on the
-  // ground (bottom at y=0, centred on x/z) so it places cleanly on a surface.
-  const TARGET_HEIGHT_M = 0.6;
-  let box = new THREE.Box3().setFromObject(root);
-  const size = box.getSize(new THREE.Vector3());
-  const scale = size.y > 0 ? TARGET_HEIGHT_M / size.y : 1;
-  root.scale.multiplyScalar(scale);
-  root.updateMatrixWorld(true);
-
-  box = new THREE.Box3().setFromObject(root);
-  const center = box.getCenter(new THREE.Vector3());
-  root.position.x -= center.x;
-  root.position.z -= center.z;
-  root.position.y -= box.min.y;
-  root.updateMatrixWorld(true);
-
+  const gltf = await loader.loadAsync(toAbs(arModelUrl(sculpture)));
   const exporter = new USDZExporter();
-  const usdz = await exporter.parseAsync(root);
+  const usdz = await exporter.parseAsync(gltf.scene);
   const blob = new Blob([usdz as BlobPart], { type: "model/vnd.usdz+zip" });
   return URL.createObjectURL(blob);
 };
@@ -143,7 +123,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
     setError(null);
     if (platform === "android") {
       launchSceneViewer(
-        toAbs(sculpture.modelUrl),
+        toAbs(arModelUrl(sculpture)),
         sculpture.title,
         window.location.href.replace(/[?&]ar=1/, ""),
       );
