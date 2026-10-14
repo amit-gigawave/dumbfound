@@ -22,12 +22,12 @@ const TilePreview = dynamic(() => import("../three/TilePreview"), {
 
 /**
  * How long the pointer rests on a tile before the 3D view mounts (the model
- * itself starts downloading at once). Short, but enough that sweeping the
- * cursor across the grid doesn't start a viewer in every tile.
+ * itself starts downloading at once). Previews share one renderer, so starting
+ * one is cheap; this only skips tiles the cursor merely passes over.
  */
-const HOVER_DELAY = 150;
-/** Once loaded: time for the bar to complete before the work starts turning. */
-const TURN_AFTER = 200;
+const HOVER_DELAY = 60;
+/** Once loaded: pause before the work starts turning. */
+const TURN_AFTER = 0;
 
 /**
  * Catalogue tile: the work framed on a plate, captioned
