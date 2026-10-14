@@ -14,8 +14,16 @@ import { DRACO_PATH } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 
 const WIRE_COLOR = "#a08060";
-/** Turn (radians) on load: faces the viewer straight on. Scroll turns it from here. */
-const START_TURN = -Math.PI / 2;
+/** Turn (radians) on load: face and hair square to the viewer. */
+const START_TURN = -1.3;
+/** Over the scroll the work turns a little toward its details on the right… */
+const SCROLL_TURN = 0.3;
+/** …and grows by this share. */
+const SCROLL_GROW = 0.18;
+/** On load it pops in from this scale, overshooting slightly, over POP_TIME seconds. */
+const POP_FROM = 0.85;
+const POP_TIME = 1.1;
+const easeOutBack = (t: number) => 1 + 2.2 * (t - 1) ** 3 + 1.2 * (t - 1) ** 2;
 
 /** Lets the page's scroll handler ask for a new frame (the canvas renders on demand). */
 const ScrollFrames = () => {
@@ -36,6 +44,8 @@ const Model = () => {
   const progressRef = useRef(0);
   const boundsRef = useRef<{ min: number; max: number } | null>(null);
   const frameCount = useRef(0);
+  const popRef = useRef(0);
+  const growRef = useRef(1);
 
   // Clipping planes that sweep up the model: the wireframe draws in first,
   // then the finished surface follows it.
@@ -91,23 +101,35 @@ const Model = () => {
     const clip = clipRef.current;
     if (!clip) return;
 
-    // Turn with scroll, damped so it glides rather than steps; keep asking
-    // for frames until it has settled.
-    if (groupRef.current) {
-      const target = START_TURN + heroScrollStore.progress * Math.PI * 0.3;
-      const y = groupRef.current.rotation.y;
-      const settled = frameCount.current === 1 || Math.abs(target - y) < 0.0005;
-      groupRef.current.rotation.y = settled
-        ? target
-        : THREE.MathUtils.damp(y, target, 6, delta);
-      if (!settled) invalidate();
-    }
+    const group = groupRef.current;
+    if (!group) return;
+
+    // Turn and grow with scroll, damped so it glides rather than steps; keep
+    // asking for frames until it has settled.
+    const s = heroScrollStore.progress;
+    const turn = START_TURN + s * SCROLL_TURN;
+    const grow = 1 + s * SCROLL_GROW;
+    const first = frameCount.current === 1;
+    const settled =
+      first ||
+      (Math.abs(turn - group.rotation.y) < 0.0005 &&
+        Math.abs(grow - growRef.current) < 0.0005);
+    group.rotation.y = settled
+      ? turn
+      : THREE.MathUtils.damp(group.rotation.y, turn, 6, delta);
+    growRef.current = settled
+      ? grow
+      : THREE.MathUtils.damp(growRef.current, grow, 6, delta);
+    if (!settled) invalidate();
 
     if (!boundsRef.current) {
       invalidate();
-      if (frameCount.current < 3 || !groupRef.current) return;
-      groupRef.current.updateWorldMatrix(true, true);
-      const box = new THREE.Box3().setFromObject(groupRef.current);
+      if (frameCount.current < 3) return;
+      // Measure at the largest scroll size so the reveal sweeps past the top.
+      group.scale.setScalar(1 + SCROLL_GROW);
+      group.updateWorldMatrix(true, true);
+      const box = new THREE.Box3().setFromObject(group);
+      group.scale.setScalar(POP_FROM);
       boundsRef.current = { min: box.min.y, max: box.max.y };
       clip.wireBottom.constant = boundsRef.current.min - 1;
       clip.tex.constant = boundsRef.current.min - 1;
@@ -115,12 +137,24 @@ const Model = () => {
       return;
     }
 
+    // Pop in as the reveal starts, then follow the scroll size.
+    if (popRef.current < 1) {
+      popRef.current = Math.min(1, popRef.current + delta / POP_TIME);
+      invalidate();
+    }
+    const pop = POP_FROM + (1 - POP_FROM) * easeOutBack(popRef.current);
+    group.scale.setScalar(pop * growRef.current);
+
     if (progressRef.current >= 1) return;
     progressRef.current = Math.min(1, progressRef.current + delta * 0.15);
     invalidate();
-    // Drawn in: the wireframe copy is fully clipped away, so stop drawing it.
-    if (progressRef.current >= 1 && wireRef.current)
-      wireRef.current.visible = false;
+    // Drawn in: hide the wireframe copy and open the surface's clip fully,
+    // so growing with scroll can never cut off the top.
+    if (progressRef.current >= 1) {
+      if (wireRef.current) wireRef.current.visible = false;
+      clip.tex.constant = 9999;
+      return;
+    }
     const p = progressRef.current;
     const { min, max } = boundsRef.current;
     const range = max - min;
@@ -173,7 +207,7 @@ export default function HeroScene() {
           <ScrollFrames />
           {/* One soft contact shadow (below); Stage's own would double it. */}
           <Stage
-            adjustCamera
+            adjustCamera={0.85}
             intensity={0.5}
             environment={null}
             shadows={false}
