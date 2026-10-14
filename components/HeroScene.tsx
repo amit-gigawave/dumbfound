@@ -156,6 +156,9 @@ export default function HeroScene() {
         dpr={[1, 1.5]}
         camera={{ fov: 35 }}
         gl={{ antialias: true, alpha: true, localClippingEnabled: true }}
+        // Don't track the canvas's page position on scroll: it changes R3F's
+        // size object, which made the camera refit (flicker) while scrolling.
+        resize={{ scroll: false }}
       >
         <ambientLight intensity={3} />
         <directionalLight position={[0, 2, 10]} intensity={5} />
