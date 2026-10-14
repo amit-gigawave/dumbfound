@@ -69,16 +69,18 @@ const next = () => {
     return;
   }
   fetching = true;
-  // Warm the HTTP cache only; decoding waits for an actual hover.
+  // Download, then decode once idle again (Draco runs in a worker), so a
+  // hover only has to upload the model to the GPU.
   fetch(url)
     .then((r) => r.arrayBuffer())
+    .then(() => idle(() => preloadModel(url)))
     .catch(() => {})
     .finally(() => idle(next));
 };
 
 /**
- * Download a visible tile's model in the background, one at a time while the
- * page is idle, so hovering it later doesn't wait on the network.
+ * Download and decode a visible tile's model in the background, one at a time
+ * while the page is idle, so hovering it later doesn't wait for either.
  */
 export const prefetchModel = (url: string) => {
   if (typeof window === "undefined" || requested.has(url) || queue.includes(url))
