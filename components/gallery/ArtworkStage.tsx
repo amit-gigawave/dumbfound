@@ -7,7 +7,7 @@ import { Maximize2, Minimize2, RotateCcw } from "lucide-react";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Sculpture } from "@/lib/sculptures";
 import ARButton from "../ARButton";
-import { FIT_VIEWER, preloadModel } from "../three/modelLoader";
+import { FIT_VIEWER } from "../three/modelLoader";
 
 const SculptureScene = dynamic(() => import("../SculptureScene"), {
   ssr: false,
@@ -34,9 +34,9 @@ const IconButton = ({
 );
 
 /**
- * The artwork's plate. Shows the still image by default. Works with a 3D model
- * also get "View in the round" — which swaps in the turnable work (the model
- * only downloads then) — and "See it in your space" (AR on the visitor's phone).
+ * The artwork's plate. Works with a 3D model open in 3D (the photo shows
+ * until the model is ready) and get a 3D | Photo switch plus "View in AR"
+ * (on the visitor's phone). Other works show their photo.
  */
 export default function ArtworkStage({
   work,
@@ -47,7 +47,7 @@ export default function ArtworkStage({
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
-  const [inRound, setInRound] = useState(false);
+  const [inRound, setInRound] = useState(Boolean(work.modelUrl));
   const [ready, setReady] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [viewerBg, setViewerBg] = useState<string | null>(null);
@@ -62,9 +62,10 @@ export default function ArtworkStage({
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
 
-  const toggleRound = () => {
-    if (inRound && document.fullscreenElement) document.exitFullscreen();
-    setInRound((v) => !v);
+  const show3D = (on: boolean) => {
+    if (on === inRound) return;
+    if (!on && document.fullscreenElement) document.exitFullscreen();
+    setInRound(on);
     setReady(false);
   };
 
@@ -133,27 +134,38 @@ export default function ArtworkStage({
 
       {modelUrl && (
         <div className="mt-4 flex flex-wrap items-center gap-x-7 gap-y-3">
-          <button
-            type="button"
-            onClick={toggleRound}
-            onPointerEnter={() => preloadModel(modelUrl)}
-            onFocus={() => preloadModel(modelUrl)}
-            aria-pressed={inRound}
-            className="group inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] transition-colors hover:text-accent"
+          <div
+            role="group"
+            aria-label="View"
+            className="inline-flex rounded-full border border-rule p-0.5 text-[11px] tracking-[0.18em]"
           >
-            <span aria-hidden className="text-base leading-none">
-              {inRound ? "▢" : "↻"}
-            </span>
-            <span className="border-b border-current/30 pb-0.5 group-hover:border-current">
-              {inRound ? "Back to the image" : "View in the round"}
-            </span>
-          </button>
+            {(
+              [
+                [true, "3D"],
+                [false, "Photo"],
+              ] as const
+            ).map(([on, label]) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => show3D(on)}
+                aria-pressed={inRound === on}
+                className={`rounded-full px-4 py-1.5 uppercase transition-colors ${
+                  inRound === on
+                    ? "bg-ink text-paper"
+                    : "text-stone hover:text-accent"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           <ARButton sculpture={{ ...work, modelUrl }} />
         </div>
       )}
       {inRound && (
         <p className="mt-2 text-xs text-stone">
-          Turn the work with your finger or mouse.
+          Drag to turn the work, scroll or pinch to zoom.
         </p>
       )}
     </div>

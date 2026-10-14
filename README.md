@@ -1,6 +1,6 @@
 # Sculpted India
 
-A catalogue website for artists and their works, with 3D viewing and "see it in your space" AR for works that have a model.
+A catalogue website for artists and their works, with 3D viewing and "View in AR" for works that have a model.
 The platform is multi-artist and not tied to one medium. Each work can be a photograph or a 3D model.
 
 The name, tagline and contact details are set in `lib/site.ts` and used everywhere from there.
@@ -42,7 +42,7 @@ To test on a phone, open the "Network" address that `npm run dev` prints. AR its
 | --- | --- |
 | `/` | Home: scroll-driven 3D hero, featured works, artists |
 | `/artists`, `/artists/[slug]` | Artist list and artist pages |
-| `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages with the 3D viewer and AR |
+| `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
 | `/events` | Upcoming and past exhibitions |
 | `/about` | About the platform |
 | `/contact` | Enquiry form. It opens the visitor's mail app with the message filled in |

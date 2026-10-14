@@ -36,12 +36,12 @@ const faq: FaqItem[] = [
       'Open the work and choose "Enquire about this work", or write to us through the enquiry page. We will put you in touch about availability, editions and viewing.',
   },
   {
-    question: 'What does "View in the round" mean?',
+    question: "Can I see a work in 3D?",
     answer:
-      'Some works exist in three dimensions. For those, "View in the round" lets you turn the work and look at it from every side, as you would in a gallery.',
+      "Works that exist in three dimensions open in 3D on their page. Drag to turn the work and look at it from every side, as you would in a gallery, or switch to Photo for the still image.",
   },
   {
-    question: 'What does "See it in your space" do?',
+    question: 'What does "View in AR" do?',
     answer:
       "On a phone, it places the work in your room through the camera, at its real size, so you can see how it sits in your home. On a computer it shows a code to scan with your phone.",
   },
