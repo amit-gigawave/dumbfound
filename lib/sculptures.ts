@@ -25,8 +25,8 @@ export interface Sculpture {
   /** Show in "Featured works" on the home page. */
   featured?: boolean;
   /**
-   * 3D model (Draco-compressed GLB). Works that have one get "View in the round"
-   * and "See it in your space"; paintings, photographs etc. simply omit it.
+   * 3D model (Draco-compressed GLB). Works that have one open in 3D and get
+   * "View in AR"; paintings, photographs etc. simply omit it.
    */
   modelUrl?: string;
   /**

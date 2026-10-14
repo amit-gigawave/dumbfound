@@ -204,7 +204,7 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
             </p>
             <div className="mt-8">
               <Link href={`/artworks/${work.slug}`} className="btn">
-                View in the round <span className="nudge">→</span>
+                View in 3D <span className="nudge">→</span>
               </Link>
             </div>
           </div>

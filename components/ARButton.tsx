@@ -178,7 +178,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
         onClick={onButtonClick}
         className="group inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-ink transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
       >
-        {/* a plinth with a sculpture silhouette — "in your space" */}
+        {/* a plinth with a sculpture silhouette: the work placed in your room */}
         <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-4 w-4">
           <path
             d="M9 5.5a3 3 0 1 1 6 0c0 1.7-1.3 2.4-1.3 4.2V13h-3.4V9.7C10.3 7.9 9 7.2 9 5.5Z"
@@ -194,7 +194,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
           />
         </svg>
         <span className="border-b border-current/30 pb-0.5 group-hover:border-current">
-          See it in your space
+          View in AR
         </span>
       </button>
 
@@ -212,7 +212,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
                   <X size={18} />
                 </button>
                 <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
-                  <Smartphone size={13} /> In your space
+                  <Smartphone size={13} /> View in AR
                 </div>
                 <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
                   View on your phone
@@ -255,7 +255,7 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
                   </button>
                 )}
                 <div className="mb-1 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.35em] text-black/40">
-                  <Smartphone size={13} /> In your space
+                  <Smartphone size={13} /> View in AR
                 </div>
                 <h3 className="font-display text-2xl tracking-[-0.02em] text-black">
                   {sculpture.title}

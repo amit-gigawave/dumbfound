@@ -114,7 +114,7 @@ When it finishes, open `http://localhost:3000/artworks/<slug>` and check the pag
    },
    ```
 
-Works without a `modelUrl` simply don't show "View in the round" or "See it in your space".
+Works without a `modelUrl` show their photo, with no 3D view or "View in AR".
 No thumbnail step is needed.
 
 ---
@@ -151,7 +151,7 @@ The entries marked `placeholder: true` ("Artist Name") only fill the layout. Del
 | Field | What it does |
 | --- | --- |
 | `featured` | `true` shows the work in **Featured works** on the home page |
-| `modelUrl` | The 3D model. Adds "View in the round" and "See it in your space" |
+| `modelUrl` | The 3D model. The work's page opens in 3D (with a 3D / Photo switch) and gets "View in AR" |
 | `facing` | Degrees to turn the model (anticlockwise, seen from above) so it faces front. For scans saved facing sideways. Run `npm run thumbnails -- <slug>` again after changing it |
 | `usdzUrl` | A ready-made iPhone AR file. Without it, one is generated from the `.glb` |
 | `subtitle` | A short line, e.g. `"The iconic muse"`. Searchable |
@@ -189,6 +189,6 @@ Optional details only appear on the page when filled in. Text that starts with `
 
 ## Things to know about AR
 
-- **"See it in your space" only works on the live website**, served over `https://`. It will not work from the local network link.
+- **"View in AR" only works on the live website**, served over `https://`. It will not work from the local network link.
 - On **Android** the `.glb` opens in Google's viewer at the size it was modelled (in metres).
 - On **iPhone** the model is currently scaled to **0.6 m tall**, whatever the real size of the work. Real sizes per work are not supported yet.

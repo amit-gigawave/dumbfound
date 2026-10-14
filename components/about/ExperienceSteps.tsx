@@ -10,12 +10,12 @@ const STEPS = [
   },
   {
     icon: Rotate3d,
-    title: "View in the round",
+    title: "View in 3D",
     line: "Turn a sculpture and look at it from every side, as you would in a gallery.",
   },
   {
     icon: Smartphone,
-    title: "See it in your space",
+    title: "View in AR",
     line: "On a phone, place the work in your room through the camera, at its real size.",
   },
   {
