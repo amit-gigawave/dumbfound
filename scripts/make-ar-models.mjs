@@ -15,7 +15,7 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
-import { draco, getBounds } from "@gltf-transform/functions";
+import { draco, getBounds, transformMesh } from "@gltf-transform/functions";
 import draco3d from "draco3dgltf";
 
 const { sculptures, AR_DEFAULT_CM } = await import(
@@ -94,6 +94,21 @@ for (const work of works) {
     -b.min[1],
     -(b.min[2] + b.max[2]) / 2,
   ]);
+
+  // Bake every transform into the vertex data, so the file has no node
+  // transforms and the mesh itself is in metres. AR viewers that size or
+  // place a model from its raw mesh bounds then see the real size too.
+  const nodes = [];
+  scene.traverse((node) => nodes.push(node));
+  for (const node of nodes) {
+    const mesh = node.getMesh();
+    if (!mesh) continue;
+    if (mesh.listParents().filter((p) => p !== doc.getRoot()).length > 1)
+      throw new Error(`${work.slug}: a mesh is used by several nodes; baking it would move every copy.`);
+    transformMesh(mesh, node.getWorldMatrix());
+  }
+  for (const node of nodes)
+    node.setTranslation([0, 0, 0]).setRotation([0, 0, 0, 1]).setScale([1, 1, 1]);
 
   if (sharp) {
     for (const texture of doc.getRoot().listTextures()) {
