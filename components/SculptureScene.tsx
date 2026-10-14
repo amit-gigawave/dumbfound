@@ -22,6 +22,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
 import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
+import { setupRenderer } from "./three/renderer";
 
 // Neutral grey for the wireframe scaffold during the reveal.
 const WIRE_COLOR = "#5c5c5c";
@@ -381,13 +382,26 @@ const RevealModel: FC<{
   );
 };
 
-const SculptureScene: FC<SculptureSceneProps> = ({
+/**
+ * Everything inside the canvas: camera, lights, studio reflections, the model
+ * and controls. Shared by SculptureScene (its own canvas: viewer, thumbnails)
+ * and TilePreview (the grid's shared renderer), so every view of a work is
+ * framed and lit identically.
+ */
+export const SculptureContents: FC<
+  Omit<SculptureSceneProps, "mode"> & {
+    isThumb?: boolean;
+    /** Show the spinner while the model loads (needs a DOM-attached canvas). */
+    loader?: boolean;
+  }
+> = ({
   url,
   offsetX = 0,
   offsetY = 0,
   defaultZoom = 1,
   interactive = false,
-  mode = "viewer",
+  isThumb = false,
+  loader = !isThumb,
   reveal = true,
   fit,
   controlsRef,
@@ -397,8 +411,75 @@ const SculptureScene: FC<SculptureSceneProps> = ({
   autoRotate = true,
   facing = 0,
 }) => {
-  const isThumb = mode === "thumbnail";
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
+
+      {/* Deterministic studio lighting — independent of model load order. */}
+      <ambientLight intensity={0.5} />
+      <directionalLight
+        position={[3, 5, 4]}
+        intensity={1.6}
+        castShadow={interactive}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-bias={-0.0002}
+      />
+      <directionalLight position={[-4, 2, -3]} intensity={0.5} />
+
+      {/* Reflections / specular for the bronze patina — procedural, no HDR download. */}
+      <StudioEnvironment intensity={0.9} />
+
+      <Suspense fallback={loader ? <Loader /> : null}>
+        <RevealModel
+          url={url}
+          offsetX={offsetX}
+          offsetY={offsetY}
+          reveal={reveal && !isThumb}
+          fit={fit}
+          facing={facing}
+          adaptiveBg={!isThumb && adaptiveBackground}
+          onBackground={onBackground}
+          onReady={onReady}
+        />
+      </Suspense>
+
+      {/* Auto-framed models render their own shadow at their base. */}
+      {!fit && (
+        <ContactShadows
+          position={[0, -0.6, 0]}
+          opacity={0.22}
+          scale={4}
+          blur={3}
+          far={1.5}
+          resolution={512}
+        />
+      )}
+
+      <OrbitControls
+        ref={controlsRef}
+        makeDefault
+        enableZoom={interactive}
+        {...(!fit && { minDistance: camZ * 0.4, maxDistance: camZ * 2 })}
+        enablePan={interactive}
+        autoRotate={autoRotate && !interactive && !isThumb}
+        autoRotateSpeed={1.4}
+        enableDamping
+        dampingFactor={0.08}
+        maxPolarAngle={interactive ? Math.PI : Math.PI / 1.6}
+        minPolarAngle={interactive ? 0 : Math.PI / 3}
+      />
+    </>
+  );
+};
+
+const SculptureScene: FC<SculptureSceneProps> = ({
+  mode = "viewer",
+  interactive = false,
+  ...props
+}) => {
+  const isThumb = mode === "thumbnail";
   const wrapRef = useRef<HTMLDivElement>(null);
   // Pause the render loop while the canvas is scrolled out of view so multiple
   // gallery canvases don't all burn GPU/CPU at once.
@@ -438,66 +519,12 @@ const SculptureScene: FC<SculptureSceneProps> = ({
           preserveDrawingBuffer: isThumb,
           localClippingEnabled: true,
         }}
-        onCreated={({ gl }) => {
-          gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.05;
-        }}
+        onCreated={({ gl }) => setupRenderer(gl)}
       >
-        <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
-
-        {/* Deterministic studio lighting — independent of model load order. */}
-        <ambientLight intensity={0.5} />
-        <directionalLight
-          position={[3, 5, 4]}
-          intensity={1.6}
-          castShadow={interactive}
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
-          shadow-bias={-0.0002}
-        />
-        <directionalLight position={[-4, 2, -3]} intensity={0.5} />
-
-        {/* Reflections / specular for the bronze patina — procedural, no HDR download. */}
-        <StudioEnvironment intensity={0.9} />
-
-        <Suspense fallback={isThumb ? null : <Loader />}>
-          <RevealModel
-            url={url}
-            offsetX={offsetX}
-            offsetY={offsetY}
-            reveal={reveal && !isThumb}
-            fit={fit}
-            facing={facing}
-            adaptiveBg={!isThumb && adaptiveBackground}
-            onBackground={onBackground}
-            onReady={onReady}
-          />
-        </Suspense>
-
-        {/* Auto-framed models render their own shadow at their base. */}
-        {!fit && (
-          <ContactShadows
-            position={[0, -0.6, 0]}
-            opacity={0.22}
-            scale={4}
-            blur={3}
-            far={1.5}
-            resolution={512}
-          />
-        )}
-
-        <OrbitControls
-          ref={controlsRef}
-          makeDefault
-          enableZoom={interactive}
-          {...(!fit && { minDistance: camZ * 0.4, maxDistance: camZ * 2 })}
-          enablePan={interactive}
-          autoRotate={autoRotate && !interactive && !isThumb}
-          autoRotateSpeed={1.4}
-          enableDamping
-          dampingFactor={0.08}
-          maxPolarAngle={interactive ? Math.PI : Math.PI / 1.6}
-          minPolarAngle={interactive ? 0 : Math.PI / 3}
+        <SculptureContents
+          {...props}
+          interactive={interactive}
+          isThumb={isThumb}
         />
       </Canvas>
     </div>

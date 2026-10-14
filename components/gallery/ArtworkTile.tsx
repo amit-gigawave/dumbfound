@@ -16,7 +16,7 @@ import {
 import { registerAmbient } from "./ambientTurn";
 import { tilt, untilt } from "./tilt";
 
-const SculptureScene = dynamic(() => import("../SculptureScene"), {
+const TilePreview = dynamic(() => import("../three/TilePreview"), {
   ssr: false,
 });
 
@@ -180,12 +180,10 @@ const ArtworkTile = ({
               ready ? "opacity-100" : "opacity-0"
             }`}
           >
-            <SculptureScene
+            <TilePreview
               url={modelUrl}
               fit={FIT_CARD}
               facing={work.facing}
-              reveal={false}
-              adaptiveBackground={false}
               autoRotate={spinning}
               onReady={onReady}
             />
