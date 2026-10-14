@@ -1,5 +1,7 @@
 # Sculpture Showcase Website – Technical Documentation
 
+> **Original design brief, kept for reference.** The site was later rebuilt as a multi-page, multi-artist catalogue, so much of this document (single-page layout, `Scene.tsx`, `Gallery.tsx`, `/public/sculpture.glb`) no longer matches the code. See [README.md](README.md) for the current structure.
+
 ## 1. Project Overview
 
 The goal of this project is to build a **premium interactive sculpture showcase website** that highlights sculptures using **modern web technologies, 3D visualization, and cinematic animations**.
