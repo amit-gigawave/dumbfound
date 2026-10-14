@@ -106,7 +106,14 @@ const ARButton = ({ sculpture }: { sculpture: WithModel }) => {
 
   const openQr = useCallback(async () => {
     const { default: QRCode } = await import("qrcode");
-    const target = new URL(window.location.href);
+    // The code is scanned by a phone, so it must point at an address the phone
+    // can open: the public site URL when set (e.g. a tunnel while testing
+    // locally), otherwise this page's own address.
+    const { pathname, search } = window.location;
+    const target = new URL(
+      pathname + search,
+      process.env.NEXT_PUBLIC_SITE_URL || window.location.origin,
+    );
     target.searchParams.set("ar", "1");
     const data = await QRCode.toDataURL(target.href, {
       margin: 1,
