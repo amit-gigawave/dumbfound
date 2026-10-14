@@ -54,7 +54,7 @@ To test on a phone, open the "Network" address that `npm run dev` prints. AR its
 ## Project structure
 
 ```
-app/                    Routes (see above)
+app/                    Routes (see above); favicon.ico, icon.png and apple-icon.png are the site icons
 components/
   HeroScroll.tsx        Home hero: sculpture that moves with the scroll
   HeroScene.tsx         3D scene for the hero
@@ -82,6 +82,7 @@ public/
   thumbnails/           Rendered thumbnails of 3D works (WebP)
   artworks/             Photos of works without a model
   artists/              Artist portraits
+  logos/                Wordmark shown in the navbar (from sculptedindia.com)
 docs/
   adding-artworks.md    How to add artworks and artists
 ```
