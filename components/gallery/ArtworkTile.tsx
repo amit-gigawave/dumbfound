@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import { Rotate3d } from "lucide-react";
-import { FIT_CARD, preloadModel } from "../three/modelLoader";
+import { FIT_CARD, preloadModel, warm3D } from "../three/modelLoader";
 import { registerAmbient } from "./ambientTurn";
 import { tilt, untilt } from "./tilt";
 
@@ -15,10 +15,14 @@ const SculptureScene = dynamic(() => import("../SculptureScene"), {
   ssr: false,
 });
 
-/** How long the pointer rests on a tile before the 3D work loads. */
-const HOVER_DELAY = 400;
-/** Once loaded: time for the bar to complete and fade before the work starts turning. */
-const TURN_AFTER = 600;
+/**
+ * How long the pointer rests on a tile before the 3D view mounts (the model
+ * itself starts downloading at once). Short, but enough that sweeping the
+ * cursor across the grid doesn't start a viewer in every tile.
+ */
+const HOVER_DELAY = 150;
+/** Once loaded: time for the bar to complete before the work starts turning. */
+const TURN_AFTER = 200;
 
 /**
  * Catalogue tile: the work framed on a plate, captioned
@@ -62,6 +66,9 @@ const ArtworkTile = ({
   const active = turning || ambientOn;
 
   useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => {
+    if (modelUrl) warm3D();
+  }, [modelUrl]);
 
   // Enter the ambient draw; when the turn ends, fall back to the photo unless
   // the visitor has since hovered in and taken over.

@@ -22,6 +22,24 @@ export const preloadModel = (url: string) => {
   useGLTF.preload(url, DRACO_PATH);
 };
 
+let warmed = false;
+
+/**
+ * Once the page is idle, fetch the 3D viewer code and the Draco decoder, so
+ * the first hover only has to download the model itself (idempotent).
+ */
+export const warm3D = () => {
+  if (warmed || typeof window === "undefined") return;
+  warmed = true;
+  const go = () => {
+    import("../SculptureScene");
+    for (const f of ["draco_wasm_wrapper.js", "draco_decoder.wasm"])
+      fetch(DRACO_PATH + f).catch(() => {});
+  };
+  if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 3000 });
+  else setTimeout(go, 1500);
+};
+
 /** Whether the materialize reveal already played for this model this session. */
 export const hasRevealed = (url: string) => revealed.has(url);
 export const markRevealed = (url: string) => {
