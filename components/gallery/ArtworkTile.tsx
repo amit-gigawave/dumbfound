@@ -7,7 +7,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import { Rotate3d } from "lucide-react";
-import { FIT_CARD, preloadModel, warm3D } from "../three/modelLoader";
+import {
+  FIT_CARD,
+  prefetchModel,
+  preloadModel,
+  warm3D,
+} from "../three/modelLoader";
 import { registerAmbient } from "./ambientTurn";
 import { tilt, untilt } from "./tilt";
 
@@ -68,6 +73,22 @@ const ArtworkTile = ({
   useEffect(() => () => clearTimeout(timer.current), []);
   useEffect(() => {
     if (modelUrl) warm3D();
+  }, [modelUrl]);
+
+  // On devices that can hover, fetch the model once the tile is on screen.
+  useEffect(() => {
+    const el = plateRef.current;
+    if (!modelUrl || !el || !matchMedia("(hover: hover)").matches) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        prefetchModel(modelUrl);
+        io.disconnect();
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, [modelUrl]);
 
   // Enter the ambient draw; when the turn ends, fall back to the photo unless
