@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -44,11 +45,15 @@ export default function Navbar() {
     <>
       <header className="sticky top-0 z-50 border-b border-rule bg-paper/95 backdrop-blur-sm">
         <div className="mx-auto flex h-[84px] max-w-[1200px] items-center justify-between gap-5 px-[clamp(16px,4vw,40px)]">
-          <Link
-            href="/"
-            className="font-display text-[26px] leading-none tracking-[0.01em]"
-          >
-            {site.name}
+          <Link href="/" className="shrink-0" aria-label={`${site.name}, home`}>
+            <Image
+              src="/logos/sculpted-india-wordmark.png"
+              alt={site.name}
+              width={480}
+              height={71}
+              priority
+              className="h-auto w-[clamp(150px,16vw,203px)]"
+            />
           </Link>
 
           {/* Three groups — wordmark · links · search — spread evenly by justify-between. */}
