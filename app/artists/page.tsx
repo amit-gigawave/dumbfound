@@ -26,7 +26,7 @@ export default function ArtistsPage() {
       <SectionHeader title="Artists" as="h1" />
       <div
         data-reveal-stagger
-        data-spotlight
+        data-focus-grid
         className="grid grid-cols-2 gap-x-7 gap-y-10 sm:grid-cols-3 lg:grid-cols-5"
       >
         {ordered.map((artist) => (
