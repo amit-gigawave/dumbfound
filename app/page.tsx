@@ -41,6 +41,7 @@ const FAN = [
 export default function Home() {
   const live = publishedArtists();
   const featured = getFeaturedWorks();
+  const explore = sculptures.filter((w) => w.modelUrl && !w.featured).slice(0, 8);
   const heroWork = heroWorkFor(HERO_WORK);
   const fan = FAN.flatMap(
     (slug) => artists.find((a) => a.slug === slug && a.portrait) ?? [],
@@ -107,6 +108,38 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {explore.length > 0 && (
+        <section className="border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
+          <div className={wrap}>
+            <SectionHeader
+              title="Explore in 3D"
+              link={{ label: "All artworks", href: "/artworks" }}
+            />
+            <p
+              data-reveal
+              className="font-text -mt-4 mb-10 max-w-[56ch] text-[17px] leading-relaxed text-stone"
+            >
+              Turn a work in the round, then open it to look from every side or
+              place it in your room with AR.
+            </p>
+            <div
+              data-reveal-stagger
+              className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
+            >
+              {explore.map((work) => (
+                <ArtworkTile
+                  key={work.slug}
+                  work={work}
+                  showcase
+                  ambient
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Deep contrast band */}
       <section className="deep overflow-hidden">
