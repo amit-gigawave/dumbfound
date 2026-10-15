@@ -46,6 +46,7 @@ const ArtworkTile = ({
   priority = false,
   showcase = false,
   ambient = false,
+  backdrop = false,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
 }: {
   work: Sculpture;
@@ -53,6 +54,8 @@ const ArtworkTile = ({
   priority?: boolean;
   showcase?: boolean;
   ambient?: boolean;
+  /** Studio-light plate with a floor shadow, for tiles on a tinted section. */
+  backdrop?: boolean;
   sizes?: string;
 }) => {
   const artist = getArtist(work.artistSlug);
@@ -157,12 +160,23 @@ const ArtworkTile = ({
         data-turning={active || undefined}
         onPointerMove={showcase ? (e) => tilt(e, 5) : undefined}
         onPointerLeave={showcase ? untilt : undefined}
-        className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] group-hover:bg-[#e8e8e8] ${
+        className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] ${
+          backdrop
+            ? "border-white/80 bg-[radial-gradient(120%_80%_at_50%_22%,#ffffff_0%,#f6f7f5_45%,#dde2dd_100%)] shadow-[0_18px_34px_-24px_rgba(20,40,28,.45)]"
+            : "border-rule bg-plate group-hover:bg-[#e8e8e8]"
+        } ${
           showcase
             ? "group-hover:shadow-[0_26px_46px_-30px_rgba(0,0,0,.5)]"
             : ""
         }`}
       >
+        {backdrop && (
+          // Studio floor: a soft pool of shadow the work stands on.
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-[18%] bottom-[7%] -z-10 h-[9%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(20,40,28,.22),transparent)]"
+          />
+        )}
         <Image
           src={work.thumbnail}
           alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}

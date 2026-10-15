@@ -148,6 +148,7 @@ export default function Home() {
                   work={work}
                   showcase
                   ambient
+                  backdrop
                   sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
