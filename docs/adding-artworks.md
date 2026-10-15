@@ -192,7 +192,7 @@ The entries marked `placeholder: true` ("Artist Name") only fill the layout. Del
 | `edition` | e.g. `"1 of 8"`. Listed in the details |
 | `location` | Collection or gallery. Listed in the details as "Collection" |
 | `tags` | Search keywords, e.g. `["bronze", "portrait"]` |
-| `accent` | Colour tint for the AR dialog (defaults to the site's red) |
+| `accent` | Colour tint for the AR dialog (defaults to the site's green, from the logo) |
 
 Optional details only appear on the page when filled in. Text that starts with `TODO` is treated as empty and hidden.
 
