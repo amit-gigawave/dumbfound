@@ -136,7 +136,7 @@ export const artists: Artist[] = [
     place: "Varanasi, Uttar Pradesh",
     medium: "Sculpture, painting",
     role: "Sculptor and painter",
-    // Portrait: thepnc.in/biography — © the artist
+    // Portrait: artlogic-hosted gallery image (static-assets.artlogic.net/.../pnc_sap.jpeg), cropped square — rights unconfirmed
     portrait: "/artists/phaneendra-nath-chaturvedi.webp",
     summary:
       "Phaneendra Nath Chaturvedi is a painter, sculptor and multimedia artist whose anthropomorphic figures draw on transformation and memory. He works in drawing and painting, and in sculpture in fibreglass, wood and stainless steel.",
