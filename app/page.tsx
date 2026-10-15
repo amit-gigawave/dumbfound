@@ -84,6 +84,7 @@ export default function Home() {
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Artists"
+          number="01"
           link={{ label: "All artists", href: "/artists" }}
         />
         <div
@@ -100,6 +101,7 @@ export default function Home() {
       <section id="featured" className={`${wrap} pb-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Featured works"
+          number="02"
           link={{ label: "All artworks", href: "/artworks" }}
         />
         <div
@@ -122,6 +124,7 @@ export default function Home() {
           <div className={wrap}>
             <SectionHeader
               title="Explore in 3D"
+              number="03"
               link={{ label: "All artworks", href: "/artworks" }}
             />
             <p
@@ -152,7 +155,11 @@ export default function Home() {
       {quote && quoted && (
         <section className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
           <figure data-reveal-stagger className="mx-auto grid max-w-[900px] gap-9 text-center">
-            <span className="label">In the artist&rsquo;s words</span>
+            <span className="label flex items-center justify-center gap-3">
+              04
+              <span aria-hidden className="h-px w-10 bg-current opacity-60" />
+              In the artist&rsquo;s words
+            </span>
             <blockquote className="font-display text-[clamp(28px,4.4vw,56px)] leading-[1.22] tracking-[0.01em]">
               &ldquo;{quote.text}&rdquo;
             </blockquote>
@@ -195,6 +202,7 @@ export default function Home() {
           <div className={wrap}>
             <SectionHeader
               title="Events"
+              number="05"
               link={{ label: "All events", href: "/events" }}
             />
             <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
