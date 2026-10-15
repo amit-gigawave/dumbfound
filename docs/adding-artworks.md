@@ -158,6 +158,8 @@ No thumbnail step is needed.
 The entries marked `placeholder: true` ("Artist Name") only fill the layout. Delete one for each real artist you add.
 
 > **Facts must be sourced.** Only add dates, awards, exhibitions and quotes that come from a reliable published source. The Thota entry has the source of each fact in a comment next to it.
+>
+> The same goes for **artworks**: a title, year, medium, size or description must come from the artist, the gallery or a published source. If a detail isn't known, leave it empty (`""`); empty details are hidden. Don't write a description to fill the space. Every artist and work was checked against its sources on 2026-10-15, and unsourced text was removed.
 
 ---
 
@@ -184,7 +186,7 @@ The entries marked `placeholder: true` ("Artist Name") only fill the layout. Del
 | `facing` | Degrees to turn the model (anticlockwise, seen from above) so it faces front. For scans saved facing sideways. Run `npm run thumbnails -- <slug>` and `npm run ar-models -- <slug>` again after changing it |
 | `heightCm` | The work's real height in cm: the size it appears at in AR. Without it, AR uses 50 cm. Run `npm run ar-models -- <slug>` again after changing it |
 | `usdzUrl` | A ready-made iPhone AR file. Without it, one is generated from the `.glb` |
-| `subtitle` | A short line, e.g. `"The iconic muse"`. Searchable |
+| `subtitle` | A short line, e.g. `"From the Nayika series"`. Searchable |
 | `longDescription` | Extra paragraph under the description |
 | `dimensions` | e.g. `"60 × 25 × 20 cm"`. Listed in the details |
 | `edition` | e.g. `"1 of 8"`. Listed in the details |
