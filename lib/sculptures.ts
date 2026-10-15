@@ -228,6 +228,18 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "meditating.usdz". TODO: artist, title, year and medium not known yet.
+  {
+    slug: "meditating",
+    title: "Meditating",
+    description: "",
+    artistSlug: "",
+    thumbnail: "/thumbnails/meditating.webp",
+    modelUrl: "/sculptures/meditating.glb",
+    facing: 180,
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
