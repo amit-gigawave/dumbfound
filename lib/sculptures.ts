@@ -43,7 +43,7 @@ export interface Sculpture {
   heightCm?: number;
   /** Prebuilt USDZ for iPhone AR. Without it, one is generated from the GLB in the browser. */
   usdzUrl?: string;
-  /** A short line, e.g. "The iconic muse". Searchable. */
+  /** A short line, e.g. "From the Nayika series". Searchable. */
   subtitle?: string;
   /** Extra paragraph shown under the description. */
   longDescription?: string;
