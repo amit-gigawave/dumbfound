@@ -3,15 +3,15 @@ import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 
 /**
- * Artist portraits in an overlapping row, upright (no tilt). When the row is
- * hovered the cards spread apart, and the card under the pointer lifts into
- * colour and shows its name. Each card opens that artist.
+ * Artist portraits in an overlapping row, upright and still. The card under
+ * the pointer turns from black and white to colour and shows its name. Each
+ * card opens that artist.
  */
 export default function PortraitFan({ artists }: { artists: Artist[] }) {
   const n = artists.length;
   const mid = (n - 1) / 2;
   return (
-    <div className="group/fan relative mx-auto aspect-[5/4] w-full max-w-[460px]">
+    <div className="relative mx-auto aspect-[5/4] w-full max-w-[460px]">
       {artists.map((a, i) => {
         const k = i - mid; // -2 … 2
         return (
@@ -19,14 +19,11 @@ export default function PortraitFan({ artists }: { artists: Artist[] }) {
             key={a.slug}
             href={`/artists/${a.slug}`}
             aria-label={a.name}
-            className="group/card absolute bottom-[6%] left-1/2 aspect-[4/5] w-[36%] overflow-hidden rounded-[12px] bg-[#1d1d1d] shadow-[0_18px_40px_-18px_rgba(0,0,0,.8)] ring-1 ring-white/15 transition-[translate,scale,box-shadow] duration-700 ease-[cubic-bezier(.3,.7,.3,1)] [translate:var(--x)_var(--y)] hover:z-20 hover:scale-[1.08] hover:shadow-[0_26px_50px_-18px_rgba(0,0,0,.9)] group-hover/fan:[translate:var(--x2)_var(--y2)]"
+            className="group/card absolute bottom-[6%] left-1/2 aspect-[4/5] w-[36%] overflow-hidden rounded-[12px] bg-[#1d1d1d] shadow-[0_18px_40px_-18px_rgba(0,0,0,.8)] ring-1 ring-white/15 [translate:var(--x)_0] hover:z-20"
             style={
               {
                 zIndex: 10 - Math.abs(Math.round(k)),
                 "--x": `calc(-50% + ${k * 18}%)`,
-                "--y": "0%",
-                "--x2": `calc(-50% + ${k * 52}%)`,
-                "--y2": "0%",
               } as React.CSSProperties
             }
           >
@@ -39,7 +36,7 @@ export default function PortraitFan({ artists }: { artists: Artist[] }) {
                 className="object-cover grayscale transition-[filter] duration-500 group-hover/card:grayscale-0"
               />
             )}
-            <span className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/80 to-transparent p-3 pt-8 text-[12px] leading-tight tracking-[0.04em] text-white transition-transform duration-500 group-hover/card:translate-y-0">
+            <span className="absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/80 to-transparent p-3 pt-8 text-[12px] leading-tight tracking-[0.04em] text-white group-hover/card:block">
               {a.name}
             </span>
           </Link>
