@@ -12,7 +12,8 @@
 /*
  * Gallery palette — black and the logo's patina green. Off-white paper and
  * neutral greys are just tints of black; green is the single accent:
- * `accent` (#435448, sampled from the wordmark) on light grounds,
+ * `accent` (#396046: the wordmark's #435448, a little richer so it reads as
+ * green rather than grey) on light grounds,
  * `accent-light` on black, where the dark green would not be readable.
  * Tailwind classes: bg-paper, text-ink, text-stone, border-rule, bg-plate,
  * text-accent, text-accent-light, bg-deep, text-deep-ink, text-deep-muted.
@@ -23,8 +24,8 @@
   --color-stone: #5c5c5c;
   --color-rule: #e4e4e4;
   --color-plate: #f0f0f0;
-  --color-accent: #435448;
-  --color-accent-light: #93b39b;
+  --color-accent: #396046;
+  --color-accent-light: #95c6a5;
   --color-black: #111111;
   --color-deep-ink: #f2f2f2;
   --color-deep-muted: #a3a3a3;
@@ -79,7 +80,7 @@ h3,
   font-weight: 500;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #435448;
+  color: #396046;
 }
 
 /* Large capital-letter display heading */
@@ -98,7 +99,7 @@ h3,
   transition: color 0.2s ease;
 }
 .text-link:hover {
-  color: #435448;
+  color: #396046;
 }
 
 /* Outlined button. On hover the fill wipes in from the left (and out to the
@@ -111,8 +112,8 @@ h3,
   display: inline-flex;
   align-items: center;
   gap: 0.6em;
-  border: 1px solid #435448;
-  color: #435448;
+  border: 1px solid #396046;
+  color: #396046;
   padding: 13px 26px;
   font-size: 11px;
   letter-spacing: 0.22em;
@@ -128,7 +129,7 @@ h3,
   position: absolute;
   inset: -1px;
   z-index: -1;
-  background: #435448;
+  background: #396046;
   transform: scaleX(0);
   transform-origin: right center;
   transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1);
@@ -136,7 +137,7 @@ h3,
 .btn:hover {
   color: #ffffff;
   translate: 0 -2px;
-  box-shadow: 0 14px 26px -16px rgba(67, 84, 72, 0.6);
+  box-shadow: 0 14px 26px -16px rgba(57, 96, 70, 0.6);
 }
 .btn:hover::before {
   transform: scaleX(1);
@@ -152,12 +153,12 @@ h3,
   color: #f2f2f2;
 }
 .deep .btn::before {
-  background: #5f7a66;
+  background: #4a7d5c;
 }
 .deep .btn:hover {
-  border-color: #5f7a66;
+  border-color: #4a7d5c;
   color: #ffffff;
-  box-shadow: 0 14px 26px -16px rgba(95, 122, 102, 0.7);
+  box-shadow: 0 14px 26px -16px rgba(74, 125, 92, 0.7);
 }
 
 /* Deep charcoal-green contrast band */
@@ -169,11 +170,11 @@ h3,
 .deep .text-accent,
 .deep .hover\:text-accent:hover,
 .deep .group:hover .group-hover\:text-accent {
-  color: #93b39b;
+  color: #95c6a5;
 }
 
 :focus-visible {
-  outline: 2px solid #435448;
+  outline: 2px solid #396046;
   outline-offset: 3px;
 }
 /* Text fields show focus their own way (accent underline, or the caret in the

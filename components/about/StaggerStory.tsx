@@ -68,7 +68,7 @@ function StaggerParagraph({ text }: { text: string }) {
           // The phrase's last word leaves its space outside, so the marker ends on the text.
           <span key={pi}>
             <mark
-              className={`bg-transparent bg-[linear-gradient(rgba(67,84,72,.15),rgba(67,84,72,.15))] bg-[length:100%_42%] bg-[position:0_90%] bg-no-repeat text-ink transition-[background-size] duration-[900ms] ease-[cubic-bezier(.6,0,.2,1)] ${
+              className={`bg-transparent bg-[linear-gradient(rgba(57,96,70,.15),rgba(57,96,70,.15))] bg-[length:100%_42%] bg-[position:0_90%] bg-no-repeat text-ink transition-[background-size] duration-[900ms] ease-[cubic-bezier(.6,0,.2,1)] ${
                 shown ? "" : "[html.js_&]:bg-[length:0%_42%]"
               }`}
               style={{ transitionDelay: delay(end + 150 + pi * 90) }}
