@@ -81,9 +81,9 @@ export default async function ArtworkPage({
         / {work.title}
       </p>
 
-      <div
-        data-reveal-stagger
-        className="grid items-start gap-[clamp(32px,5vw,72px)] pb-[72px] pt-7 min-[820px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]"
+      {/* No scroll reveal here: the plate and details are above the fold and
+          should show at once, not wait for scripts to load. */}
+      <div className="grid items-start gap-[clamp(32px,5vw,72px)] pb-[72px] pt-7 min-[820px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]"
       >
         <ArtworkStage
           key={work.slug}
