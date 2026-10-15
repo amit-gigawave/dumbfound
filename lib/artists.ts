@@ -107,7 +107,7 @@ export const artists: Artist[] = [
     place: "Jaipur; lives in Paris",
     medium: "Painting, mixed media",
     role: "Painter",
-    // Portrait: sujata-bajaj.com (published by Discover Artiana) — rights unconfirmed
+    // Portrait: colour original, from a Times of India blog (timesofindia.indiatimes.com/blogs/wp-content/uploads/backup2/plumage/sujata-bajajprofile.jpg) — rights unconfirmed
     portrait: "/artists/sujata-bajaj.webp",
     summary:
       "Sujata Bajaj is an Indian painter whose abstract work draws on the tribal art of India. Born in Jaipur, she took a degree in fine arts in Pune, focused on Indian tribal art, and has lived and worked in Paris since 1988.",
