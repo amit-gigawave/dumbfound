@@ -1,7 +1,7 @@
 /*
- * Lean a card toward the mouse. Shared by the artist and artwork tiles.
+ * Lean a card toward the mouse. Used by the artwork tiles.
  * Mouse and pen only; skipped for visitors who prefer reduced motion.
- * The element needs a `transform` transition (see .artist-plate / ArtworkTile).
+ * The element needs a `transform` transition (see ArtworkTile).
  */
 
 /** Largest lean toward the cursor, in degrees. */

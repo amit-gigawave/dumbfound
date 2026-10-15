@@ -310,9 +310,8 @@ select:focus-visible {
 
 /* ------------------------------------------------------------------
  * Artist grid focus. Hovering one artist dims the rest of the grid
- * ([data-focus-grid]); the hovered portrait shows in full colour, lifts,
- * gives a small wiggle and leans toward the cursor (ArtistTile sets the
- * transform). Dimming targets the tile's
+ * ([data-focus-grid]); the hovered portrait shows in full colour and lifts,
+ * without tilting. Dimming targets the tile's
  * parts, not the tile, so it never fights the scroll-reveal transition.
  * ------------------------------------------------------------------ */
 .artist-plate {
@@ -321,7 +320,6 @@ select:focus-visible {
     filter 0.6s ease,
     opacity 0.6s ease,
     scale 0.6s cubic-bezier(0.3, 0.7, 0.3, 1),
-    transform 0.45s cubic-bezier(0.3, 0.7, 0.3, 1),
     box-shadow 0.6s ease;
 }
 .artist-caption {
@@ -339,22 +337,6 @@ select:focus-visible {
   .artist-tile:hover .artist-plate {
     scale: 1.05;
     box-shadow: 0 22px 40px -22px rgba(0, 0, 0, 0.5);
-    animation: artist-wiggle 0.8s ease-in-out;
   }
 }
 
-@keyframes artist-wiggle {
-  0%,
-  100% {
-    rotate: 0deg;
-  }
-  25% {
-    rotate: -1.8deg;
-  }
-  50% {
-    rotate: 1.3deg;
-  }
-  75% {
-    rotate: -0.6deg;
-  }
-}

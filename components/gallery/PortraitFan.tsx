@@ -38,7 +38,7 @@ export default function PortraitFan({ artists }: { artists: Artist[] }) {
                 alt=""
                 fill
                 sizes="180px"
-                className="object-cover grayscale-[0.7] transition-[filter] duration-500 group-hover/card:grayscale-0"
+                className="object-cover grayscale transition-[filter] duration-500 group-hover/card:grayscale-0"
               />
             )}
             <span className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/80 to-transparent p-3 pt-8 text-[12px] leading-tight tracking-[0.04em] text-white transition-transform duration-500 group-hover/card:translate-y-0">
