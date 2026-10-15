@@ -49,7 +49,7 @@ export const artists: Artist[] = [
     medium: "Painting, sculpture",
     role: "Painter and sculptor",
     // Photo by Mananrelia (2007), public domain — commons.wikimedia.org/wiki/File:ThotaVaikuntam.jpg
-    portrait: "/artists/thota-vaikuntam.webp",
+    portrait: "/artists/thota-vaikuntam-colour.webp",
     // Theatre troupes — DAG, Saffronart ("travelling theatre groups"); sculpture — Open (2022), Deccan Chronicle (2026)
     summary:
       "Thota Vaikuntam grew up in Burugupalli, a village in Telangana, where the travelling theatre troupes of his childhood — men playing the women's roles — first fascinated him. Trained in Hyderabad and at Baroda under K.G. Subramanyan, he has spent six decades painting the women and men of rural Telangana in bold colour, and has lately given them form in sculpture.",
@@ -108,7 +108,7 @@ export const artists: Artist[] = [
     medium: "Painting, mixed media",
     role: "Painter",
     // Portrait: colour original, from a Times of India blog (timesofindia.indiatimes.com/blogs/wp-content/uploads/backup2/plumage/sujata-bajajprofile.jpg) — rights unconfirmed
-    portrait: "/artists/sujata-bajaj.webp",
+    portrait: "/artists/sujata-bajaj-colour.webp",
     summary:
       "Sujata Bajaj is an Indian painter whose abstract work draws on the tribal art of India. Born in Jaipur, she took a degree in fine arts in Pune, focused on Indian tribal art, and has lived and worked in Paris since 1988.",
     bio: [
@@ -137,7 +137,7 @@ export const artists: Artist[] = [
     medium: "Sculpture, painting",
     role: "Sculptor and painter",
     // Portrait: artlogic-hosted gallery image (static-assets.artlogic.net/.../pnc_sap.jpeg), cropped square — rights unconfirmed
-    portrait: "/artists/phaneendra-nath-chaturvedi.webp",
+    portrait: "/artists/phaneendra-nath-chaturvedi-colour.webp",
     summary:
       "Phaneendra Nath Chaturvedi is a painter, sculptor and multimedia artist whose anthropomorphic figures draw on transformation and memory. He works in drawing and painting, and in sculpture in fibreglass, wood and stainless steel.",
     bio: [
