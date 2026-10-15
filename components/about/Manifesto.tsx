@@ -66,7 +66,7 @@ export default function Manifesto({
         const tone = dark
           ? lit
             ? key
-              ? "text-[#ef5a4d]"
+              ? "text-accent-light"
               : "text-[#f2f2f2]"
             : "text-white/20"
           : lit

@@ -152,7 +152,7 @@ export default async function ArtistPage({
                 href={leadQuote.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-[#ef5a4d]"
+                className="transition-colors hover:text-accent-light"
               >
                 {leadQuote.source}
               </a>
