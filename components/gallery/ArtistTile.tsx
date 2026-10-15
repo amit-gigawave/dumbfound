@@ -8,7 +8,7 @@ import { initials, type Artist } from "@/lib/artists";
  * Portrait (or initials) with name, birth and medium. Placeholders don't link.
  * Portraits are black and white until hovered, when they ease into full
  * colour over ~2s and the plate grows a little. Inside a [data-spotlight]
- * grid, the rest of the page goes into shadow meanwhile, so the hovered one is in
+ * grid, every other artist goes dark meanwhile, so the hovered one is in
  * focus (styles in globals.css). No tilt.
  */
 const ArtistTile = ({ artist }: { artist: Artist }) => {

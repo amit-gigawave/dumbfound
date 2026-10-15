@@ -309,42 +309,32 @@ select:focus-visible {
 }
 
 /* ------------------------------------------------------------------
- * Artist spotlight. Hovering an artist in a [data-spotlight] grid puts the
- * whole page in shadow except that artist: the tile's ::before throws a
- * screen-sized shadow around it. The hovered plate also grows a little
- * (ArtistTile fades it into colour). The header sits outside <main>'s
- * stacking context, so it is darkened to match with a filter.
+ * Artist spotlight. Hovering one artist in a [data-spotlight] grid turns
+ * every other artist dark, so the hovered one is in focus; it also grows a
+ * little (ArtistTile fades it into colour). The dimming targets the tile's
+ * parts, not the tile, so it never fights the scroll-reveal transition.
  * ------------------------------------------------------------------ */
 .artist-plate {
-  transition: scale 0.8s cubic-bezier(0.25, 0.6, 0.3, 1);
+  transition:
+    filter 0.7s ease,
+    opacity 0.7s ease,
+    scale 0.8s cubic-bezier(0.25, 0.6, 0.3, 1);
 }
-[data-spotlight] a.artist-tile {
-  position: relative;
+.artist-caption {
+  transition: opacity 0.7s ease;
 }
-[data-spotlight] a.artist-tile::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: 18px;
-  pointer-events: none;
-  box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.7);
-  opacity: 0;
-  transition: opacity 0.6s ease;
+[data-spotlight]:has(.artist-tile:hover)
+  .artist-tile:not(:hover)
+  .artist-plate {
+  filter: brightness(0.3);
 }
-[data-spotlight] a.artist-tile:hover {
-  z-index: 60;
-}
-[data-spotlight] a.artist-tile:hover::before {
-  opacity: 1;
+[data-spotlight]:has(.artist-tile:hover)
+  .artist-tile:not(:hover)
+  .artist-caption {
+  opacity: 0.3;
 }
 @media (prefers-reduced-motion: no-preference) {
   a.artist-tile:hover .artist-plate {
     scale: 1.04;
-  }
-  header.sticky {
-    transition: filter 0.6s ease;
-  }
-  body:has([data-spotlight] a.artist-tile:hover) header.sticky {
-    filter: brightness(0.3);
   }
 }
