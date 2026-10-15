@@ -151,7 +151,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-untitled-seated-man.webp",
-    modelUrl: "/sculptures/khanna-untitled-seated-man.glb",
+    modelUrl: "/sculptures/khanna-untitled-seated-man.glb?v=2",
     material: "",
     year: "",
   },
