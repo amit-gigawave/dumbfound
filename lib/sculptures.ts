@@ -220,6 +220,18 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "05 - Female Head" (original in .glb-backup/web/). TODO: artist, year and medium not known yet.
+  {
+    slug: "female-head",
+    title: "Female Head",
+    description: "",
+    artistSlug: "",
+    thumbnail: "/thumbnails/female-head.webp",
+    modelUrl: "/sculptures/female-head.glb",
+    facing: 180,
+    material: "",
+    year: "",
+  },
   // Scan "meditating.usdz". TODO: artist, title, year and medium not known yet.
   {
     slug: "meditating",
