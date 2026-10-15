@@ -98,29 +98,33 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="featured" className={`${wrap} pb-[clamp(64px,8vw,110px)]`}>
-        <SectionHeader
-          title="Featured works"
-          number="02"
-          link={{ label: "All artworks", href: "/artworks" }}
-        />
-        <div
-          data-reveal-stagger
-          className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {featured.map((work, i) => (
-            <ArtworkTile
-              key={work.slug}
-              work={work}
-              priority={i < 3}
-              showcase
-            />
-          ))}
+      {/* Section grounds alternate (paper, white, patina tint, black) so each
+          section reads as its own chapter. */}
+      <section id="featured" className="border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
+        <div className={wrap}>
+          <SectionHeader
+            title="Featured works"
+            number="02"
+            link={{ label: "All artworks", href: "/artworks" }}
+          />
+          <div
+            data-reveal-stagger
+            className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {featured.map((work, i) => (
+              <ArtworkTile
+                key={work.slug}
+                work={work}
+                priority={i < 3}
+                showcase
+              />
+            ))}
+          </div>
         </div>
       </section>
 
       {explore.length > 0 && (
-        <section className="border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
+        <section className="bg-[#edf1ee] py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
               title="Explore in 3D"
@@ -153,52 +157,54 @@ export default function Home() {
       )}
 
       {quote && quoted && (
-        <section className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
-          <figure data-reveal-stagger className="mx-auto grid max-w-[900px] gap-9 text-center">
-            <span className="label flex items-center justify-center gap-3">
-              04
-              <span aria-hidden className="h-px w-10 bg-current opacity-60" />
-              In the artist&rsquo;s words
-            </span>
-            <blockquote className="font-display text-[clamp(28px,4.4vw,56px)] leading-[1.22] tracking-[0.01em]">
-              &ldquo;{quote.text}&rdquo;
-            </blockquote>
-            <figcaption className="flex items-center justify-center gap-4 text-left">
-              <Link
-                href={`/artists/${quoted.slug}`}
-                className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-plate"
-              >
-                <Image
-                  src={quoted.portrait!}
-                  alt={quoted.name}
-                  fill
-                  sizes="56px"
-                  className="object-cover"
-                />
-              </Link>
-              <span className="grid gap-1">
+        <section className="deep">
+          <div className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
+            <figure data-reveal-stagger className="mx-auto grid max-w-[900px] gap-9 text-center">
+              <span className="label flex items-center justify-center gap-3">
+                04
+                <span aria-hidden className="h-px w-10 bg-current opacity-60" />
+                In the artist&rsquo;s words
+              </span>
+              <blockquote className="font-display text-[clamp(28px,4.4vw,56px)] leading-[1.22] tracking-[0.01em]">
+                &ldquo;{quote.text}&rdquo;
+              </blockquote>
+              <figcaption className="flex items-center justify-center gap-4 text-left">
                 <Link
                   href={`/artists/${quoted.slug}`}
-                  className="font-display text-[20px] tracking-[0.02em] transition-colors hover:text-accent"
+                  className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-plate"
                 >
-                  {quoted.name}
+                  <Image
+                    src={quoted.portrait!}
+                    alt={quoted.name}
+                    fill
+                    sizes="56px"
+                    className="object-cover"
+                  />
                 </Link>
-                <a
-                  href={quote.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[11px] uppercase tracking-[0.16em] text-stone transition-colors hover:text-accent"
-                >
-                  {quote.source} ↗
-                </a>
-              </span>
-            </figcaption>
-          </figure>
+                <span className="grid gap-1">
+                  <Link
+                    href={`/artists/${quoted.slug}`}
+                    className="font-display text-[20px] tracking-[0.02em] transition-colors hover:text-accent"
+                  >
+                    {quoted.name}
+                  </Link>
+                  <a
+                    href={quote.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] uppercase tracking-[0.16em] text-deep-muted transition-colors hover:text-accent"
+                  >
+                    {quote.source} ↗
+                  </a>
+                </span>
+              </figcaption>
+            </figure>
+          </div>
         </section>
       )}
 
       {homeEvents.length > 0 && (
-        <section className="border-t border-rule bg-white py-[clamp(64px,8vw,110px)]">
+        <section className="py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
               title="Events"
@@ -210,7 +216,7 @@ export default function Home() {
                 <Link
                   key={e.slug}
                   href="/events"
-                  className="group grid content-start gap-5 rounded-[18px] border border-rule bg-paper p-[clamp(20px,3vw,32px)] transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] hover:-translate-y-1 hover:border-[#d6d6d6] hover:shadow-[0_24px_50px_-34px_rgba(0,0,0,.4)] sm:grid-cols-[auto_1fr]"
+                  className="group grid content-start gap-5 rounded-[18px] border border-rule bg-white p-[clamp(20px,3vw,32px)] transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] hover:-translate-y-1 hover:border-[#d6d6d6] hover:shadow-[0_24px_50px_-34px_rgba(0,0,0,.4)] sm:grid-cols-[auto_1fr]"
                 >
                   <DateTile e={e} />
                   <div className="grid gap-3">
