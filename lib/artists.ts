@@ -48,6 +48,7 @@ export const artists: Artist[] = [
     place: "Burugupalli, Telangana",
     medium: "Painting, sculpture",
     role: "Painter and sculptor",
+    // Photo by Mananrelia (2007), public domain — commons.wikimedia.org/wiki/File:ThotaVaikuntam.jpg
     portrait: "/artists/thota-vaikuntam.webp",
     // Theatre troupes — DAG, Saffronart ("travelling theatre groups"); sculpture — Open (2022), Deccan Chronicle (2026)
     summary:
