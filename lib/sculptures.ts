@@ -181,7 +181,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-a.webp",
-    modelUrl: "/sculptures/head-a.glb",
+    modelUrl: "/sculptures/head-a.glb?v=2",
     material: "",
     year: "",
   },
