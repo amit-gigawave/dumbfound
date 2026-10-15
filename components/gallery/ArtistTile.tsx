@@ -3,20 +3,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { initials, type Artist } from "@/lib/artists";
-import { tilt, untilt } from "./tilt";
 
 /**
  * Portrait (or initials) with name, birth and medium. Placeholders don't link.
- * Hover: the portrait eases into full colour over ~2s, the plate lifts with a
- * small wiggle and leans toward the cursor, and a thin mount-style frame fades
- * in. In a [data-focus-grid], the other artists dim meanwhile.
+ * Portraits are black and white until hovered, when they ease into full
+ * colour over ~2s, the plate lifts and a thin mount-style frame fades in. In a [data-focus-grid], the other artists dim meanwhile.
  */
 const ArtistTile = ({ artist }: { artist: Artist }) => {
   const body = (
     <>
       <div
-        onPointerMove={artist.placeholder ? undefined : tilt}
-        onPointerLeave={artist.placeholder ? undefined : untilt}
         className="artist-plate relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate group-hover:bg-[#e8e8e8]"
       >
         {artist.portrait ? (
@@ -25,7 +21,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
             alt={artist.name}
             fill
             sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover grayscale-[0.6] transition-[transform,filter] duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-[1.04] group-hover:grayscale-0"
+            className="object-cover grayscale transition-[transform,filter] duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-[1.04] group-hover:grayscale-0"
           />
         ) : (
           <span
