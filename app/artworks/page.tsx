@@ -10,7 +10,7 @@ import SectionHeader from "@/components/gallery/SectionHeader";
 export const metadata: Metadata = {
   title: "Artworks",
   description:
-    "Every work in the collection, with its artist, year and medium.",
+    "Every work in the collection, with its artist, year and medium where known.",
 };
 
 export default async function ArtworksPage({

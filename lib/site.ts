@@ -25,5 +25,5 @@ export const site = {
     { name: "Raj", email: "", phone: "+91 99490 74234" },
     { name: "Sanya", email: "", phone: "+91 98716 63259" },
   ],
-  social: [{ label: "Instagram", href: "#" }],
+  social: [] as { label: string; href: string }[],
 } as const;

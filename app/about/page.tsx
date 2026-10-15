@@ -9,7 +9,7 @@ import StaggerStory from "@/components/about/StaggerStory";
 
 // Lights up word by word on scroll; **key words** turn the accent colour.
 const MANIFESTO =
-  "Sculpture has always been one of the most **powerful and enduring** forms of artistic expression — yet it has often remained on the **periphery** of India's art ecosystem. Sculpted India was founded to **change that.**";
+  "Sculpture has always been one of the most **powerful and enduring** forms of artistic expression — yet it has often remained on the **periphery** of India's broader art ecosystem. Sculpted India was founded to **change that.**";
 
 // Rises in word by word; a marker then sweeps across the **key phrases**.
 const STORY = [
@@ -43,7 +43,7 @@ const faq: FaqItem[] = [
   {
     question: 'What does "View in AR" do?',
     answer:
-      "On a phone, it places the work in your room through the camera, at its real size, so you can see how it sits in your home. On a computer it shows a code to scan with your phone.",
+      "On a phone, it places the work in your room through the camera, so you can see how it sits in your home. On a computer it shows a code to scan with your phone.",
   },
   {
     question: "I am an artist. Can my work be shown here?",
