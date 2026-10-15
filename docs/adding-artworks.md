@@ -103,6 +103,28 @@ When it finishes, open `http://localhost:3000/artworks/<slug>` and check the pag
    npm run ar-models -- my-sculpture
    ```
 
+### A 3D scan (.usdz or .usdc)
+
+Scans from a phone or scanning app come as USD files. Turn them into a `.glb` with Blender (5.1), then follow the steps above.
+
+1. **Put the scan in `public/sculptures/`.** Raw scans are large (often 40 MB or more) and are not committed. Only the compressed `.glb` is.
+
+2. **Convert it with Blender.** Run this from the project folder, with your file name and slug filled in:
+
+   ```bash
+   "C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b --python-expr "import bpy, os; bpy.ops.wm.read_factory_settings(use_empty=True); bpy.ops.wm.usd_import(filepath=os.path.abspath('public/sculptures/<scan>.usdz')); bpy.ops.export_scene.gltf(filepath=os.path.abspath('.glb-backup/web/<slug>.glb'), export_format='GLB', export_vertex_color='ACTIVE')"
+   ```
+
+   - `export_vertex_color='ACTIVE'` matters: many scans keep their colour in the vertices, and without it the model renders plain white.
+   - Blender needs full paths, so the command wraps them in `os.path.abspath`. A bare relative path fails with "unable to open stage".
+   - The uncompressed result goes to `.glb-backup/web/`, which is not committed.
+
+3. **Compress** `.glb-backup/web/<slug>.glb` into `public/sculptures/<slug>.glb` (step 1 above), add the entry, and make the thumbnail.
+
+4. **Check which way it faces.** Look at the thumbnail. Scans are often saved facing sideways or backwards. If so, set `facing` (for example `180`) and make the thumbnail again. Then make the AR model.
+
+Unknown details (artist, year, medium) can stay empty (`""`), or start with `TODO`, until they are known. They are hidden on the site.
+
 ### A work without 3D (painting, photograph, drawing, …)
 
 1. Save the photo as `public/artworks/<slug>.webp` (about 1600 px on the long side, under 300 KB).
