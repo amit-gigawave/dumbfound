@@ -65,61 +65,53 @@ export const AR_DEFAULT_CM = 50;
 export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
 
 export const sculptures: Sculpture[] = [
+  // Thota Vaikuntam's works. Their earlier titles, years, materials and
+  // descriptions had no source and were removed (2026-10-15). Titles are named
+  // after the model files until the real ones are known. TODO: confirm details.
   {
     slug: "telangana-woman",
-    title: "Telangana Woman",
-    subtitle: "The iconic muse",
-    description:
-      "The iconic subject of Vaikuntam's world — a rural woman adorned with vermilion bindi, almond eyes, and traditional jewellery, capturing the dignity and sensuality of Telangana heritage in three dimensions.",
+    title: "Untitled (Lady)",
+    description: "",
     modelUrl: "/sculptures/Lady.glb",
     thumbnail: "/thumbnails/telangana-woman.webp",
     artistSlug: "thota-vaikuntam",
     featured: true,
-    material: "Patinated bronze",
-    year: "2019",
-    tags: ["bronze", "portrait", "telangana", "folk"],
+    material: "",
+    year: "",
   },
   {
     slug: "lord-krishna",
-    title: "Lord Krishna",
-    subtitle: "Celestial grace",
-    description:
-      "Rooted in the village life that shaped him, Vaikuntam brings celestial grace and folk intimacy together — poise, peace and primary colour meeting bronze.",
+    title: "Untitled (Lord Krishna)",
+    description: "",
     modelUrl: "/sculptures/LordKrishna.glb",
     thumbnail: "/thumbnails/lord-krishna.webp",
     artistSlug: "thota-vaikuntam",
     featured: true,
-    material: "Painted bronze",
-    year: "2020",
-    tags: ["bronze", "mythology", "krishna", "painted"],
+    material: "",
+    year: "",
   },
   {
     slug: "sacred-gaze",
-    title: "Sacred Gaze",
-    subtitle: "Dravidian dignity",
-    description:
-      "From Vaikuntam's series of sculptural heads in patinated bronze — almond eyes and ornate adornment, the calm, dignified faces of his Telangana people rendered in the round.",
+    title: "Untitled (Pandit)",
+    description: "",
     modelUrl: "/sculptures/Pandit.glb",
     thumbnail: "/thumbnails/sacred-gaze.webp",
     artistSlug: "thota-vaikuntam",
     featured: false,
-    material: "Patinated bronze",
-    year: "2018",
-    tags: ["bronze", "head", "portrait"],
+    material: "",
+    year: "",
   },
+  // Title from sculptedindia.com ("Dancing Shiva—a contemporary sculpture by Thota Vaikuntam").
   {
     slug: "dancing-shiva",
     title: "Dancing Shiva",
-    subtitle: "Nataraja in motion",
-    description:
-      "The cosmic dancer caught mid-stride — Vaikuntam's Nataraja fuses the rhythm of South Indian temple iconography with his unmistakable folk sensibility, rendered in flowing, gilded bronze.",
+    description: "A contemporary sculpture by Thota Vaikuntam.",
     modelUrl: "/sculptures/DancingShiva.glb",
     thumbnail: "/thumbnails/dancing-shiva.webp",
     artistSlug: "thota-vaikuntam",
     featured: true,
-    material: "Gilded bronze",
-    year: "2021",
-    tags: ["bronze", "mythology", "nataraja", "dance"],
+    material: "",
+    year: "",
   },
 
   // ---- Scanned works with a 3D model (integrated via the USDZ/GLB pipeline) ----
