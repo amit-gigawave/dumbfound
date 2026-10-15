@@ -295,32 +295,33 @@ select:focus-visible {
 }
 
 /* ------------------------------------------------------------------
- * Artist spotlight. Hovering one artist in a [data-spotlight] grid turns
- * every other artist dark, so the hovered one is in focus; it also grows a
- * little (ArtistTile fades it into colour). The dimming targets the tile's
+ * Artist grid focus. Hovering one artist dims the rest of the grid
+ * ([data-focus-grid]); the hovered portrait shows in full colour and lifts,
+ * without tilting. Dimming targets the tile's
  * parts, not the tile, so it never fights the scroll-reveal transition.
  * ------------------------------------------------------------------ */
 .artist-plate {
   transition:
-    filter 0.7s ease,
-    opacity 0.7s ease,
-    scale 0.8s cubic-bezier(0.25, 0.6, 0.3, 1);
+    background-color 1.8s cubic-bezier(0.45, 0, 0.2, 1),
+    filter 0.6s ease,
+    opacity 0.6s ease,
+    scale 0.6s cubic-bezier(0.3, 0.7, 0.3, 1),
+    box-shadow 0.6s ease;
 }
 .artist-caption {
-  transition: opacity 0.7s ease;
+  transition:
+    filter 0.6s ease,
+    opacity 0.6s ease;
 }
-[data-spotlight]:has(.artist-tile:hover)
+[data-focus-grid]:has(.artist-tile:hover)
   .artist-tile:not(:hover)
-  .artist-plate {
-  filter: brightness(0.3);
-}
-[data-spotlight]:has(.artist-tile:hover)
-  .artist-tile:not(:hover)
-  .artist-caption {
-  opacity: 0.3;
+  :is(.artist-plate, .artist-caption) {
+  filter: grayscale(1) brightness(0.92);
+  opacity: 0.38;
 }
 @media (prefers-reduced-motion: no-preference) {
-  a.artist-tile:hover .artist-plate {
-    scale: 1.04;
+  .artist-tile:hover .artist-plate {
+    scale: 1.05;
+    box-shadow: 0 22px 40px -22px rgba(0, 0, 0, 0.5);
   }
 }
