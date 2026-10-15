@@ -73,6 +73,8 @@ When it finishes, open `http://localhost:3000/artworks/<slug>` and check the pag
 
    Aim for **under 1 MB**. Larger files load slowly on phones.
 
+   **Scans with a large, detailed texture** (4096 or 8192 px, with painted details such as eyes or patterns): use `--texture-size 4096` instead. At 2048 the detail turns blurry on the artwork page. The file will be about 0.5–1.5 MB, which is acceptable for these.
+
 2. **Add the entry** to the list in `lib/sculptures.ts`:
 
    ```ts
@@ -201,7 +203,8 @@ Optional details only appear on the page when filled in. Text that starts with `
 ## Guidelines
 
 - **Images:** any shape works; the site shows them whole on a 4:5 plate, so leave some space around the subject. Clean, evenly lit photos on a plain background look best.
-- **3D models:** upright (Y up), facing front, one object, textures no larger than 2048 px, under 1 MB.
+- **3D models:** upright (Y up), facing front, one object, under 1 MB. Textures 2048 px, or 4096 px for detailed scans (see above).
+- **Asking a 3D artist for a model:** a `.glb` (or a `.usdz`, which packs its textures; a `.usdc` doesn't, so textures go missing) with the colour baked into one texture of 4096 px. No colour stored on the mesh (vertex colours) instead of a texture: it can only be as sharp as the mesh, so details smear. Opaque, single-sided material, facing front, with the real height in cm.
 - **Thumbnails of 3D works** are renders of the model itself (transparent 800 × 1000 WebP), so what visitors see on the grid matches the 3D view.
 - **Removing a work:** delete its entry from `lib/sculptures.ts` and its files (`public/sculptures/<slug>.glb`, `public/ar/<slug>.glb`, `public/thumbnails/<slug>.webp` or `public/artworks/<slug>.webp`).
 - **Replacing a model:** overwrite the `.glb`, then run `npm run thumbnails -- <slug>` and `npm run ar-models -- <slug>` again.
