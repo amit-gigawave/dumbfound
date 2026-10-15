@@ -52,7 +52,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
           {artist.name}
         </h3>
         <p className="mt-1 text-[13px] leading-relaxed text-stone">
-          {artist.born} · {artist.place.split(",").pop()?.trim()}
+          {[artist.born, artist.place.split(",").pop()?.trim()].filter(Boolean).join(" · ")}
           <br />
           {artist.medium}
         </p>

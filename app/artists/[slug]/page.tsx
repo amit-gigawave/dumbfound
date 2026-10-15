@@ -27,7 +27,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const artist = getArtist(slug);
   if (!artist || artist.placeholder) return { title: "Artist not found" };
-  return { title: artist.name, description: artist.summary };
+  return { title: artist.name, description: artist.summary || undefined };
 }
 
 const FactList = ({ title, items }: { title: string; items: Fact[] }) =>
@@ -87,7 +87,7 @@ export default async function ArtistPage({
               {artist.name}
             </h1>
             <p className="mt-3 text-xs uppercase tracking-[0.14em] text-stone">
-              {artist.born}, {artist.place} · {artist.role}
+              {[artist.born, artist.place].filter(Boolean).join(", ")} · {artist.role}
             </p>
 
             <nav
@@ -112,7 +112,7 @@ export default async function ArtistPage({
               id="profile"
               className="font-text mt-6 max-w-[62ch] text-lg leading-[1.75]"
             >
-              <p>{artist.summary}</p>
+              {artist.summary && <p>{artist.summary}</p>}
               <ReadMore paragraphs={artist.bio} />
             </div>
           </div>
