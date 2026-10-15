@@ -1,5 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
+import { MapPin } from "lucide-react";
+import { pastEvents, upcomingEvents } from "@/lib/events";
+import DateTile from "@/components/events/DateTile";
+import EventStatus from "@/components/events/EventStatus";
 import { artists, publishedArtists } from "@/lib/artists";
 import { getFeaturedWorks, getSculpture, sculptures } from "@/lib/sculptures";
 import HeroScroll, { type HeroWork } from "@/components/HeroScroll";
@@ -45,6 +49,7 @@ export default function Home() {
   const explore = sculptures.filter((w) => w.modelUrl && !w.featured).slice(0, 8);
   const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
   const quote = quoted?.quotes[0];
+  const homeEvents = [...upcomingEvents(), ...pastEvents()].slice(0, 2);
   const heroWork = heroWorkFor(HERO_WORK);
   const fan = FAN.flatMap(
     (slug) => artists.find((a) => a.slug === slug && a.portrait) ?? [],
@@ -182,6 +187,52 @@ export default function Home() {
               </span>
             </figcaption>
           </figure>
+        </section>
+      )}
+
+      {homeEvents.length > 0 && (
+        <section className="border-t border-rule bg-white py-[clamp(64px,8vw,110px)]">
+          <div className={wrap}>
+            <SectionHeader
+              title="Events"
+              link={{ label: "All events", href: "/events" }}
+            />
+            <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
+              {homeEvents.map((e) => (
+                <Link
+                  key={e.slug}
+                  href="/events"
+                  className="group grid content-start gap-5 rounded-[18px] border border-rule bg-paper p-[clamp(20px,3vw,32px)] transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] hover:-translate-y-1 hover:border-[#d6d6d6] hover:shadow-[0_24px_50px_-34px_rgba(0,0,0,.4)] sm:grid-cols-[auto_1fr]"
+                >
+                  <DateTile e={e} />
+                  <div className="grid gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="label">{e.kind}</span>
+                      {e.start && e.end && (
+                        <EventStatus
+                          start={e.start}
+                          end={e.end}
+                          fallback={e.past ? "Ended" : "Upcoming"}
+                        />
+                      )}
+                    </div>
+                    <h3 className="heading-caps text-[clamp(22px,2.4vw,30px)] leading-tight tracking-[0.04em] transition-colors group-hover:text-accent">
+                      {e.title}
+                    </h3>
+                    <p className="flex items-center gap-1.5 text-[14px] text-stone">
+                      <MapPin size={14} className="shrink-0" /> {e.venue}
+                    </p>
+                    <p className="font-text line-clamp-3 text-[16px] leading-[1.7] text-[#333]">
+                      {e.description}
+                    </p>
+                    <span className="mt-1 text-[11px] uppercase tracking-[0.16em] text-accent">
+                      Details <span className="nudge">→</span>
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         </section>
       )}
 
