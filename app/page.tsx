@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { artists, publishedArtists } from "@/lib/artists";
 import { getFeaturedWorks, getSculpture, sculptures } from "@/lib/sculptures";
 import HeroScroll, { type HeroWork } from "@/components/HeroScroll";
@@ -42,6 +43,8 @@ export default function Home() {
   const live = publishedArtists();
   const featured = getFeaturedWorks();
   const explore = sculptures.filter((w) => w.modelUrl && !w.featured).slice(0, 8);
+  const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
+  const quote = quoted?.quotes[0];
   const heroWork = heroWorkFor(HERO_WORK);
   const fan = FAN.flatMap(
     (slug) => artists.find((a) => a.slug === slug && a.portrait) ?? [],
@@ -138,6 +141,47 @@ export default function Home() {
               ))}
             </div>
           </div>
+        </section>
+      )}
+
+      {quote && quoted && (
+        <section className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
+          <figure data-reveal-stagger className="mx-auto grid max-w-[900px] gap-9 text-center">
+            <span className="label">In the artist&rsquo;s words</span>
+            <blockquote className="font-display text-[clamp(28px,4.4vw,56px)] leading-[1.22] tracking-[0.01em]">
+              &ldquo;{quote.text}&rdquo;
+            </blockquote>
+            <figcaption className="flex items-center justify-center gap-4 text-left">
+              <Link
+                href={`/artists/${quoted.slug}`}
+                className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-plate"
+              >
+                <Image
+                  src={quoted.portrait!}
+                  alt={quoted.name}
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
+              </Link>
+              <span className="grid gap-1">
+                <Link
+                  href={`/artists/${quoted.slug}`}
+                  className="font-display text-[20px] tracking-[0.02em] transition-colors hover:text-accent"
+                >
+                  {quoted.name}
+                </Link>
+                <a
+                  href={quote.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] uppercase tracking-[0.16em] text-stone transition-colors hover:text-accent"
+                >
+                  {quote.source} ↗
+                </a>
+              </span>
+            </figcaption>
+          </figure>
         </section>
       )}
 
