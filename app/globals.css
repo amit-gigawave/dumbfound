@@ -226,22 +226,8 @@ select:focus-visible {
     transition:
       opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
       transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    /* Set per element by RevealObserver, so each batch staggers. */
     transition-delay: var(--reveal-delay, 0ms);
-  }
-  [data-reveal-stagger] > :nth-child(2) {
-    --reveal-delay: 70ms;
-  }
-  [data-reveal-stagger] > :nth-child(3) {
-    --reveal-delay: 140ms;
-  }
-  [data-reveal-stagger] > :nth-child(4) {
-    --reveal-delay: 210ms;
-  }
-  [data-reveal-stagger] > :nth-child(5) {
-    --reveal-delay: 280ms;
-  }
-  [data-reveal-stagger] > :nth-child(n + 6) {
-    --reveal-delay: 350ms;
   }
 
   /* Text links redraw their underline on hover. */
