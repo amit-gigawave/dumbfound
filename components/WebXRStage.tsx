@@ -184,7 +184,7 @@ const WebXRStage = forwardRef<
         ? "Still looking for the floor, so the work may float. Try a well-lit floor with some pattern or texture; plain, dark or shiny surfaces are hard to detect."
         : "Point your phone at the floor and move it slowly from side to side. The work will settle onto it."
       : phase === "placed" && showPlaced
-        ? `${title} is placed at its real size. Drag to move it, twist with two fingers to turn it.`
+        ? `${title} is placed on the floor. Drag to move it, twist with two fingers to turn it.`
         : null;
 
   return el

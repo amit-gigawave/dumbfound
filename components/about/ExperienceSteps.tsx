@@ -16,7 +16,7 @@ const STEPS = [
   {
     icon: Smartphone,
     title: "View in AR",
-    line: "On a phone, place the work in your room through the camera, at its real size.",
+    line: "On a phone, place the work in your room through the camera.",
   },
   {
     icon: Mail,
