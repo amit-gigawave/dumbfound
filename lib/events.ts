@@ -57,6 +57,7 @@ export const events: GalleryEvent[] = [
     sourceUrl:
       "https://www.sculptedindia.com/events/design-democracy-2026.html",
     artistSlugs: [
+      "mf-husain",
       "krishen-khanna",
       "himmat-shah",
       "thota-vaikuntam",
