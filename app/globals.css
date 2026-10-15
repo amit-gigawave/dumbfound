@@ -297,14 +297,15 @@ select:focus-visible {
 /* ------------------------------------------------------------------
  * Artist spotlight. Hovering one artist in a [data-spotlight] grid turns
  * every other artist dark, so the hovered one is in focus; it also grows a
- * little (ArtistTile fades it into colour). The dimming targets the tile's
+ * little and casts a soft shadow (ArtistTile fades it into colour). The dimming targets the tile's
  * parts, not the tile, so it never fights the scroll-reveal transition.
  * ------------------------------------------------------------------ */
 .artist-plate {
   transition:
     filter 0.7s ease,
     opacity 0.7s ease,
-    scale 0.8s cubic-bezier(0.25, 0.6, 0.3, 1);
+    scale 0.8s cubic-bezier(0.25, 0.6, 0.3, 1),
+    box-shadow 0.8s ease;
 }
 .artist-caption {
   transition: opacity 0.7s ease;
@@ -322,5 +323,6 @@ select:focus-visible {
 @media (prefers-reduced-motion: no-preference) {
   a.artist-tile:hover .artist-plate {
     scale: 1.04;
+    box-shadow: 0 24px 44px -20px rgba(0, 0, 0, 0.55);
   }
 }
