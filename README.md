@@ -92,7 +92,8 @@ scripts/
   make-ar-models.mjs    `npm run ar-models`
   copy-draco.mjs        postinstall: copies three's Draco decoder to public/draco
 public/
-  sculptures/           GLB models (the web viewer)
+  sculptures/           GLB models (the web viewer). Raw .usdz/.usdc scans are dropped here
+                        for conversion but not committed
   ar/                   AR copies of the models, in metres (built by `npm run ar-models`)
   vendor/               model-viewer 4.3.1 (Apache-2.0), loaded only for AR on Android
   thumbnails/           Rendered thumbnails of 3D works (WebP)
