@@ -153,7 +153,7 @@ No thumbnail step is needed.
 ## 3. Adding an artist
 
 1. Copy the Thota Vaikuntam entry in `lib/artists.ts` and change it.
-2. Put the portrait in `public/artists/<slug>.webp` (square works best) and set `portrait: "/artists/<slug>.webp"`. Until then, initials are shown.
+2. Put the portrait in `public/artists/<slug>.webp` (square works best) and set `portrait: "/artists/<slug>.webp"`. Until then, initials are shown. To replace a portrait, save it under a new name (e.g. `<slug>-colour.webp`) and update `portrait`: browsers keep showing a cached image whose name hasn't changed. Portraits should be in colour; the site shows them in black and white until hovered.
 3. Fill in the details. `education`, `honours`, `collections` and `quotes` may be empty lists (`[]`); empty sections are not shown.
 4. The `slug` (for example `"jane-doe"`) is what artworks use as `artistSlug`.
 
