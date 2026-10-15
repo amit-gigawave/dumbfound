@@ -64,7 +64,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: scroll-driven 3D hero, featured works, artists |
+| `/` | Home: scroll-driven 3D hero, artists, featured works, Explore in 3D, an artist quote, events |
 | `/artists`, `/artists/[slug]` | Artist list and artist pages |
 | `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
 | `/events` | Upcoming and past exhibitions |
