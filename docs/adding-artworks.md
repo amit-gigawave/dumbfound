@@ -112,10 +112,11 @@ Scans from a phone or scanning app come as USD files. Turn them into a `.glb` wi
 2. **Convert it with Blender.** Run this from the project folder, with your file name and slug filled in:
 
    ```bash
-   "C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b --python-expr "import bpy, os; bpy.ops.wm.read_factory_settings(use_empty=True); bpy.ops.wm.usd_import(filepath=os.path.abspath('public/sculptures/<scan>.usdz')); bpy.ops.export_scene.gltf(filepath=os.path.abspath('.glb-backup/web/<slug>.glb'), export_format='GLB', export_vertex_color='ACTIVE')"
+   "C:\Program Files\Blender Foundation\Blender 5.1\blender.exe" -b --python-expr "import bpy, os; bpy.ops.wm.read_factory_settings(use_empty=True); bpy.ops.wm.usd_import(filepath=os.path.abspath('public/sculptures/<scan>.usdz')); [(setattr(m, 'use_backface_culling', True), [m.node_tree.links.remove(l) for l in list(m.node_tree.links) if l.to_socket.name == 'Alpha']) for m in bpy.data.materials if m.node_tree]; bpy.ops.export_scene.gltf(filepath=os.path.abspath('.glb-backup/web/<slug>.glb'), export_format='GLB', export_vertex_color='ACTIVE')"
    ```
 
    - `export_vertex_color='ACTIVE'` matters: many scans keep their colour in the vertices, and without it the model renders plain white.
+   - The middle part makes the model solid. USD scans often arrive with their opacity linked up and backface culling off, so the export comes out transparent (`alphaMode: BLEND`) and double-sided. On the site that looks see-through, with the inside and back faces showing.
    - Blender needs full paths, so the command wraps them in `os.path.abspath`. A bare relative path fails with "unable to open stage".
    - The uncompressed result goes to `.glb-backup/web/`, which is not committed.
 
@@ -214,6 +215,8 @@ Optional details only appear on the page when filled in. Text that starts with `
 | `"…" is already used by another work` | Pick a different address name (slug) |
 | The new work isn't on the site | Check that `artistSlug` matches an artist, and refresh the page |
 | The thumbnail looks wrong | Run `npm run thumbnails -- <slug>` again |
+| A model looks see-through, inside faces showing | Its material is set to transparent (`BLEND`). Convert the scan again with the Blender command above, then compress, and make the thumbnail and AR model again |
+| A replaced model still shows the old version | Models are cached for a day. Add `?v=2` (then `?v=3`, …) to its `modelUrl` |
 | Search doesn't find it | Search reads `title`, `subtitle`, `description`, `tags`, medium, year and artist name |
 
 ## Things to know about AR
