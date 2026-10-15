@@ -235,7 +235,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "",
     thumbnail: "/thumbnails/meditating.webp",
-    modelUrl: "/sculptures/meditating.glb",
+    modelUrl: "/sculptures/meditating.glb?v=2",
     facing: 180,
     material: "",
     year: "",
