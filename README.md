@@ -28,13 +28,25 @@ To test on a phone, open the "Network" address that `npm run dev` prints. AR its
 
 ### Testing AR from your computer
 
-The "View in AR" QR code on desktop is scanned by a phone, so it can't point at `localhost`. Set the public address in `.env.local` (not committed), and the QR code uses it:
+The "View in AR" QR code on desktop is scanned by a phone, so it can't point at `localhost`, and AR needs `https://`. `npm run tunnel` opens an ngrok tunnel to the dev server and points the QR code at it.
+
+One-time setup, in `.env.local` (not committed):
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://<your-tunnel>.trycloudflare.com
+NGROK_AUTHTOKEN=<token>             # https://dashboard.ngrok.com/get-started/your-authtoken
+NGROK_DOMAIN=<name>.ngrok-free.app  # optional, https://dashboard.ngrok.com/domains
 ```
 
-A quick HTTPS tunnel: `cloudflared tunnel --url http://localhost:3000`. Its address changes on every restart, so update `.env.local` too. On the live site, set `NEXT_PUBLIC_SITE_URL` to the real domain, or leave it unset to use the page's own address.
+Each free ngrok account gets one permanent domain. With `NGROK_DOMAIN` set, the address stays the same on every run. Without it, it changes each time.
+
+```bash
+npm run dev       # terminal 1
+npm run tunnel    # terminal 2: prints the https:// address
+```
+
+The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which the QR code uses. Refresh the page after it starts. On the free plan the phone sees an ngrok "Visit Site" page once; tap through to reach the site.
+
+**Production** (`main`, deployed by Vercel at https://dumbfound.vercel.app) needs none of this. `NEXT_PUBLIC_SITE_URL` is unset there, so the QR code uses the page's own address.
 
 ## Scripts
 
@@ -46,6 +58,7 @@ A quick HTTPS tunnel: `cloudflared tunnel --url http://localhost:3000`. Its addr
 | `npm run add-work` | Interactive helper: adds an artwork, compresses its image or model and makes its thumbnail |
 | `npm run thumbnails -- [slug]` | Renders thumbnails of 3D works with Puppeteer. The dev server must be running. Leave out the slug to redo all of them |
 | `npm run ar-models -- [slug]` | Builds the AR copies of 3D works (`public/ar/`): real size from `heightCm`, facing front, on the floor |
+| `npm run tunnel -- [--port 3000]` | ngrok tunnel to the dev server, for testing the AR QR code from a phone (see above) |
 
 ## Routes
 
@@ -90,6 +103,7 @@ scripts/
   add-work.mjs          `npm run add-work`
   make-thumbnails.mjs   `npm run thumbnails`
   make-ar-models.mjs    `npm run ar-models`
+  tunnel.mjs            `npm run tunnel` (ngrok)
   copy-draco.mjs        postinstall: copies three's Draco decoder to public/draco
 public/
   sculptures/           GLB models (the web viewer). Raw .usdz/.usdc scans are dropped here
