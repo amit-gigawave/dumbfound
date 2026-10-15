@@ -227,7 +227,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "",
     thumbnail: "/thumbnails/female-head.webp",
-    modelUrl: "/sculptures/female-head.glb",
+    modelUrl: "/sculptures/female-head.glb?v=2",
     facing: 180,
     material: "",
     year: "",
