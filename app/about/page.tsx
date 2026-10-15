@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { site } from "@/lib/site";
-import FAQ, { type FaqItem } from "@/components/FAQ";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import Manifesto from "@/components/about/Manifesto";
-import ExperienceSteps from "@/components/about/ExperienceSteps";
 import StaggerStory from "@/components/about/StaggerStory";
 
 // Lights up word by word on scroll; **key words** turn the accent colour.
@@ -23,34 +20,6 @@ export const metadata: Metadata = {
   title: "About",
   description: site.description,
 };
-
-const faq: FaqItem[] = [
-  {
-    question: "What is Sculpted India?",
-    answer:
-      "Sculpted India is a pioneering public art initiative and dedicated platform committed to advancing modern and contemporary Indian sculpture by giving it the visibility, recognition, and cultural presence it has long deserved.",
-  },
-  {
-    question: "How do I enquire about a work?",
-    answer:
-      'Open the work and choose "Enquire about this work", or write to us through the enquiry page. We will put you in touch about availability, editions and viewing.',
-  },
-  {
-    question: "Can I see a work in 3D?",
-    answer:
-      "Works that exist in three dimensions open in 3D on their page. Drag to turn the work and look at it from every side, as you would in a gallery, or switch to Photo for the still image.",
-  },
-  {
-    question: 'What does "View in AR" do?',
-    answer:
-      "On a phone, it places the work in your room through the camera, so you can see how it sits in your home. On a computer it shows a code to scan with your phone.",
-  },
-  {
-    question: "I am an artist. Can my work be shown here?",
-    answer:
-      "We are always glad to hear from artists. Write to us through the enquiry page with a short introduction and a few images of your work.",
-  },
-];
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
@@ -81,32 +50,6 @@ export default function AboutPage() {
           <span className="label md:sticky md:top-36 md:self-start">Our story</span>
           <StaggerStory paragraphs={STORY} />
         </div>
-      </section>
-
-      <section className="border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
-        <div className={wrap}>
-          <span className="label">Experience</span>
-          <h2 className="heading-caps mt-4 text-[clamp(26px,3.4vw,42px)] leading-[1.15] tracking-[0.05em]">
-            From screen to your room
-          </h2>
-          <ExperienceSteps />
-        </div>
-      </section>
-
-      <section
-        id="viewing"
-        className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)] pt-[clamp(64px,8vw,104px)]`}
-      >
-        <SectionHeader title="Questions" />
-        <div data-reveal>
-          <FAQ items={faq} />
-        </div>
-        <p className="mt-8 text-sm text-stone">
-          Something else?{" "}
-          <Link href="/contact" className="text-link">
-            Write to us
-          </Link>
-        </p>
       </section>
 
       <section
