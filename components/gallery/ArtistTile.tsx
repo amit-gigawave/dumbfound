@@ -7,13 +7,15 @@ import { initials, type Artist } from "@/lib/artists";
 /**
  * Portrait (or initials) with name, birth and medium. Placeholders don't link.
  * Portraits are black and white until hovered, when they ease into full
- * colour over ~2s, the plate lifts and a thin mount-style frame fades in. In a [data-focus-grid], the other artists dim meanwhile.
+ * colour over ~2s and the plate grows a little. Inside a [data-spotlight]
+ * grid, every other artist goes dark meanwhile, so the hovered one is in
+ * focus (styles in globals.css). No tilt.
  */
 const ArtistTile = ({ artist }: { artist: Artist }) => {
   const body = (
     <>
       <div
-        className="artist-plate relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate group-hover:bg-[#e8e8e8]"
+        className="artist-plate relative isolate grid aspect-square place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate"
       >
         {artist.portrait ? (
           <Image
@@ -21,28 +23,21 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
             alt={artist.name}
             fill
             sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover grayscale transition-[transform,filter] duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-[1.04] group-hover:grayscale-0"
+            className="object-cover grayscale transition-[filter] duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:grayscale-0"
           />
         ) : (
           <span
             aria-hidden
-            className="font-display text-[42px] text-[#bdbdbd] transition-transform duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-110"
+            className="font-display text-[42px] text-[#bdbdbd]"
           >
             {initials(artist.name)}
           </span>
         )}
-        {!artist.placeholder && (
-          // Thin mount-style frame that fades in on hover
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-2.5 scale-[1.03] rounded-[6px] border border-paper/80 opacity-0 transition-[opacity,transform] duration-[1800ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:scale-100 group-hover:opacity-100"
-          />
-        )}
       </div>
       <div className="artist-caption">
         <h3
-          className={`text-[21px] leading-tight tracking-[0.04em] transition-colors duration-[1200ms] ease-[cubic-bezier(0.45,0,0.2,1)] ${
-            artist.placeholder ? "text-[#8a8a8a]" : "group-hover:text-accent"
+          className={`text-[21px] leading-tight tracking-[0.04em] ${
+            artist.placeholder ? "text-[#8a8a8a]" : ""
           }`}
         >
           {artist.name}
