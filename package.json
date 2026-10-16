@@ -10,6 +10,8 @@
     "postinstall": "node scripts/copy-draco.mjs",
     "thumbnails": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/make-thumbnails.mjs",
     "add-work": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/add-work.mjs",
+    "add-model": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/add-model.mjs",
+    "check-model": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-model.mjs",
     "ar-models": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/make-ar-models.mjs",
     "tunnel": "node scripts/tunnel.mjs"
   },
