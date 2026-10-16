@@ -130,6 +130,10 @@ To add or change artworks and artists, follow **[docs/adding-artworks.md](docs/a
 - `.glb-backup/` holds the uncompressed source models. It is ignored by git.
 - Static models, thumbnails and the Draco files are cached for a day (`next.config.ts`).
 
+## To do
+
+- **Admin panel for adding works.** Plan a panel where a non-developer can add an artist or work (details, photos, 3D model) without editing `lib/` or running the conversion scripts by hand. To plan: where the content lives instead of `lib/*.ts`, sign-in, model upload and conversion (USD → GLB, Draco, AR copy, thumbnail), and how changes reach the live site. Today's manual steps are in [docs/adding-artworks.md](docs/adding-artworks.md).
+
 ## License
 
 All Rights Reserved © 2026 Sculpted India
