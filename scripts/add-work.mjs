@@ -1,31 +1,32 @@
-// Adds an artwork to the site.
+// Adds an artwork from a photo (painting, photograph, drawing, a sculpture
+// without a scan…).
 //
 //   npm run add-work
 //
-// Asks a few questions, prepares the image or 3D model, writes the entry into
-// lib/sculptures.ts and (for 3D works, when the site is running) makes the
-// thumbnail. Full guide: docs/adding-artworks.md
-import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+// For a 3D model use  npm run add-model -- "<file>"  instead (this script
+// hands .glb/.usdz/.usdc files over to it). Full guide: docs/adding-artworks.md
+import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
 import { extname, resolve } from "node:path";
 import { createInterface } from "node:readline";
-import { pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
+import { addWork, load, loadWorks, slugify } from "./lib/catalogue.mjs";
 
-const CATALOGUE = "lib/sculptures.ts";
 const BASE = process.env.SITE_URL ?? "http://localhost:3000";
+const IMAGE = [".jpg", ".jpeg", ".png", ".webp"];
+const MODEL = [".glb", ".usdz", ".usdc"];
 
 // ---------- small helpers ----------
 
 const rl = createInterface({ input: process.stdin, terminal: false });
 const lines = rl[Symbol.asyncIterator]();
 
-/** Ask one question. Empty answer returns `def` (if any). Re-asks until valid. */
-async function ask(question, { def, validate } = {}) {
+/** Ask one question. Empty answer returns `def`. Re-asks until valid. */
+async function ask(question, { def = "", validate } = {}) {
   for (;;) {
-    process.stdout.write(`${question}${def !== undefined ? ` [${def}]` : ""}: `);
+    process.stdout.write(`${question}${def ? ` [${def}]` : ""}: `);
     const { value, done } = await lines.next();
     if (done) fail("\nInput ended before all questions were answered.");
-    const answer = value.trim() || def || "";
+    const answer = value.trim() || def;
     const problem = validate?.(answer);
     if (!problem) return answer;
     console.log(`  ${problem}`);
@@ -37,222 +38,116 @@ function fail(message) {
   process.exit(1);
 }
 
-const load = (file, bust = "") =>
-  import(pathToFileURL(resolve(file)).href + bust);
-
-const slugify = (text) =>
-  text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
 /** Windows "Copy as path" wraps paths in quotes; drag-and-drop may too. */
 const cleanPath = (p) => p.trim().replace(/^["']|["']$/g, "");
 
 const kb = (file) => Math.round(statSync(file).size / 1024);
 
-const required = (label) => (v) => (v ? null : `${label} is required.`);
+// ---------- the file ----------
+
+console.log("\nAdd an artwork from a photo\n");
+
+let source = "";
+await ask("Path to the image (you can paste or drag the file here)", {
+  validate: (v) => {
+    source = resolve(cleanPath(v));
+    if (!existsSync(source)) return "That file was not found.";
+    const ext = extname(source).toLowerCase();
+    if (![...IMAGE, ...MODEL].includes(ext)) return `Expected ${IMAGE.join(" / ")} (or a 3D model: ${MODEL.join(" / ")}).`;
+    return null;
+  },
+});
+
+if (MODEL.includes(extname(source).toLowerCase())) {
+  rl.close();
+  console.log("\nThat's a 3D model, so handing over to  npm run add-model …\n");
+  const run = spawnSync(
+    process.execPath,
+    ["--disable-warning=ExperimentalWarning", "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", "scripts/add-model.mjs", source],
+    { stdio: "inherit" },
+  );
+  process.exit(run.status ?? 1);
+}
 
 // ---------- questions ----------
 
 const { artists } = await load("lib/artists.ts");
-const { sculptures } = await load(CATALOGUE);
-const realArtists = artists.filter((a) => !a.placeholder);
-if (realArtists.length === 0) {
-  fail("There are no artists yet. Add one to lib/artists.ts first (see docs/adding-artworks.md).");
-}
+const works = await loadWorks();
+const real = artists.filter((a) => !a.placeholder);
 
-console.log("\nAdd an artwork\n");
-
-console.log("Artists:");
-realArtists.forEach((a, i) => console.log(`  ${i + 1}. ${a.name}  (${a.slug})`));
-let artist;
-await ask("Which artist? (number or slug)", {
-  def: realArtists.length === 1 ? "1" : undefined,
-  validate: (v) => {
-    artist = realArtists[Number(v) - 1] ?? realArtists.find((a) => a.slug === v);
-    return artist ? null : "Pick a number from the list, or type an artist slug.";
-  },
-});
-
-const title = await ask("Title", { validate: required("Title") });
+console.log("Leave anything you don't know empty: unknown details stay hidden on the site.\n");
+const title = await ask("Title", { validate: (v) => (v ? null : "A title is needed.") });
 const slug = await ask("Address name (slug)", {
   def: slugify(title),
   validate: (v) => {
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(v)) return "Use lowercase letters, numbers and hyphens only.";
-    if (sculptures.some((w) => w.slug === v)) return `"${v}" is already used by another work.`;
+    if (works.some((w) => w.slug === v)) return `"${v}" is already used by another work.`;
     return null;
   },
 });
-const year = await ask("Year (e.g. 2024)", { validate: required("Year") });
-const material = await ask("Medium / material (e.g. Patinated bronze, Oil on canvas)", {
-  validate: required("Medium"),
+console.log("Artists:");
+real.forEach((a, i) => console.log(`  ${i + 1}. ${a.name}`));
+let artist = null;
+await ask("Artist (number, or Enter if unknown)", {
+  validate: (v) => {
+    if (!v) return null;
+    artist = real[Number(v) - 1] ?? real.find((a) => a.slug === v) ?? null;
+    return artist ? null : "Pick a number from the list, or press Enter.";
+  },
 });
-const description = await ask("Short description (one or two sentences)", {
-  validate: required("Description"),
-});
+const material = await ask("Medium (optional, e.g. Oil on canvas)");
+const year = await ask("Year (optional)");
+const dimensions = await ask("Dimensions (optional)");
+const description = await ask("Short description (optional)");
 const featured = /^y/i.test(await ask("Show in Featured works on the home page? (y/n)", { def: "n" }));
 
-console.log("\nWhat do you have for this work?\n  1. A 3D model (.glb)\n  2. An image (.jpg, .png or .webp)");
-const kind = await ask("Choose 1 or 2", { validate: (v) => (v === "1" || v === "2" ? null : "Type 1 or 2.") });
-const is3d = kind === "1";
-
-const okExt = is3d ? [".glb"] : [".jpg", ".jpeg", ".png", ".webp"];
-let source = "";
-await ask(`Path to the ${is3d ? ".glb file" : "image"} (you can paste or drag the file here)`, {
-  validate: (v) => {
-    source = resolve(cleanPath(v));
-    if (!existsSync(source)) return "That file was not found.";
-    if (!okExt.includes(extname(source).toLowerCase())) return `Expected a ${okExt.join(" / ")} file.`;
-    return null;
-  },
-});
-
-console.log(`
-About to add:
-  ${title}  (${slug})
-  by ${artist.name}, ${year}, ${material}
-  ${is3d ? "3D model" : "Image"}: ${source}
-  Featured on home page: ${featured ? "yes" : "no"}`);
+console.log(`\nAbout to add "${title}" (${slug}), ${artist?.name ?? "artist unknown"}.`);
 if (/^n/i.test(await ask("Go ahead? (y/n)", { def: "y" }))) fail("Cancelled. Nothing was changed.");
 rl.close();
 
-// ---------- prepare the file ----------
+// ---------- prepare the image ----------
 
+mkdirSync("public/artworks", { recursive: true });
 let thumbnail;
-let modelUrl;
-
-if (is3d) {
-  mkdirSync("public/sculptures", { recursive: true });
-  const out = `public/sculptures/${slug}.glb`;
-  console.log("\nCompressing the model (Draco + WebP). This can take a minute…");
-  const run = spawnSync(
-    `npx --yes @gltf-transform/cli optimize "${source}" "${out}" --compress draco --texture-compress webp --texture-size 2048`,
-    { stdio: "inherit", shell: true },
-  );
-  if (run.status !== 0 || !existsSync(out)) {
-    console.warn("\nCompression failed — using the original file instead. It may be large and slow to load.");
-    copyFileSync(source, out);
-  }
-  const size = kb(out);
-  console.log(`Model saved: ${out} (${size} KB)`);
-  if (size > 1500) console.warn("  Warning: over 1.5 MB. Consider reducing the model's detail or textures.");
-  modelUrl = `/sculptures/${slug}.glb`;
-  thumbnail = `/thumbnails/${slug}.webp`;
-} else {
-  mkdirSync("public/artworks", { recursive: true });
-  let sharp;
-  try {
-    sharp = (await import("sharp")).default;
-  } catch {
-    sharp = null;
-  }
-  if (sharp) {
-    const out = `public/artworks/${slug}.webp`;
-    await sharp(source)
-      .rotate()
-      .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 82 })
-      .toFile(out);
-    console.log(`\nImage saved: ${out} (${kb(out)} KB)`);
-    thumbnail = `/artworks/${slug}.webp`;
-  } else {
-    const ext = extname(source).toLowerCase();
-    const out = `public/artworks/${slug}${ext}`;
-    copyFileSync(source, out);
-    console.warn(`\nCould not resize the image (sharp is missing); copied it as-is: ${out} (${kb(out)} KB)`);
-    thumbnail = `/artworks/${slug}${ext}`;
-  }
-}
-
-// ---------- write the catalogue entry ----------
-
-const str = (v) => JSON.stringify(v);
-const entry = [
-  "  {",
-  `    slug: ${str(slug)},`,
-  `    title: ${str(title)},`,
-  `    description: ${str(description)},`,
-  `    artistSlug: ${str(artist.slug)},`,
-  `    thumbnail: ${str(thumbnail)},`,
-  ...(modelUrl ? [`    modelUrl: ${str(modelUrl)},`] : []),
-  `    material: ${str(material)},`,
-  `    year: ${str(year)},`,
-  ...(featured ? ["    featured: true,"] : []),
-  "  },",
-].join("\n");
-
-const original = readFileSync(CATALOGUE, "utf8");
-const arrayStart = original.indexOf("export const sculptures: Sculpture[] = [");
-const arrayEnd = arrayStart === -1 ? -1 : original.indexOf("\n];", arrayStart);
-if (arrayEnd === -1) fail(`Could not find the list of works in ${CATALOGUE}. Add the entry by hand (see docs/adding-artworks.md).`);
-
-writeFileSync(CATALOGUE, `${original.slice(0, arrayEnd)}\n${entry}${original.slice(arrayEnd)}`);
-
-// Make sure the file still loads and now contains the work; otherwise undo.
+let sharp = null;
 try {
-  const { sculptures: after } = await load(CATALOGUE, `?check=${Date.now()}`);
-  if (!after.some((w) => w.slug === slug)) throw new Error("new entry not found");
+  sharp = (await import("sharp")).default;
+} catch {
+  /* copied as-is below */
+}
+if (sharp) {
+  const out = `public/artworks/${slug}.webp`;
+  await sharp(source)
+    .rotate()
+    .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toFile(out);
+  console.log(`\nImage saved: ${out} (${kb(out)} KB)`);
+  thumbnail = `/artworks/${slug}.webp`;
+} else {
+  const ext = extname(source).toLowerCase();
+  const out = `public/artworks/${slug}${ext}`;
+  copyFileSync(source, out);
+  console.warn(`\nCould not resize the image (sharp is missing); copied it as-is: ${out} (${kb(out)} KB)`);
+  thumbnail = `/artworks/${slug}${ext}`;
+}
+
+// ---------- catalogue entry ----------
+
+try {
+  await addWork({
+    slug,
+    title,
+    description,
+    artistSlug: artist?.slug ?? "",
+    thumbnail,
+    material,
+    year,
+    dimensions,
+    featured,
+  });
 } catch (err) {
-  writeFileSync(CATALOGUE, original);
-  fail(`Something went wrong writing ${CATALOGUE} (${err.message}). The file was restored; no entry was added.`);
+  fail(err.message);
 }
-console.log(`Added "${title}" to ${CATALOGUE}`);
-
-// ---------- AR model (3D works only) ----------
-
-if (is3d) {
-  console.log("\nMaking the AR model…");
-  const ar = spawnSync(
-    process.execPath,
-    [
-      "--disable-warning=ExperimentalWarning",
-      "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON",
-      "scripts/make-ar-models.mjs",
-      slug,
-    ],
-    { stdio: "inherit" },
-  );
-  if (ar.status !== 0) {
-    console.warn(`\nThe AR model could not be made. Fix the problem above, then run:  npm run ar-models -- ${slug}`);
-  }
-}
-
-// ---------- thumbnail (3D works only) ----------
-
-if (is3d) {
-  let running = false;
-  try {
-    await fetch(BASE, { signal: AbortSignal.timeout(3000) });
-    running = true;
-  } catch {
-    /* not running */
-  }
-  if (running) {
-    console.log("\nMaking the thumbnail…");
-    const t = spawnSync(
-      process.execPath,
-      [
-        "--disable-warning=ExperimentalWarning",
-        "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON",
-        "scripts/make-thumbnails.mjs",
-        slug,
-        "--base",
-        BASE,
-      ],
-      { stdio: "inherit" },
-    );
-    if (t.status !== 0) {
-      console.warn(`\nThe thumbnail could not be made. Fix the problem above, then run:  npm run thumbnails -- ${slug}`);
-    }
-  } else {
-    console.log(`
-The site is not running, so the thumbnail was not made yet. To make it:
-  1. In one terminal:      npm run dev
-  2. In another terminal:  npm run thumbnails -- ${slug}`);
-  }
-}
-
-console.log(`\nDone. Open ${BASE}/artworks/${slug} to check it.`);
+console.log(`Added "${title}" to lib/sculptures.ts`);
+console.log(`\nDone. Open ${BASE}/artworks/${slug} to check it, then commit the image and lib/sculptures.ts.`);
