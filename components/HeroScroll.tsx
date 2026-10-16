@@ -160,9 +160,14 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
               voices, across every medium, each presented with the care of a
               museum catalogue.
             </p>
-            <div className="mt-[34px] flex flex-wrap items-center gap-[30px]">
-              <Magnetic>
-                <Link href="/artworks" className="btn">
+            {/* Phones: a full-width button with the link centred under it,
+                instead of the two wrapping onto ragged lines. */}
+            <div className="mt-[34px] grid justify-items-center gap-6 sm:flex sm:flex-wrap sm:items-center sm:gap-[30px]">
+              <Magnetic className="block w-full sm:inline-block sm:w-auto">
+                <Link
+                  href="/artworks"
+                  className="btn w-full justify-center sm:w-auto"
+                >
                   View the artworks <span className="nudge">→</span>
                 </Link>
               </Magnetic>
@@ -177,9 +182,14 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
           {/* The sculpture — starts on the right, slides to the left */}
           <div
             ref={modelRef}
-            className="relative h-[58vh] min-h-[340px] will-change-transform lg:absolute lg:inset-y-0 lg:left-1/2 lg:h-auto lg:w-1/2"
+            className="relative h-[46vh] min-h-[300px] will-change-transform lg:absolute lg:inset-y-0 lg:left-1/2 lg:h-auto lg:w-1/2"
           >
-            <HeroScene />
+            {/* The hair fans out to one side, so centring the outline leaves
+                the body off-centre; on phones nudge it back over the middle.
+                (On desktop the scroll transform owns this box.) */}
+            <div className="h-full max-lg:translate-x-[6%]">
+              <HeroScene />
+            </div>
           </div>
 
           {/* The work's details — take the right half once the sculpture has moved */}
@@ -203,7 +213,10 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
               {work.description}
             </p>
             <div className="mt-8">
-              <Link href={`/artworks/${work.slug}`} className="btn">
+              <Link
+                href={`/artworks/${work.slug}`}
+                className="btn w-full justify-center sm:w-auto"
+              >
                 View in 3D <span className="nudge">→</span>
               </Link>
             </div>

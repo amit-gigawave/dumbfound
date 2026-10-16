@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useMemo } from "react";
+import { Suspense, useEffect, useRef, useMemo, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   useGLTF,
@@ -25,6 +25,8 @@ const SCROLL_GROW = 0.12;
  * scroll, plus a little air for the turn, so it never leaves its frame.
  */
 const FRAME_MARGIN = (1 + SCROLL_GROW) * 1.04;
+/** Below lg the hero doesn't scroll-animate, so the work can fill its frame. */
+const PHONE_MARGIN = 1.04;
 /** On load it pops in from this scale, overshooting slightly, over POP_TIME seconds. */
 const POP_FROM = 0.85;
 const POP_TIME = 1.1;
@@ -187,6 +189,12 @@ const Model = () => {
 };
 
 export default function HeroScene() {
+  // Client-only component (loaded with ssr: false), so window is available.
+  const [margin] = useState(() =>
+    window.matchMedia("(min-width: 1024px)").matches
+      ? FRAME_MARGIN
+      : PHONE_MARGIN,
+  );
   return (
     <div className="w-full h-full cursor-grab active:cursor-grabbing">
       {/* Renders only while something moves (draw-in, scroll turn, drag). */}
@@ -212,7 +220,7 @@ export default function HeroScene() {
           <ScrollFrames />
           {/* One soft contact shadow (below); Stage's own would double it. */}
           <Stage
-            adjustCamera={FRAME_MARGIN}
+            adjustCamera={margin}
             intensity={0.5}
             environment={null}
             shadows={false}

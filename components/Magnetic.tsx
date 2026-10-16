@@ -9,7 +9,13 @@ const REACH = 8;
  * Pulls its child gently toward the cursor while the mouse is over it, and
  * springs back on leave. Mouse and pen only; off for reduced motion.
  */
-export default function Magnetic({ children }: { children: React.ReactNode }) {
+export default function Magnetic({
+  children,
+  className = "inline-block",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
 
   const move = (e: React.PointerEvent<HTMLSpanElement>) => {
@@ -35,7 +41,7 @@ export default function Magnetic({ children }: { children: React.ReactNode }) {
       ref={ref}
       onPointerMove={move}
       onPointerLeave={leave}
-      className="inline-block"
+      className={className}
     >
       {children}
     </span>
