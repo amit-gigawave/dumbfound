@@ -55,7 +55,9 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `npm run dev` | Development server |
 | `npm run build` / `npm start` | Production build and server |
 | `npm run lint` | ESLint |
-| `npm run add-work` | Interactive helper: adds an artwork, compresses its image or model and makes its thumbnail |
+| `npm run add-model -- <file>` | Adds a 3D work from a `.glb`, `.usdz` or `.usdc`: Blender conversion, model checks and fixes, compression, catalogue entry, thumbnail, facing check and AR copy. `--slug <slug> --replace` swaps a work's model; `--slug <slug> --facing 180` turns one |
+| `npm run check-model -- <file>` | Reports on a model's checks (opaque, single-sided, colour layers, winding, texture size) without changing anything |
+| `npm run add-work` | Interactive helper for photo-only works: resizes the image and adds the entry |
 | `npm run thumbnails -- [slug]` | Renders thumbnails of 3D works with Puppeteer. The dev server must be running. Leave out the slug to redo all of them |
 | `npm run ar-models -- [slug]` | Builds the AR copies of 3D works (`public/ar/`): real size from `heightCm`, facing front, on the floor |
 | `npm run tunnel -- [--port 3000]` | ngrok tunnel to the dev server, for testing the AR QR code from a phone (see above) |
@@ -100,7 +102,10 @@ lib/
   events.ts             Exhibitions
   search.ts             Search over artists and works
 scripts/
+  add-model.mjs         `npm run add-model`
+  check-model.mjs       `npm run check-model`
   add-work.mjs          `npm run add-work`
+  lib/                  Shared by the above: catalogue editing, model checks, Blender
   make-thumbnails.mjs   `npm run thumbnails`
   make-ar-models.mjs    `npm run ar-models`
   tunnel.mjs            `npm run tunnel` (ngrok)
