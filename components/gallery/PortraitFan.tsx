@@ -6,38 +6,57 @@ import type { Artist } from "@/lib/artists";
  * Artist portraits in an overlapping row, upright, spaced so part of every
  * face shows. Hovering the row spreads it wider; the card under the pointer
  * comes to the front, lifts, turns from black and white to colour and shows
- * its name. Each card opens that artist. Below md it becomes a swipeable row
- * with names shown.
+ * its name. Each card opens that artist. Below md it becomes an endlessly
+ * scrolling row with names shown.
  */
 export default function PortraitFan({ artists }: { artists: Artist[] }) {
   const n = artists.length;
   const mid = (n - 1) / 2;
   return (
     <>
-      {/* Phones: no hover, and the overlap crops faces, so a swipeable row of
-          separate cards with the name under each. */}
-      <ul className="-mx-[clamp(16px,4vw,40px)] flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-[clamp(16px,4vw,40px)] px-[clamp(16px,4vw,40px)] pb-2 [scrollbar-width:none] md:hidden">
-        {artists.map((a) => (
-          <li key={a.slug} className="w-[40%] shrink-0 snap-start">
-            <Link href={`/artists/${a.slug}`} className="grid gap-2.5">
-              <span className="relative block aspect-[4/5] overflow-hidden rounded-[12px] bg-[#1d1d1d] ring-1 ring-white/15">
-                {a.portrait && (
-                  <Image
-                    src={a.portrait}
-                    alt=""
-                    fill
-                    sizes="40vw"
-                    className="object-cover grayscale transition-[filter] duration-500 active:grayscale-0"
-                  />
-                )}
-              </span>
-              <span className="text-[13px] leading-snug tracking-[0.04em] text-[#d0d0d0]">
-                {a.name}
-              </span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      {/* Phones: no hover, and the overlap crops faces, so separate cards with
+          the name under each, drifting left in an endless loop. The list is
+          rendered twice and the track slides by -50% (exactly one copy), then
+          restarts: at that moment copy 2 sits where copy 1 began, so the jump
+          can't be seen. Each card carries its own left padding (no flex gap)
+          so the two halves are the same width. contain:inline-size stops the
+          wide track from stretching the page column. Touching pauses it; with
+          reduced motion it is a plain swipeable row with one copy. */}
+      <div className="-mx-[clamp(16px,4vw,40px)] overflow-hidden pb-2 [contain:inline-size] motion-reduce:overflow-x-auto motion-reduce:[scrollbar-width:none] md:hidden">
+        <ul className="flex w-max motion-safe:animate-[portrait-marquee_30s_linear_infinite] motion-safe:active:[animation-play-state:paused]">
+          {[...artists, ...artists].map((a, i) => {
+            const copy = i >= n;
+            return (
+              <li
+                key={`${a.slug}-${copy ? 2 : 1}`}
+                aria-hidden={copy || undefined}
+                className={`w-[clamp(140px,40vw,220px)] shrink-0 pl-3 ${copy ? "motion-reduce:hidden" : ""}`}
+              >
+                <Link
+                  href={`/artists/${a.slug}`}
+                  tabIndex={copy ? -1 : undefined}
+                  className="grid gap-2.5"
+                >
+                  <span className="relative block aspect-[4/5] overflow-hidden rounded-[12px] bg-[#1d1d1d] ring-1 ring-white/15">
+                    {a.portrait && (
+                      <Image
+                        src={a.portrait}
+                        alt=""
+                        fill
+                        sizes="40vw"
+                        className="object-cover grayscale transition-[filter] duration-500 active:grayscale-0"
+                      />
+                    )}
+                  </span>
+                  <span className="text-[13px] leading-snug tracking-[0.04em] text-[#d0d0d0]">
+                    {a.name}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
 
       <div className="group/fan relative mx-auto hidden aspect-[5/4] w-full max-w-[460px] md:block">
         {artists.map((a, i) => {
