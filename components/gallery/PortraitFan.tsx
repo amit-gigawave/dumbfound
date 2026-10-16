@@ -3,15 +3,16 @@ import Image from "next/image";
 import type { Artist } from "@/lib/artists";
 
 /**
- * Artist portraits in an overlapping row, upright and still. The card under
- * the pointer turns from black and white to colour and shows its name. Each
- * card opens that artist.
+ * Artist portraits in an overlapping row, upright, spaced so part of every
+ * face shows. Hovering the row spreads it wider; the card under the pointer
+ * turns from black and white to colour and shows its name. Each card opens
+ * that artist.
  */
 export default function PortraitFan({ artists }: { artists: Artist[] }) {
   const n = artists.length;
   const mid = (n - 1) / 2;
   return (
-    <div className="relative mx-auto aspect-[5/4] w-full max-w-[460px]">
+    <div className="group/fan relative mx-auto aspect-[5/4] w-full max-w-[460px]">
       {artists.map((a, i) => {
         const k = i - mid; // -2 … 2
         return (
@@ -19,13 +20,8 @@ export default function PortraitFan({ artists }: { artists: Artist[] }) {
             key={a.slug}
             href={`/artists/${a.slug}`}
             aria-label={a.name}
-            className="group/card absolute bottom-[6%] left-1/2 aspect-[4/5] w-[36%] overflow-hidden rounded-[12px] bg-[#1d1d1d] shadow-[0_18px_40px_-18px_rgba(0,0,0,.8)] ring-1 ring-white/15 [translate:var(--x)_0] hover:z-20"
-            style={
-              {
-                zIndex: 10 - Math.abs(Math.round(k)),
-                "--x": `calc(-50% + ${k * 18}%)`,
-              } as React.CSSProperties
-            }
+            className="group/card absolute bottom-[6%] left-1/2 aspect-[4/5] w-[36%] overflow-hidden rounded-[12px] bg-[#1d1d1d] shadow-[0_18px_40px_-18px_rgba(0,0,0,.8)] ring-1 ring-white/15 transition-[translate] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] [translate:calc(-50%_+_var(--k)*40%)_0] group-hover/fan:[translate:calc(-50%_+_var(--k)*56%)_0] hover:z-20"
+            style={{ zIndex: 10 - Math.abs(Math.round(k)), "--k": k } as React.CSSProperties}
           >
             {a.portrait && (
               <Image
