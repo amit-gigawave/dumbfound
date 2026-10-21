@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
-import { isPast, pastEvents, upcomingEvents } from "@/lib/events";
+import { events, isPast, pastEvents, upcomingEvents } from "@/lib/events";
 import DateTile from "@/components/events/DateTile";
 import EventStatus from "@/components/events/EventStatus";
 import { artists, publishedArtists } from "@/lib/artists";
@@ -35,19 +35,34 @@ const heroWorkFor = (slug: string): HeroWork | undefined => {
   };
 };
 
+/** Painted scans for "Explore in 3D": one row, in colour. */
+const EXPLORE = [
+  "meditating",
+  "khanna-patinder-rawat-trumpet-walae",
+  "head-e",
+  "female-with-green-saree",
+];
+
 // Upcoming and past events are worked out from today's date, so rebuild hourly.
 export const revalidate = 3600;
 
 export default function Home() {
   const live = publishedArtists();
   const featured = getFeaturedWorks();
-  const explore = sculptures.filter((w) => w.modelUrl && !w.featured).slice(0, 8);
+  const explore = EXPLORE.flatMap((slug) => getSculpture(slug) ?? []).filter(
+    (w) => w.modelUrl,
+  );
+  // Ten portraits fill two rows of five; the rest are a click away.
+  const homeArtists = live.filter((a) => a.portrait).slice(0, 10);
+  const stats: [number, string][] = [
+    [live.length, "Artists"],
+    [sculptures.length, "Works"],
+    [events.length, "Events"],
+  ];
   const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
   const quote = quoted?.quotes[0];
   const homeEvents = [...upcomingEvents(), ...pastEvents()].slice(0, 2);
   const heroWork = heroWorkFor(HERO_WORK);
-  const count = (n: number, one: string, many: string) =>
-    `${n} ${n === 1 ? one : many}`;
 
   return (
     <main>
@@ -78,37 +93,38 @@ export default function Home() {
         </div>
       </section>
 
+      {/* The collection in three figures. */}
       <div className="border-y border-rule bg-white">
-        <div
-          className={`${wrap} flex flex-wrap items-baseline gap-x-[30px] gap-y-2 py-4 text-[11px] uppercase tracking-[0.16em] text-stone`}
+        <dl
+          data-reveal-stagger
+          className={`${wrap} grid grid-cols-3 divide-x divide-rule py-[clamp(28px,4vw,48px)] text-center`}
         >
-          <span>Now showing</span>
-          <span className="font-display text-lg normal-case tracking-[0.06em] text-accent">
-            {count(live.length, "artist", "artists")} ·{" "}
-            {count(sculptures.length, "work", "works")}
-          </span>
-          <Link
-            href="/artworks"
-            className="ml-auto text-accent transition-colors hover:text-ink"
-          >
-            View the artworks <span className="nudge">→</span>
-          </Link>
-        </div>
+          {stats.map(([n, label]) => (
+            <div key={label} className="grid gap-1.5 px-2">
+              <dt className="order-2 text-[10px] uppercase tracking-[0.2em] text-stone sm:text-[11px]">
+                {label}
+              </dt>
+              <dd className="font-display text-[clamp(34px,5vw,60px)] leading-none tracking-[0.02em] text-accent">
+                {n}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Artists"
           number="02"
-          link={{ label: "All artists", href: "/artists" }}
+          link={{ label: `All ${live.length} artists`, href: "/artists" }}
         />
         <div
           data-reveal-stagger
           data-spotlight
           className="grid grid-cols-2 gap-x-7 gap-y-10 sm:grid-cols-3 lg:grid-cols-5"
         >
-          {artists.map((artist) => (
-            <ArtistTile key={artist.slug} artist={artist} />
+          {homeArtists.map((artist) => (
+            <ArtistTile key={artist.slug} artist={artist} compact />
           ))}
         </div>
       </section>

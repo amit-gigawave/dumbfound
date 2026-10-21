@@ -11,7 +11,8 @@ import { initials, type Artist } from "@/lib/artists";
  * grid, every other artist goes dark meanwhile, so the hovered one is in
  * focus (styles in globals.css). No tilt.
  */
-const ArtistTile = ({ artist }: { artist: Artist }) => {
+/** `compact`: name and birth only, for the home page. */
+const ArtistTile = ({ artist, compact = false }: { artist: Artist; compact?: boolean }) => {
   const body = (
     <>
       <div
@@ -43,9 +44,15 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
           {artist.name}
         </h3>
         <p className="mt-1 text-[13px] leading-relaxed text-stone">
-          {[artist.born, artist.place.split(",").pop()?.trim()].filter(Boolean).join(" · ")}
-          <br />
-          {artist.medium}
+          {compact
+            ? artist.born
+            : [artist.born, artist.place.split(",").pop()?.trim()].filter(Boolean).join(" · ")}
+          {!compact && (
+            <>
+              <br />
+              {artist.medium}
+            </>
+          )}
         </p>
         {artist.placeholder && (
           <span className="mt-1 block text-[11px] uppercase tracking-[0.14em] text-[#a0a0a0]">
