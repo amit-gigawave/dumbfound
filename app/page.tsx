@@ -13,6 +13,7 @@ import SectionHeader from "@/components/gallery/SectionHeader";
 import Magnetic from "@/components/Magnetic";
 import Manifesto from "@/components/about/Manifesto";
 import PortraitFan from "@/components/gallery/PortraitFan";
+import { MANIFESTO, PILLARS, STORY, plain } from "@/lib/about";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
@@ -34,7 +35,7 @@ const heroWorkFor = (slug: string): HeroWork | undefined => {
   };
 };
 
-// Portraits fanned out beside "Every work has a maker" (missing ones are skipped).
+// Portraits fanned out in the About section (missing ones are skipped).
 const FAN = [
   "mf-husain",
   "krishen-khanna",
@@ -66,6 +67,81 @@ export default function Home() {
           sculpture slides left and its details appear (HeroScroll). */}
       {heroWork && <HeroScroll work={heroWork} />}
 
+      {/* About: what Sculpted India is, and who it shows. */}
+      <section id="about" className="deep overflow-hidden">
+        <div className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
+          <div className="grid items-center gap-[clamp(40px,6vw,80px)] md:grid-cols-[1.15fr_1fr]">
+            <div data-reveal-stagger className="grid gap-[22px]">
+              <span className="label flex items-center gap-3">
+                01
+                <span aria-hidden className="h-px w-10 bg-current opacity-60" />
+                About Sculpted India
+              </span>
+              <Manifesto
+                as="h2"
+                dark
+                text={MANIFESTO}
+                className="font-display max-w-[30ch] text-[clamp(24px,3.2vw,40px)] leading-[1.28] tracking-[0.01em]"
+              />
+              <p className="font-text max-w-[56ch] text-[17px] leading-[1.75] text-[#d0d0d0]">
+                {plain(STORY[0])}
+              </p>
+            </div>
+            <div data-reveal className="grid gap-6">
+              <PortraitFan artists={fan} />
+              <p className="text-center text-[11px] uppercase tracking-[0.16em] text-deep-muted">
+                {count(live.length, "artist", "artists")} on the platform
+              </p>
+            </div>
+          </div>
+
+          <ol
+            data-reveal-stagger
+            className="mt-[clamp(56px,7vw,96px)] grid gap-x-10 gap-y-8 border-t border-white/15 pt-10 md:grid-cols-3"
+          >
+            {PILLARS.map((p, i) => (
+              <li key={p.title} className="grid content-start gap-3">
+                <span className="font-display text-sm text-accent-light">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 className="heading-caps text-[20px] tracking-[0.08em] text-[#f2f2f2]">
+                  {p.title}
+                </h3>
+                <p className="font-text text-[16px] leading-[1.7] text-[#bdbdbd]">
+                  {p.text}
+                </p>
+              </li>
+            ))}
+          </ol>
+
+          <ul
+            data-reveal
+            className="mt-[clamp(48px,6vw,72px)] flex flex-wrap gap-x-5 gap-y-2.5 border-t border-white/15 pt-8 text-[15px] text-[#d0d0d0]"
+            aria-label="Artists"
+          >
+            {live.map((a) => (
+              <li key={a.slug}>
+                <Link href={`/artists/${a.slug}`} className="transition-colors hover:text-accent-light">
+                  {a.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div data-reveal className="mt-10 flex flex-wrap items-center gap-7">
+            <Magnetic>
+              <Link href="/about" className="btn">
+                About us <span className="nudge">→</span>
+              </Link>
+            </Magnetic>
+            <Link href="/artists" className="text-link text-[#d0d0d0]">
+              Meet all {count(live.length, "artist", "artists")}{" "}
+              <span className="nudge">→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <div className="border-y border-rule bg-white">
         <div
           className={`${wrap} flex flex-wrap items-baseline gap-x-[30px] gap-y-2 py-4 text-[11px] uppercase tracking-[0.16em] text-stone`}
@@ -87,7 +163,7 @@ export default function Home() {
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Artists"
-          number="01"
+          number="02"
           link={{ label: "All artists", href: "/artists" }}
         />
         <div
@@ -107,7 +183,7 @@ export default function Home() {
         <div className={wrap}>
           <SectionHeader
             title="Featured works"
-            number="02"
+            number="03"
             link={{ label: "All artworks", href: "/artworks" }}
           />
           <div
@@ -131,7 +207,7 @@ export default function Home() {
           <div className={wrap}>
             <SectionHeader
               title="Explore in 3D"
-              number="03"
+              number="04"
               link={{ label: "All artworks", href: "/artworks" }}
             />
             <p
@@ -165,7 +241,7 @@ export default function Home() {
           <div className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
             <figure data-reveal-stagger className="mx-auto grid max-w-[900px] gap-9 text-center">
               <span className="label flex items-center justify-center gap-3">
-                04
+                05
                 <span aria-hidden className="h-px w-10 bg-current opacity-60" />
                 In the artist&rsquo;s words
               </span>
@@ -212,7 +288,7 @@ export default function Home() {
           <div className={wrap}>
             <SectionHeader
               title="Events"
-              number="05"
+              number="06"
               link={{ label: "All events", href: "/events" }}
             />
             <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
@@ -254,41 +330,6 @@ export default function Home() {
         </section>
       )}
 
-      {/* Deep contrast band */}
-      <section className="deep overflow-hidden">
-        <div
-          className={`${wrap} grid items-center gap-[clamp(40px,6vw,80px)] py-[clamp(70px,9vw,120px)] md:grid-cols-[1.1fr_1fr]`}
-        >
-          <div data-reveal-stagger className="grid gap-[22px]">
-            <span className="label">About the gallery</span>
-            <Manifesto
-              as="h2"
-              dark
-              text="Every work has a **maker,** and a **story.**"
-              className="heading-caps max-w-[18ch] text-[clamp(28px,4vw,50px)] leading-[1.14] tracking-[0.06em]"
-            />
-            <p className="font-text max-w-[52ch] text-[17px] leading-[1.75] text-[#d0d0d0]">
-              We bring together artists and their work, and present each piece
-              with the care of a catalogue: who made it, what it is made of, and
-              the story it carries.
-            </p>
-            <div className="mt-2.5 flex flex-wrap items-center gap-7">
-              <Magnetic>
-                <Link href="/about" className="btn">
-                  About us <span className="nudge">→</span>
-                </Link>
-              </Magnetic>
-              <Link href="/artists" className="text-link text-[#d0d0d0]">
-                Meet all {count(live.length, "artist", "artists")}{" "}
-                <span className="nudge">→</span>
-              </Link>
-            </div>
-          </div>
-          <div data-reveal>
-            <PortraitFan artists={fan} />
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
