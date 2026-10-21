@@ -109,6 +109,7 @@ export default async function ContactPage({
             <Contact
               key={work?.slug ?? "general"}
               email={site.email}
+              whatsapp={site.phone}
               works={works}
               workSlug={work?.slug}
             />
