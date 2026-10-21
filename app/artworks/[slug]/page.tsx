@@ -8,6 +8,7 @@ import {
   hasValue,
 } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
+import { openGraphDefaults } from "@/lib/site";
 import ArtworkStage from "@/components/gallery/ArtworkStage";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
@@ -37,6 +38,7 @@ export async function generateMetadata({
     title,
     description,
     openGraph: {
+      ...openGraphDefaults,
       title,
       description,
       images: [{ url: work.thumbnail, width: 800, height: 1000 }],
