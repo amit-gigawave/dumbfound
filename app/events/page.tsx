@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { upcomingEvents, pastEvents, type GalleryEvent } from "@/lib/events";
+import {
+  isPast,
+  upcomingEvents,
+  pastEvents,
+  type GalleryEvent,
+} from "@/lib/events";
 import { artists, type Artist } from "@/lib/artists";
 import { getWorksByArtist } from "@/lib/sculptures";
 import SectionHeader from "@/components/gallery/SectionHeader";
@@ -209,7 +214,7 @@ const EventCard = ({ e }: { e: GalleryEvent }) => {
               <EventStatus
                 start={e.start}
                 end={e.end}
-                fallback={e.past ? "Ended" : "Upcoming"}
+                fallback={isPast(e) ? "Ended" : "Upcoming"}
               />
             )}
           </div>
@@ -275,6 +280,9 @@ const EventCard = ({ e }: { e: GalleryEvent }) => {
 
 /* ------------------------------------------------------------------ */
 
+// Upcoming and past events are worked out from today's date, so rebuild hourly.
+export const revalidate = 3600;
+
 export default function EventsPage() {
   const upcoming = upcomingEvents();
   const past = pastEvents();
@@ -297,7 +305,13 @@ export default function EventsPage() {
         </p>
       </section>
 
-      {featured && <Featured e={featured} />}
+      {featured ? (
+        <Featured e={featured} />
+      ) : (
+        <p className={`${wrap} font-text text-[17px] text-stone`}>
+          Nothing is scheduled right now. Our latest exhibitions are below.
+        </p>
+      )}
 
       {moreUpcoming.length > 0 && (
         <section className={`${wrap} pt-[clamp(56px,8vw,96px)]`}>
