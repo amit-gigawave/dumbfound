@@ -3,6 +3,7 @@ import { site } from "@/lib/site";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import Manifesto from "@/components/about/Manifesto";
 import StaggerStory from "@/components/about/StaggerStory";
+import PageHeader from "@/components/PageHeader";
 import { MANIFESTO, STORY } from "@/lib/about";
 
 export const metadata: Metadata = {
@@ -15,18 +16,11 @@ const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 export default function AboutPage() {
   return (
     <main>
-      <section
-        data-reveal-stagger
-        className={`${wrap} pb-[clamp(48px,7vw,90px)] pt-[clamp(56px,9vw,120px)]`}
-      >
-        <span className="label">The Initiative</span>
-        <h1 className="heading-caps mt-5 max-w-[16ch] text-[clamp(34px,5.2vw,64px)] leading-[1.1] tracking-[0.04em]">
-          About
-        </h1>
-        <p className="font-display mt-5 max-w-[48ch] text-[clamp(18px,2.4vw,24px)] leading-[1.5] text-stone">
-          Placing sculpture at the centre of contemporary cultural discourse.
-        </p>
-      </section>
+      <PageHeader
+        label="The Initiative"
+        title="About"
+        line="Placing sculpture at the centre of contemporary cultural discourse."
+      />
 
       <section className="border-y border-rule bg-white py-[clamp(70px,10vw,140px)]">
         <div className={wrap}>
