@@ -25,7 +25,7 @@ export default async function ContactPage({
 
   const works = sculptures.map((s) => ({
     slug: s.slug,
-    label: `${s.title} — ${getArtist(s.artistSlug)?.name ?? ""}`,
+    label: [s.title, getArtist(s.artistSlug)?.name].filter(Boolean).join(" — "),
   }));
 
   return (
