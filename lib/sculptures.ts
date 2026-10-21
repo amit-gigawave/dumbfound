@@ -221,7 +221,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "",
     thumbnail: "/thumbnails/female-with-blue-saree.webp",
-    modelUrl: "/sculptures/female-with-blue-saree.glb",
+    modelUrl: "/sculptures/female-with-blue-saree.glb?v=2",
     material: "",
     year: "",
   },
