@@ -150,7 +150,7 @@ const ArtworkTile = ({
   return (
     <Link
       href={`/artworks/${work.slug}`}
-      className="group grid gap-3.5"
+      className="group grid content-start gap-3.5"
       onPointerEnter={modelUrl ? onEnter : undefined}
       onPointerLeave={modelUrl ? onLeave : undefined}
       onFocus={modelUrl ? () => preloadModel(modelUrl) : undefined}
