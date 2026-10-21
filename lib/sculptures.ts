@@ -155,15 +155,17 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), YS-0101.
   {
     slug: "sugandh-elephant-kite",
-    title: "Elephant Kite",
+    title: "Meri Patang",
     description: "",
     artistSlug: "yashika-sugandh",
     thumbnail: "/thumbnails/sugandh-elephant-kite.webp",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb",
-    material: "",
-    year: "",
+    material: "Acrylic on PETG and Fiber Resin",
+    year: "2026",
+    dimensions: "71 × 50 × 30 inches",
   },
 
   // ---- Newly scanned heads (USDZ → GLB). Artist/title to be confirmed. ----
@@ -188,15 +190,18 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Subba Ghosh, not Himmat Shah: details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // SG-0029 (untitled there).
   {
     slug: "head-e",
-    title: "Untitled (Head E)",
+    title: "Untitled",
     description: "",
-    artistSlug: "himmat-shah",
+    artistSlug: "subba-ghosh",
     thumbnail: "/thumbnails/head-e.webp",
     modelUrl: "/sculptures/head-e.glb",
-    material: "",
+    material: "Fibreglass, Resin, Paper Mache, Oil and Acrylic Paint",
     year: "",
+    dimensions: "17 × 11 × 16 inches",
   },
   {
     slug: "head-g",
@@ -232,17 +237,19 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
-  // Scan "meditating.usdz". TODO: artist, title, year and medium not known yet.
+  // Scan "meditating.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // MS-0095. Year not given there.
   {
     slug: "meditating",
-    title: "Meditating",
+    title: "Levitation",
     description: "",
-    artistSlug: "",
+    artistSlug: "meena-sansanwal",
     thumbnail: "/thumbnails/meditating.webp",
     modelUrl: "/sculptures/meditating.glb?v=2",
     facing: 180,
-    material: "",
+    material: "Papermache, Marble And Acrylic Paint",
     year: "",
+    dimensions: "24 × 22 × 14 inches",
   },
   // Scan "03 - Female with green Saree" (original in .glb-backup/web/). TODO: artist, year and medium not known yet.
   {
