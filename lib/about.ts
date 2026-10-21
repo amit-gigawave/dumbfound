@@ -3,6 +3,10 @@
  * home page. **Double asterisks** mark key words (see Manifesto/StaggerStory).
  */
 
+/** The About page subtitle, used as the home page's About statement. */
+export const ABOUT_LINE =
+  "Placing sculpture at the **centre** of contemporary cultural discourse.";
+
 // Lights up word by word on scroll; **key words** turn the accent colour.
 export const MANIFESTO =
   "Sculpture has always been one of the most **powerful and enduring** forms of artistic expression — yet it has often remained on the **periphery** of India's broader art ecosystem. Sculpted India was founded to **change that.**";

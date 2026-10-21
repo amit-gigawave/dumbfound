@@ -264,7 +264,7 @@ select:focus-visible {
   }
 }
 
-/* Endless portrait row on phones (PortraitFan): the list is doubled, so
+/* Endless portrait row (ArtistMarquee on the home page): the list is doubled, so
    sliding by half is exactly one copy and the loop restarts seamlessly. */
 @keyframes portrait-marquee {
   to {
