@@ -58,6 +58,8 @@ export default async function ArtistPage({
 
   const works = getWorksByArtist(artist.slug);
   const [leadQuote, ...moreQuotes] = artist.quotes;
+  // Artists with no bio yet skip the Profile/Works tabs; the works follow directly.
+  const hasProfile = Boolean(artist.summary) || artist.bio.length > 0;
   const hasFacts =
     artist.education.length +
       artist.honours.length +
@@ -90,31 +92,35 @@ export default async function ArtistPage({
               {[artist.born, artist.place].filter(Boolean).join(", ")} · {artist.role}
             </p>
 
-            <nav
-              aria-label="Artist sections"
-              className="mt-7 flex gap-7 border-b border-rule text-[13px] uppercase tracking-[0.08em]"
-            >
-              <a
-                href="#profile"
-                className="-mb-px border-b-2 border-accent pb-2.5 text-accent"
-              >
-                Profile
-              </a>
-              <a
-                href="#works"
-                className="-mb-px border-b-2 border-transparent pb-2.5 text-stone hover:text-accent"
-              >
-                Works
-              </a>
-            </nav>
+            {hasProfile && (
+              <>
+                <nav
+                  aria-label="Artist sections"
+                  className="mt-7 flex gap-7 border-b border-rule text-[13px] uppercase tracking-[0.08em]"
+                >
+                  <a
+                    href="#profile"
+                    className="-mb-px border-b-2 border-accent pb-2.5 text-accent"
+                  >
+                    Profile
+                  </a>
+                  <a
+                    href="#works"
+                    className="-mb-px border-b-2 border-transparent pb-2.5 text-stone hover:text-accent"
+                  >
+                    Works
+                  </a>
+                </nav>
 
-            <div
-              id="profile"
-              className="font-text mt-6 max-w-[62ch] text-lg leading-[1.75]"
-            >
-              {artist.summary && <p>{artist.summary}</p>}
-              <ReadMore paragraphs={artist.bio} />
-            </div>
+                <div
+                  id="profile"
+                  className="font-text mt-6 max-w-[62ch] text-lg leading-[1.75]"
+                >
+                  {artist.summary && <p>{artist.summary}</p>}
+                  <ReadMore paragraphs={artist.bio} />
+                </div>
+              </>
+            )}
           </div>
 
           <div className="relative isolate order-first grid aspect-square w-full max-w-[220px] place-items-center overflow-hidden rounded-[14px] border border-rule bg-plate md:order-none md:max-w-none">
