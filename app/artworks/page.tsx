@@ -59,7 +59,7 @@ export default async function ArtworksPage({
       />
       <div
         data-reveal-stagger
-        className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3"
       >
         {works.map((work, i) => (
           <ArtworkTile

@@ -223,14 +223,14 @@ export default async function ArtistPage({
           {works.length > 0 ? (
             <div
               data-reveal-stagger
-              className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
+              className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4"
             >
               {works.map((work) => (
                 <ArtworkTile
                   key={work.slug}
                   work={work}
                   showArtist={false}
-                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
             </div>
