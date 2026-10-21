@@ -13,7 +13,7 @@ import SectionHeader from "@/components/gallery/SectionHeader";
 import Magnetic from "@/components/Magnetic";
 import Manifesto from "@/components/about/Manifesto";
 import PortraitFan from "@/components/gallery/PortraitFan";
-import { MANIFESTO, STORY, plain } from "@/lib/about";
+import { MANIFESTO } from "@/lib/about";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
@@ -67,58 +67,37 @@ export default function Home() {
           sculpture slides left and its details appear (HeroScroll). */}
       {heroWork && <HeroScroll work={heroWork} />}
 
-      {/* About: what Sculpted India is, and who it shows. */}
+      {/* About: what Sculpted India is, in one sentence, beside its artists. */}
       <section id="about" className="deep overflow-hidden">
-        <div className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
-          <div className="grid items-center gap-[clamp(40px,6vw,80px)] md:grid-cols-[1.15fr_1fr]">
-            <div data-reveal-stagger className="grid gap-[22px]">
-              <span className="label flex items-center gap-3">
-                01
-                <span aria-hidden className="h-px w-10 bg-current opacity-60" />
-                About Sculpted India
-              </span>
-              <Manifesto
-                as="h2"
-                dark
-                text={MANIFESTO}
-                className="font-display max-w-[30ch] text-[clamp(24px,3.2vw,40px)] leading-[1.28] tracking-[0.01em]"
-              />
-              <p className="font-text max-w-[56ch] text-[17px] leading-[1.75] text-[#d0d0d0]">
-                {plain(STORY[0])}
-              </p>
-            </div>
-            <div data-reveal className="grid gap-6">
-              <PortraitFan artists={fan} />
-              <p className="text-center text-[11px] uppercase tracking-[0.16em] text-deep-muted">
-                {count(live.length, "artist", "artists")} on the platform
-              </p>
+        <div
+          className={`${wrap} grid items-center gap-[clamp(48px,7vw,104px)] py-[clamp(96px,13vw,180px)] md:grid-cols-[1.3fr_1fr]`}
+        >
+          <div data-reveal-stagger className="grid gap-[clamp(32px,4vw,48px)]">
+            <span className="label flex items-center gap-3">
+              01
+              <span aria-hidden className="h-px w-10 bg-current opacity-60" />
+              About Sculpted India
+            </span>
+            <Manifesto
+              as="h2"
+              dark
+              text={MANIFESTO}
+              className="font-display max-w-[24ch] text-[clamp(28px,3.8vw,50px)] leading-[1.22] tracking-[0.01em]"
+            />
+            <div className="flex flex-wrap items-center gap-8">
+              <Magnetic>
+                <Link href="/about" className="btn">
+                  Our story <span className="nudge">→</span>
+                </Link>
+              </Magnetic>
+              <Link href="/artists" className="text-link text-[#d0d0d0]">
+                Meet the {count(live.length, "artist", "artists")}{" "}
+                <span className="nudge">→</span>
+              </Link>
             </div>
           </div>
-
-          <ul
-            data-reveal
-            className="mt-[clamp(48px,6vw,72px)] flex flex-wrap gap-x-5 gap-y-2.5 border-t border-white/15 pt-8 text-[15px] text-[#d0d0d0]"
-            aria-label="Artists"
-          >
-            {live.map((a) => (
-              <li key={a.slug}>
-                <Link href={`/artists/${a.slug}`} className="transition-colors hover:text-accent-light">
-                  {a.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <div data-reveal className="mt-10 flex flex-wrap items-center gap-7">
-            <Magnetic>
-              <Link href="/about" className="btn">
-                About us <span className="nudge">→</span>
-              </Link>
-            </Magnetic>
-            <Link href="/artists" className="text-link text-[#d0d0d0]">
-              Meet all {count(live.length, "artist", "artists")}{" "}
-              <span className="nudge">→</span>
-            </Link>
+          <div data-reveal>
+            <PortraitFan artists={fan} />
           </div>
         </div>
       </section>

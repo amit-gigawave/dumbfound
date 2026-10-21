@@ -14,6 +14,3 @@ export const STORY = [
   "What distinguishes Sculpted India is its **long-term commitment** to the medium. Rather than existing as a one-time exhibition, it is envisioned as a **sustained cultural initiative** dedicated to building visibility, accessibility, and patronage for sculpture across India.",
   "At its core, Sculpted India is founded on values of excellence, inclusivity, innovation, and cultural stewardship. The mission remains clear: to become **the leading platform** for modern and contemporary Indian sculpture, positioning the medium at the forefront of India's cultural imagination while creating a lasting legacy for artists, audiences, and future generations.",
 ];
-
-/** Story text without the ** markers, for plain paragraphs. */
-export const plain = (s: string) => s.replaceAll("**", "");
