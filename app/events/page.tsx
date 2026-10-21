@@ -14,6 +14,7 @@ import SectionHeader from "@/components/gallery/SectionHeader";
 import EventStatus from "@/components/events/EventStatus";
 import CalendarButton from "@/components/events/CalendarButton";
 import DateTile from "@/components/events/DateTile";
+import PageHeader from "@/components/PageHeader";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -290,20 +291,11 @@ export default function EventsPage() {
 
   return (
     <main>
-      <section
-        data-reveal-stagger
-        className={`${wrap} pb-[clamp(40px,6vw,72px)] pt-[clamp(48px,7vw,88px)]`}
-      >
-        <span className="label">Exhibitions</span>
-        <h1 className="heading-caps mt-4 max-w-[18ch] text-[clamp(34px,5.2vw,64px)] leading-[1.1] tracking-[0.04em]">
-          Events
-        </h1>
-        <p className="font-text mt-5 max-w-[56ch] text-[clamp(17px,1.6vw,19px)] leading-relaxed text-stone">
-          Exhibitions, fairs and showcases where our artists&apos; work is on
-          view — our own and those of our partners. Every entry credits its
-          organiser and links through to the full listing.
-        </p>
-      </section>
+      <PageHeader
+        label="Exhibitions"
+        title="Events"
+        line="Exhibitions, fairs and showcases where our artists’ work is on view — our own and those of our partners."
+      />
 
       {featured ? (
         <Featured e={featured} />
