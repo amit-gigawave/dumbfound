@@ -12,7 +12,7 @@ import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import Magnetic from "@/components/Magnetic";
 import Manifesto from "@/components/about/Manifesto";
-import { ABOUT_LINE, STORY } from "@/lib/about";
+import { HOME_HEADING, HOME_INTRO } from "@/lib/about";
 import StaggerStory from "@/components/about/StaggerStory";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
@@ -66,11 +66,10 @@ export default function Home() {
           </span>
           <Manifesto
             as="h2"
-            text={ABOUT_LINE}
-            className="font-display max-w-[20ch] text-[clamp(32px,5vw,68px)] leading-[1.14] tracking-[0.01em]"
+            text={HOME_HEADING}
+            className="font-display max-w-[18ch] text-[clamp(32px,5vw,68px)] leading-[1.14] tracking-[0.01em]"
           />
-          {/* The opening of the About page's story, with its marked phrases. */}
-          <StaggerStory paragraphs={[STORY[0]]} />
+          <StaggerStory paragraphs={[HOME_INTRO]} />
           <Magnetic>
             <Link href="/about" className="btn mt-[clamp(8px,1.5vw,16px)]">
               Our story <span className="nudge">→</span>

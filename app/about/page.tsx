@@ -3,9 +3,7 @@ import { site } from "@/lib/site";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import Manifesto from "@/components/about/Manifesto";
 import StaggerStory from "@/components/about/StaggerStory";
-import { ABOUT_LINE, MANIFESTO, STORY } from "@/lib/about";
-
-const plainLine = ABOUT_LINE.replaceAll("**", "");
+import { MANIFESTO, STORY } from "@/lib/about";
 
 export const metadata: Metadata = {
   title: "About",
@@ -26,7 +24,7 @@ export default function AboutPage() {
           About
         </h1>
         <p className="font-display mt-5 max-w-[48ch] text-[clamp(18px,2.4vw,24px)] leading-[1.5] text-stone">
-          {plainLine}
+          Placing sculpture at the centre of contemporary cultural discourse.
         </p>
       </section>
 
