@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -7,7 +8,7 @@ import {
   getWorksByArtist,
   hasValue,
 } from "@/lib/sculptures";
-import { getArtist } from "@/lib/artists";
+import { getArtist, initials } from "@/lib/artists";
 import { openGraphDefaults } from "@/lib/site";
 import ArtworkStage from "@/components/gallery/ArtworkStage";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
@@ -140,6 +141,41 @@ export default async function ArtworkPage({
           <Link href={`/contact?work=${work.slug}`} className="btn mt-8">
             Enquire about this work <span className="nudge">→</span>
           </Link>
+
+          {artist && !artist.placeholder && (
+            <Link
+              href={`/artists/${artist.slug}`}
+              className="group mt-10 flex items-center gap-4 rounded-[14px] border border-rule bg-white p-4 transition-colors duration-300 hover:border-accent"
+            >
+              <span className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plate">
+                {artist.portrait ? (
+                  <Image
+                    src={artist.portrait}
+                    alt=""
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <span aria-hidden className="font-display text-xl text-[#bdbdbd]">
+                    {initials(artist.name)}
+                  </span>
+                )}
+              </span>
+              <span className="grid min-w-0 gap-0.5">
+                <span className="label">About the artist</span>
+                <span className="font-display text-xl tracking-[0.03em] transition-colors group-hover:text-accent">
+                  {artist.name}
+                </span>
+                <span className="text-[13px] text-stone">
+                  {[artist.born, artist.medium].filter(Boolean).join(" · ")}
+                </span>
+              </span>
+              <span aria-hidden className="nudge ml-auto pr-1 text-accent">
+                →
+              </span>
+            </Link>
+          )}
         </div>
       </div>
 
