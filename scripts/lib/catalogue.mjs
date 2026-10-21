@@ -35,8 +35,10 @@ const keep = (key, v) => REQUIRED.has(key) || (v !== undefined && v !== "" && v 
 /** Applies `edit` to the file text, then checks the result with `verify(works)`. */
 async function transaction(edit, verify) {
   const original = readFileSync(CATALOGUE, "utf8");
-  const next = edit(original);
-  writeFileSync(CATALOGUE, next);
+  // Edits work on "\n"; Windows checkouts (core.autocrlf) get "\r\n" back.
+  const crlf = original.includes("\r\n");
+  const next = edit(original.replace(/\r\n/g, "\n"));
+  writeFileSync(CATALOGUE, crlf ? next.replace(/\n/g, "\r\n") : next);
   try {
     const works = await loadWorks();
     const problem = verify(works);
