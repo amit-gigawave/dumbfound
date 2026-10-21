@@ -264,14 +264,6 @@ select:focus-visible {
   }
 }
 
-/* Endless portrait row (ArtistMarquee on the home page): the list is doubled, so
-   sliding by half is exactly one copy and the loop restarts seamlessly. */
-@keyframes portrait-marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @keyframes page-in {
   from {
     opacity: 0;

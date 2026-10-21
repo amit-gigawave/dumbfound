@@ -12,8 +12,8 @@ import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import Magnetic from "@/components/Magnetic";
 import Manifesto from "@/components/about/Manifesto";
-import { ABOUT_LINE } from "@/lib/about";
-import ArtistMarquee from "@/components/about/ArtistMarquee";
+import { ABOUT_LINE, STORY } from "@/lib/about";
+import StaggerStory from "@/components/about/StaggerStory";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
@@ -46,7 +46,6 @@ export default function Home() {
   const quote = quoted?.quotes[0];
   const homeEvents = [...upcomingEvents(), ...pastEvents()].slice(0, 2);
   const heroWork = heroWorkFor(HERO_WORK);
-  const withPortraits = live.filter((a) => a.portrait);
   const count = (n: number, one: string, many: string) =>
     `${n} ${n === 1 ? one : many}`;
 
@@ -56,7 +55,8 @@ export default function Home() {
           sculpture slides left and its details appear (HeroScroll). */}
       {heroWork && <HeroScroll work={heroWork} />}
 
-      {/* About: what Sculpted India stands for, then the artists it shows. */}
+      {/* About: what Sculpted India stands for, in one line. The artists
+          follow in the next section, so no portraits here. */}
       <section id="about" className="py-[clamp(96px,13vw,180px)]">
         <div data-reveal-stagger className={`${wrap} grid justify-items-center gap-[clamp(28px,3.5vw,44px)] text-center`}>
           <span className="label flex items-center gap-3">
@@ -69,22 +69,13 @@ export default function Home() {
             text={ABOUT_LINE}
             className="font-display max-w-[20ch] text-[clamp(32px,5vw,68px)] leading-[1.14] tracking-[0.01em]"
           />
-        </div>
-
-        <div data-reveal className="mt-[clamp(56px,7vw,96px)]">
-          <ArtistMarquee artists={withPortraits} />
-        </div>
-
-        <div data-reveal className={`${wrap} mt-[clamp(48px,6vw,72px)] flex flex-wrap items-center justify-center gap-8`}>
+          {/* The opening of the About page's story, with its marked phrases. */}
+          <StaggerStory paragraphs={[STORY[0]]} />
           <Magnetic>
-            <Link href="/about" className="btn">
+            <Link href="/about" className="btn mt-[clamp(8px,1.5vw,16px)]">
               Our story <span className="nudge">→</span>
             </Link>
           </Magnetic>
-          <Link href="/artists" className="text-link">
-            Meet the {count(live.length, "artist", "artists")}{" "}
-            <span className="nudge">→</span>
-          </Link>
         </div>
       </section>
 
