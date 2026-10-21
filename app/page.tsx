@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
-import { pastEvents, upcomingEvents } from "@/lib/events";
+import { isPast, pastEvents, upcomingEvents } from "@/lib/events";
 import DateTile from "@/components/events/DateTile";
 import EventStatus from "@/components/events/EventStatus";
 import { artists, publishedArtists } from "@/lib/artists";
@@ -42,6 +42,9 @@ const FAN = [
   "himmat-shah",
   "jogen-chowdhury",
 ];
+
+// Upcoming and past events are worked out from today's date, so rebuild hourly.
+export const revalidate = 3600;
 
 export default function Home() {
   const live = publishedArtists();
@@ -227,7 +230,7 @@ export default function Home() {
                         <EventStatus
                           start={e.start}
                           end={e.end}
-                          fallback={e.past ? "Ended" : "Upcoming"}
+                          fallback={isPast(e) ? "Ended" : "Upcoming"}
                         />
                       )}
                     </div>

@@ -24,6 +24,7 @@ export interface GalleryEvent {
   artistSlugs: string[];
   /** A work of ours shown at the event, if we have its image (lib/sculptures.ts). */
   workSlug?: string;
+  /** Mark as ended by hand; only needed for events without an `end`/`start` date. */
   past?: boolean;
 }
 
@@ -66,9 +67,18 @@ export const events: GalleryEvent[] = [
       "phaneendra-nath-chaturvedi",
       "yashika-sugandh",
     ],
-    past: true,
   },
 ];
 
-export const upcomingEvents = () => events.filter((e) => !e.past);
-export const pastEvents = () => events.filter((e) => e.past);
+/** Today's date in India as YYYY-MM-DD, comparable with `start`/`end`. */
+const todayInIndia = () =>
+  new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+/** Ended: marked `past`, or its last day is before today. */
+export const isPast = (e: GalleryEvent) => {
+  const last = e.end ?? e.start;
+  return Boolean(e.past) || (last !== undefined && last < todayInIndia());
+};
+
+export const upcomingEvents = () => events.filter((e) => !isPast(e));
+export const pastEvents = () => events.filter(isPast);
