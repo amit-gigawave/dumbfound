@@ -244,6 +244,17 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "03 - Female with green Saree" (original in .glb-backup/web/). TODO: artist, year and medium not known yet.
+  {
+    slug: "female-with-green-saree",
+    title: "Female with Green Saree",
+    description: "",
+    artistSlug: "",
+    thumbnail: "/thumbnails/female-with-green-saree.webp",
+    modelUrl: "/sculptures/female-with-green-saree.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
