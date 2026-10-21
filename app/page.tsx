@@ -13,7 +13,7 @@ import SectionHeader from "@/components/gallery/SectionHeader";
 import Magnetic from "@/components/Magnetic";
 import Manifesto from "@/components/about/Manifesto";
 import PortraitFan from "@/components/gallery/PortraitFan";
-import { MANIFESTO, PILLARS, STORY, plain } from "@/lib/about";
+import { MANIFESTO, STORY, plain } from "@/lib/about";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
@@ -94,25 +94,6 @@ export default function Home() {
               </p>
             </div>
           </div>
-
-          <ol
-            data-reveal-stagger
-            className="mt-[clamp(56px,7vw,96px)] grid gap-x-10 gap-y-8 border-t border-white/15 pt-10 md:grid-cols-3"
-          >
-            {PILLARS.map((p, i) => (
-              <li key={p.title} className="grid content-start gap-3">
-                <span className="font-display text-sm text-accent-light">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="heading-caps text-[20px] tracking-[0.08em] text-[#f2f2f2]">
-                  {p.title}
-                </h3>
-                <p className="font-text text-[16px] leading-[1.7] text-[#bdbdbd]">
-                  {p.text}
-                </p>
-              </li>
-            ))}
-          </ol>
 
           <ul
             data-reveal

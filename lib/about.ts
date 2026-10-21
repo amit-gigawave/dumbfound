@@ -15,21 +15,5 @@ export const STORY = [
   "At its core, Sculpted India is founded on values of excellence, inclusivity, innovation, and cultural stewardship. The mission remains clear: to become **the leading platform** for modern and contemporary Indian sculpture, positioning the medium at the forefront of India's cultural imagination while creating a lasting legacy for artists, audiences, and future generations.",
 ];
 
-/** The three ideas of the story above, in its own words, for the home page. */
-export const PILLARS = [
-  {
-    title: "Visibility",
-    text: "Giving sculpture the visibility, recognition, and cultural presence it has long deserved.",
-  },
-  {
-    title: "A bridge",
-    text: "Between artists, collectors, galleries, institutions, architects, designers, and art enthusiasts.",
-  },
-  {
-    title: "For the long term",
-    text: "A sustained cultural initiative building visibility, accessibility, and patronage for sculpture across India.",
-  },
-];
-
 /** Story text without the ** markers, for plain paragraphs. */
 export const plain = (s: string) => s.replaceAll("**", "");
