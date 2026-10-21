@@ -73,6 +73,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `/about` | About the platform |
 | `/contact` | Enquiry form. It opens WhatsApp (to `site.phone`) or the visitor's mail app (to `site.email`) with the message filled in |
 | `/artworks/thumb/[slug]` | Hidden page that `npm run thumbnails` renders thumbnails from |
+| `/sitemap.xml`, `/robots.txt` | Built from the catalogue by `app/sitemap.ts` and `app/robots.ts` |
 | `/lab/*` | Internal design comparison pages. They are not linked anywhere and are not indexed |
 
 `/gallery/*` redirects to `/artworks/*`.
@@ -80,7 +81,10 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 ## Project structure
 
 ```
-app/                    Routes (see above); favicon.ico, icon.png and apple-icon.png are the site icons
+app/                    Routes (see above); favicon.ico, icon.png and apple-icon.png are the site icons;
+                        opengraph-image.tsx draws the default link preview (artwork and artist
+                        pages use their own image)
+assets/                 Files read at build time: the Marcellus font (OFL) and the image for the link preview
 components/
   HeroScroll.tsx        Home hero: sculpture that moves with the scroll
   HeroScene.tsx         3D scene for the hero
@@ -96,7 +100,7 @@ components/
                         hover previews (TilePreview), which share one WebGL renderer
   lab/                  Components for the /lab pages
 lib/
-  site.ts               Name, tagline, navigation, contact details
+  site.ts               Name, tagline, navigation, contact details, public site URL
   artists.ts            Artists (facts must be sourced; `placeholder` entries fill the layout)
   sculptures.ts         Artworks: the catalogue behind every page, search and AR
   events.ts             Exhibitions

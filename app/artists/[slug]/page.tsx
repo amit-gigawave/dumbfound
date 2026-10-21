@@ -9,6 +9,7 @@ import {
   type Fact,
 } from "@/lib/artists";
 import { getWorksByArtist } from "@/lib/sculptures";
+import { openGraphDefaults } from "@/lib/site";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import ReadMore from "@/components/gallery/ReadMore";
@@ -27,7 +28,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const artist = getArtist(slug);
   if (!artist || artist.placeholder) return { title: "Artist not found" };
-  return { title: artist.name, description: artist.summary || undefined };
+  const description = artist.summary || undefined;
+  return {
+    title: artist.name,
+    description,
+    // Link previews show the portrait; without one, the site's default image.
+    ...(artist.portrait && {
+      openGraph: {
+        ...openGraphDefaults,
+        title: artist.name,
+        description,
+        images: [{ url: artist.portrait, width: 600, height: 600 }],
+      },
+    }),
+  };
 }
 
 const FactList = ({ title, items }: { title: string; items: Fact[] }) =>

@@ -27,3 +27,20 @@ export const site = {
   ],
   social: [] as { label: string; href: string }[],
 } as const;
+
+/**
+ * Public address of the site, for absolute links (sitemap, link previews).
+ * On Vercel this is the production domain; locally NEXT_PUBLIC_SITE_URL
+ * (the ngrok tunnel) or localhost.
+ */
+export const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
+
+/** Link-preview fields every page shares. A page that sets its own `openGraph`
+ * replaces the layout's, so it spreads these in too. */
+export const openGraphDefaults = {
+  siteName: site.name,
+  type: "website",
+  locale: "en_IN",
+} as const;

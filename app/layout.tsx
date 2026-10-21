@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
-import { site } from "@/lib/site";
+import { openGraphDefaults, site, siteUrl } from "@/lib/site";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 
@@ -20,8 +20,11 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: { default: site.name, template: `%s | ${site.name}` },
   description: site.description,
+  openGraph: openGraphDefaults,
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({
