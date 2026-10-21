@@ -47,7 +47,7 @@ const ArtworkTile = ({
   showcase = false,
   ambient = false,
   backdrop = false,
-  sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+  sizes = "(min-width: 1024px) 33vw, 50vw",
 }: {
   work: Sculpture;
   showArtist?: boolean;
@@ -256,7 +256,7 @@ const ArtworkTile = ({
       </div>
       <div className="grid gap-0.5">
         {showArtist && artist && <span className="label">{artist.name}</span>}
-        <span className="font-display text-[21px] leading-snug tracking-[0.03em] transition-colors group-hover:text-accent">
+        <span className="font-display text-[17px] leading-snug sm:text-[21px] tracking-[0.03em] transition-colors group-hover:text-accent">
           {work.title}
         </span>
         <span className="text-[13px] text-stone">
