@@ -29,6 +29,12 @@ const WIRE_COLOR = "#5c5c5c";
 // Seconds-ish pacing of the materialize animation (higher = faster).
 const REVEAL_SPEED = 0.7;
 
+// The reveal moves its clip planes every frame. The planes come from useMemo,
+// so they're updated through this helper rather than assigned in the component.
+function setPlaneConstant(plane: THREE.Plane, constant: number) {
+  plane.constant = constant;
+}
+
 // Adaptive viewer backdrop: a light model gets a dark background and a dark
 // model gets a light one, so the sculpture always stands out with contrast.
 const BG_FOR_LIGHT_MODEL = "#2b2b2b";
@@ -178,7 +184,6 @@ const RevealModel: FC<{
 }> = ({ url, offsetX, offsetY, reveal, fit, facing, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
   const get = useThree((state) => state.get);
-  const threeScene = useThree((state) => state.scene);
 
   // Choose a contrasting backdrop from the model's own base colour.
   const bgHex = useMemo(
@@ -187,16 +192,25 @@ const RevealModel: FC<{
   );
   useLayoutEffect(() => {
     if (!adaptiveBg) return;
-    threeScene.background = bgHex ? new THREE.Color(bgHex) : null;
+    get().scene.background = bgHex ? new THREE.Color(bgHex) : null;
     if (bgHex) onBackground?.(bgHex);
-  }, [threeScene, bgHex, adaptiveBg, onBackground]);
+  }, [get, bgHex, adaptiveBg, onBackground]);
   const fittedRef = useRef(!fit);
-  // Size of the normalized model; used to frame the camera and place the floor shadow.
-  const [extent, setExtent] = useState<{
-    w: number;
-    h: number;
-    d: number;
-  } | null>(null);
+  // Center + uniform scale that normalize the model, and (when auto-framing)
+  // its normalized size, used to frame the camera and place the floor shadow.
+  const normalized = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(scene);
+    const sphere = box.getBoundingSphere(new THREE.Sphere());
+    const radius = sphere.radius || 1;
+    const scale = 1 / (radius * 2);
+    // Auto-framing centers the bounding box (what the eye sees); the legacy
+    // path keeps the bounding-sphere center so existing placements don't move.
+    const center = fit ? box.getCenter(new THREE.Vector3()) : sphere.center;
+    const size = box.getSize(new THREE.Vector3()).multiplyScalar(scale);
+    const extent = fit ? { w: size.x, h: size.y, d: size.z } : null;
+    return { scale, center, extent };
+  }, [scene, fit]);
+  const { extent } = normalized;
   const groupRef = useRef<THREE.Group>(null);
   const innerRef = useRef<THREE.Group>(null);
 
@@ -273,20 +287,10 @@ const RevealModel: FC<{
   useLayoutEffect(() => {
     const obj = innerRef.current;
     if (!obj) return;
-    const box = new THREE.Box3().setFromObject(scene);
-    const sphere = box.getBoundingSphere(new THREE.Sphere());
-    const radius = sphere.radius || 1;
-    const scale = 1 / (radius * 2);
+    const { scale, center } = normalized;
     obj.scale.setScalar(scale);
-    // Auto-framing centers the bounding box (what the eye sees); the legacy
-    // path keeps the bounding-sphere center so existing placements don't move.
-    const center = fit ? box.getCenter(new THREE.Vector3()) : sphere.center;
     obj.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-    if (fit) {
-      const size = box.getSize(new THREE.Vector3()).multiplyScalar(scale);
-      setExtent({ w: size.x, h: size.y, d: size.z });
-    }
-  }, [scene, fit]);
+  }, [normalized]);
 
   useFrame((_, delta) => {
     // Frame the camera once the model size and the default controls are known.
@@ -331,9 +335,9 @@ const RevealModel: FC<{
       const box = new THREE.Box3().setFromObject(groupRef.current);
       boundsRef.current = { min: box.min.y, max: box.max.y };
       // Keep everything hidden until the animation drives the planes up.
-      wireClipBottom.constant = boundsRef.current.min - 1;
-      texClip.constant = boundsRef.current.min - 1;
-      wireClipTop.constant = -(boundsRef.current.min - 1);
+      setPlaneConstant(wireClipBottom, boundsRef.current.min - 1);
+      setPlaneConstant(texClip, boundsRef.current.min - 1);
+      setPlaneConstant(wireClipTop, -(boundsRef.current.min - 1));
       return;
     }
 
@@ -351,12 +355,12 @@ const RevealModel: FC<{
 
     // Wireframe leads, filling the first half of the timeline.
     const wireP = Math.min(1, p / 0.5);
-    wireClipBottom.constant = bottom + wireP * span;
+    setPlaneConstant(wireClipBottom, bottom + wireP * span);
 
     // Texture follows, slightly behind the wireframe edge.
     const texP = Math.max(0, (p - 0.25) / 0.75);
-    texClip.constant = bottom + texP * span;
-    wireClipTop.constant = -(bottom + texP * span);
+    setPlaneConstant(texClip, bottom + texP * span);
+    setPlaneConstant(wireClipTop, -(bottom + texP * span));
   });
 
   return (
