@@ -66,7 +66,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: scroll-driven 3D hero, About Sculpted India (manifesto from `lib/about.ts` beside artist portraits), artists, featured works, Explore in 3D, an artist quote, events |
+| `/` | Home: scroll-driven 3D hero, About Sculpted India (one statement from `lib/about.ts` over a scrolling row of artist portraits), artists, featured works, Explore in 3D, an artist quote, events |
 | `/artists`, `/artists/[slug]` | Artist list and artist pages |
 | `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
 | `/events` | Upcoming and past exhibitions |
