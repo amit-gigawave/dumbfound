@@ -71,7 +71,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
 | `/events` | Upcoming and past exhibitions |
 | `/about` | About the platform |
-| `/contact` | Enquiry form. It opens the visitor's mail app with the message filled in |
+| `/contact` | Enquiry form. It opens WhatsApp (to `site.phone`) or the visitor's mail app (to `site.email`) with the message filled in |
 | `/artworks/thumb/[slug]` | Hidden page that `npm run thumbnails` renders thumbnails from |
 | `/lab/*` | Internal design comparison pages. They are not linked anywhere and are not indexed |
 

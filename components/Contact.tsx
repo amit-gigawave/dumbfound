@@ -55,27 +55,33 @@ interface Enquiry {
   message: string;
 }
 
-const mailto = (to: string, e: Enquiry) => {
-  const subject = `Enquiry: ${e.topic} — ${e.name}`;
-  const body = [
-    `Name: ${e.name}`,
-    `Email: ${e.email}`,
-    ...e.lines,
-    "",
-    e.message,
-  ].join("\n");
-  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-};
+type Via = "mail" | "whatsapp";
+
+const subjectOf = (e: Enquiry) => `Enquiry: ${e.topic} — ${e.name}`;
+const bodyOf = (e: Enquiry) =>
+  [`Name: ${e.name}`, `Email: ${e.email}`, ...e.lines, "", e.message].join(
+    "\n",
+  );
+
+const mailto = (to: string, e: Enquiry) =>
+  `mailto:${to}?subject=${encodeURIComponent(subjectOf(e))}&body=${encodeURIComponent(bodyOf(e))}`;
+
+/** wa.me link with the enquiry pre-filled; `phone` may contain spaces and "+". */
+const whatsappLink = (phone: string, e: Enquiry) =>
+  `https://wa.me/${phone.replace(/\D/g, "")}?text=${encodeURIComponent(`${subjectOf(e)}\n\n${bodyOf(e)}`)}`;
 
 /**
- * The one place to plug in a sending service (Web3Forms, Resend, …).
- * TODO: once a service is chosen, post the enquiry there and return "sent".
- * Until then the visitor's own email app opens with the enquiry written out,
- * so messages still reach the inbox — and the thank-you says so honestly.
+ * Hands the enquiry to the visitor's own email app or WhatsApp, written out
+ * and ready to send. Nothing is sent from the site itself.
  */
-async function sendEnquiry(to: string, e: Enquiry): Promise<"sent" | "mail"> {
-  window.location.href = mailto(to, e);
-  return "mail";
+function sendEnquiry(
+  via: Via,
+  to: { email: string; whatsapp: string },
+  e: Enquiry,
+) {
+  if (via === "whatsapp")
+    window.open(whatsappLink(to.whatsapp, e), "_blank", "noopener");
+  else window.location.href = mailto(to.email, e);
 }
 
 /** Tick that draws itself in a circle. */
@@ -122,44 +128,48 @@ const Tick = () => {
  */
 export default function Contact({
   email,
+  whatsapp,
   works,
   workSlug,
 }: {
   email: string;
+  /** Number that WhatsApp enquiries go to, e.g. "+91 98716 63259". */
+  whatsapp: string;
   works: { slug: string; label: string }[];
   workSlug?: string;
 }) {
   const work = works.find((w) => w.slug === workSlug);
   const [topic, setTopic] = useState(work ? "artwork" : "exhibitions");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "mail">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | Via>("idle");
   const [last, setLast] = useState<Enquiry | null>(null);
 
-  if ((status === "sent" || status === "mail") && last) {
+  if (status !== "idle" && last) {
+    const onWhatsApp = status === "whatsapp";
     return (
-      <div className="grid justify-items-start gap-5 py-6" aria-live="polite">
+      <div
+        // The confirmation is much shorter than the form; bring it into view.
+        ref={(el) => el?.scrollIntoView({ block: "center", behavior: "smooth" })}
+        className="grid justify-items-start gap-5 py-6"
+        aria-live="polite"
+      >
         <Tick />
         <p className="font-display text-[clamp(28px,3.4vw,38px)] leading-tight">
-          {status === "sent" ? "Thank you." : "Almost there."}
+          Almost there.
         </p>
         <p className="font-text max-w-[46ch] text-[17px] leading-[1.75] text-stone">
-          {status === "sent" ? (
-            <>
-              We have your message, {last.name.split(" ")[0]}, and will be in
-              touch soon.
-            </>
-          ) : (
-            <>
-              Your email app should now open with your message written out to{" "}
-              <span className="text-ink">{email}</span> — just press send. If it
-              didn&apos;t open,{" "}
-              <a href={mailto(email, last)} className="text-link">
-                open it again
-              </a>{" "}
-              or write to us directly.
-            </>
-          )}
+          {onWhatsApp ? "WhatsApp" : "Your email app"} should now open with
+          your message written out to{" "}
+          <span className="text-ink">{onWhatsApp ? whatsapp : email}</span> —
+          just press send. If it didn&apos;t open,{" "}
+          <a
+            href={onWhatsApp ? whatsappLink(whatsapp, last) : mailto(email, last)}
+            target={onWhatsApp ? "_blank" : undefined}
+            rel="noopener noreferrer"
+            className="text-link"
+          >
+            open it again
+          </a>{" "}
+          or write to us directly.
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-6">
           <Link href="/artworks" className="btn">
@@ -180,8 +190,12 @@ export default function Contact({
     );
   }
 
-  const onSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
+    // Which of the two send buttons was pressed.
+    const submitter = (ev.nativeEvent as SubmitEvent).submitter;
+    const via: Via =
+      submitter?.getAttribute("value") === "whatsapp" ? "whatsapp" : "mail";
     const data = new FormData(ev.currentTarget);
     const t = TOPICS.find((x) => x.id === topic)!;
     const get = (k: string) => String(data.get(k) ?? "").trim();
@@ -203,9 +217,9 @@ export default function Contact({
       lines,
       message: get("message"),
     };
-    setStatus("sending");
     setLast(enquiry);
-    setStatus(await sendEnquiry(email, enquiry));
+    setStatus(via);
+    sendEnquiry(via, { email, whatsapp }, enquiry);
   };
 
   return (
@@ -335,10 +349,14 @@ export default function Contact({
             Privacy
           </Link>
         </p>
-        <button type="submit" className="btn" disabled={status === "sending"}>
-          {status === "sending" ? "Sending…" : "Send message"}{" "}
-          <span className="nudge">→</span>
-        </button>
+        <div className="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
+          <button type="submit" value="whatsapp" className="btn justify-center">
+            Send on WhatsApp <span className="nudge">→</span>
+          </button>
+          <button type="submit" value="mail" className="btn justify-center">
+            Send by email <span className="nudge">→</span>
+          </button>
+        </div>
       </div>
     </form>
   );
