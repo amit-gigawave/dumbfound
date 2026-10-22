@@ -42,10 +42,7 @@ export default async function ContactPage({
 
       <section className={`${wrap} pt-[clamp(40px,6vw,72px)]`}>
         <SectionHeader title="Contact details" />
-        <div
-          data-reveal-stagger
-          className={`grid items-start gap-6 ${next ? "md:grid-cols-2" : ""}`}
-        >
+        <div data-reveal-stagger className="grid gap-6">
           <ContactCards
             email={site.email}
             people={site.contacts.filter((c) => c.phone)}
@@ -54,7 +51,7 @@ export default async function ContactPage({
           {next && (
             <Link
               href="/events"
-              className="group block rounded-[14px] border border-rule bg-white p-6 transition-[border-color,transform,box-shadow] duration-500 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,.45)]"
+              className="group block rounded-[14px] border border-rule bg-white p-6 md:max-w-md transition-[border-color,transform,box-shadow] duration-500 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,.45)]"
             >
               <span className="label">Meet us at</span>
               <p className="font-display mt-3 text-[22px] leading-snug tracking-[0.02em] transition-colors group-hover:text-accent">

@@ -6,7 +6,10 @@ import { Check, Copy, Mail, MessageCircle, Phone } from "lucide-react";
 const chip =
   "inline-flex items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-[12px] text-ink transition-colors hover:border-accent hover:text-accent";
 
-/** Email (copy / write) and people to call or WhatsApp. */
+/**
+ * Email (copy / write) and people to call or WhatsApp: stacked on phones, one
+ * column each from md up.
+ */
 export default function ContactCards({
   email,
   people,
@@ -27,7 +30,7 @@ export default function ContactCards({
   };
 
   return (
-    <div className="grid gap-px overflow-hidden rounded-[14px] border border-rule bg-rule">
+    <div className="grid gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:auto-cols-fr md:grid-flow-col">
       <div className="bg-white p-5">
         <span className="label">Write to us</span>
         <a
@@ -59,20 +62,15 @@ export default function ContactCards({
       {people.map((p) => {
         const digits = p.phone.replace(/\D/g, "");
         return (
-          <div
-            key={p.name}
-            className="flex flex-wrap items-center justify-between gap-3 bg-white p-5"
-          >
-            <div>
-              <span className="label">{p.name}</span>
-              <a
-                href={`tel:+${digits}`}
-                className="mt-1.5 block text-[15px] transition-colors hover:text-accent"
-              >
-                {p.phone}
-              </a>
-            </div>
-            <div className="flex gap-2">
+          <div key={p.name} className="bg-white p-5">
+            <span className="label">{p.name}</span>
+            <a
+              href={`tel:+${digits}`}
+              className="mt-2 block text-[17px] transition-colors hover:text-accent"
+            >
+              {p.phone}
+            </a>
+            <div className="mt-3 flex flex-wrap gap-2">
               <a
                 href={`tel:+${digits}`}
                 className={chip}
