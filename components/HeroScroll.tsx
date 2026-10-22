@@ -37,7 +37,18 @@ const ease = (t: number) => t * t * (3 - 2 * t);
  * states only apply once JS has marked the page (html.js), so nothing is lost
  * without scripts.
  */
-export default function HeroScroll({ work }: { work: HeroWork }) {
+/** The intro paragraph under the heading. */
+const INTRO =
+  "A gallery of artists and their works, established names and new voices, across every medium, each presented with the care of a museum catalogue.";
+
+export default function HeroScroll({
+  work,
+  intro = INTRO,
+}: {
+  work: HeroWork;
+  /** Replaces the intro paragraph (used by /v2). */
+  intro?: string;
+}) {
   const pinRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<HTMLDivElement>(null);
@@ -156,9 +167,7 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
               Art, and the hands that made it.
             </h1>
             <p className="font-text mt-[26px] max-w-[46ch] text-[clamp(17px,1.6vw,19px)] leading-relaxed text-stone">
-              A gallery of artists and their works, established names and new
-              voices, across every medium, each presented with the care of a
-              museum catalogue.
+              {intro}
             </p>
             {/* Phones: a full-width button with the link centred under it,
                 instead of the two wrapping onto ragged lines. */}
