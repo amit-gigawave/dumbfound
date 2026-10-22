@@ -41,6 +41,7 @@ export default function Magnetic({
       ref={ref}
       onPointerMove={move}
       onPointerLeave={leave}
+      data-magnetic
       className={className}
     >
       {children}
