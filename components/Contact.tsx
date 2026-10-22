@@ -393,7 +393,7 @@ ${bodyOf(last)}`,
           <button type="submit" value="whatsapp" className="btn justify-center">
             Send on WhatsApp <span className="nudge">→</span>
           </button>
-          <button type="submit" value="mail" className="btn justify-center">
+          <button type="submit" value="mail" className="btn btn-hollow justify-center">
             Send by email <span className="nudge">→</span>
           </button>
         </div>

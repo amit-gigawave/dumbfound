@@ -353,41 +353,41 @@ select:focus-visible {
 }
 
 /* ------------------------------------------------------------------
- * Home page (main.home): buttons and links in sentence case with no arrows
- * or effects, quiet labels, headings in sentence case, and no decorative
- * lines or section numbers.
+ * Site-wide (first made for the home page): buttons and links in sentence
+ * case with no arrows or effects, quiet labels, headings in sentence case,
+ * and no decorative lines or section numbers.
  * ------------------------------------------------------------------ */
-.home .heading-caps {
+body .heading-caps {
   text-transform: none;
   letter-spacing: 0.005em;
 }
 /* Small capital text (meta lines, link labels, status pills) reads as
    ordinary text instead. */
-.home .uppercase {
+body .uppercase {
   text-transform: none;
   letter-spacing: 0.005em;
   font-size: 14px;
 }
-.home .label {
+body .label {
   text-transform: none;
   letter-spacing: 0.005em;
   font-size: 14px;
   font-weight: 400;
   color: #396046;
 }
-.home .deep .label {
+body .deep .label {
   color: #95c6a5;
 }
-.home .nudge,
-.home [aria-hidden].h-px {
+body .nudge,
+body [aria-hidden].h-px {
   display: none;
 }
-.home [data-magnetic] {
+body [data-magnetic] {
   transform: none !important;
 }
 
 /* Solid button: dark, sentence case, the logo green on hover. */
-.home .btn {
+body .btn {
   overflow: visible;
   gap: 0;
   border: 1px solid #1c1c1c;
@@ -403,24 +403,35 @@ select:focus-visible {
     background-color 0.2s ease,
     border-color 0.2s ease;
 }
-.home .btn::before {
+body .btn::before {
   content: none;
 }
-.home .btn:hover {
+body .btn:hover {
   background: #396046;
   border-color: #396046;
   color: #ffffff;
   translate: none;
   box-shadow: none;
 }
-.home .deep .btn {
+/* Second action beside a solid button: hollow, same size. */
+body .btn.btn-hollow {
+  background: none;
+  border-color: rgba(17, 17, 17, 0.25);
+  color: #1c1c1c;
+}
+body .btn.btn-hollow:hover {
+  background: none;
+  border-color: #396046;
+  color: #396046;
+}
+body .deep .btn {
   background: #f2f2f2;
   border-color: #f2f2f2;
   color: #1c1c1c;
 }
 
 /* Text link: ordinary size and case, a plain underline. */
-.home .text-link {
+body .text-link {
   font-size: 15px;
   letter-spacing: 0;
   text-transform: none;
@@ -433,14 +444,14 @@ select:focus-visible {
   text-decoration-color: rgba(57, 96, 70, 0.45);
   color: #396046;
 }
-.home .text-link:hover {
+body .text-link:hover {
   color: #2c4c37;
   text-decoration-color: currentColor;
 }
 
 /* Home hero: the second action ("Meet the artists") as a hollow button,
    matching the dark main button's size. Full width on phones like it. */
-.home .text-link.hero-secondary {
+body .text-link.hero-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -456,21 +467,21 @@ select:focus-visible {
     border-color 0.2s ease,
     color 0.2s ease;
 }
-.home .text-link.hero-secondary:hover {
+body .text-link.hero-secondary:hover {
   border-color: #396046;
   color: #396046;
 }
 @media (max-width: 639px) {
-  .home [data-magnetic]:has(> .hero-secondary),
-  .home .text-link.hero-secondary {
+  body [data-magnetic]:has(> .hero-secondary),
+  body .text-link.hero-secondary {
     display: flex;
     width: 100%;
   }
 }
 
-/* Home: content is simply there; no fade-up as sections scroll into view. */
-html.js .home [data-reveal]:not(.is-visible),
-html.js .home [data-reveal-stagger] > :not(.is-visible) {
+/* Content is simply there; no fade-up as sections scroll into view. */
+html.js body [data-reveal]:not(.is-visible),
+html.js body [data-reveal-stagger] > :not(.is-visible) {
   opacity: 1;
   transform: none;
 }
