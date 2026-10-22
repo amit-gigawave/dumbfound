@@ -93,7 +93,7 @@ components/
   ARButton.tsx          AR: Android in-browser AR (WebXRStage, Scene Viewer fallback), iOS Quick Look, QR code on desktop
   WebXRStage.tsx        Guided in-browser AR session on Android (model-viewer), with on-screen guidance
   SearchDialog.tsx      Site search
-  Navbar, Footer, PageHeader, MobileMenu, Contact, Magnetic, RevealObserver
+  Navbar, Footer, EnquiryBand (WhatsApp / email call to action above the footer), PageHeader, MobileMenu, Contact, Magnetic, RevealObserver
   gallery/              Artwork and artist tiles, artwork stage, artist filter, portrait fan
   about/ contact/ events/  Page sections
   three/                Model loader (Draco), studio lighting, and the artwork tiles'
