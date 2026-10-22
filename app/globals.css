@@ -437,3 +437,33 @@ select:focus-visible {
   color: #2c4c37;
   text-decoration-color: currentColor;
 }
+
+/* v2 hero: the second action ("Meet the artists") as a hollow button,
+   matching the dark main button's size. Full width on phones like it. */
+.v2 .text-link.hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(17, 17, 17, 0.25);
+  border-radius: 3px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1c1c1c;
+  text-decoration: none;
+  background: none;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.v2 .text-link.hero-secondary:hover {
+  border-color: #396046;
+  color: #396046;
+}
+@media (max-width: 639px) {
+  .v2 [data-magnetic]:has(> .hero-secondary),
+  .v2 .text-link.hero-secondary {
+    display: flex;
+    width: 100%;
+  }
+}

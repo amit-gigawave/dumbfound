@@ -181,7 +181,7 @@ export default function HeroScroll({
                 </Link>
               </Magnetic>
               <Magnetic>
-                <Link href="/artists" className="text-link">
+                <Link href="/artists" className="text-link hero-secondary">
                   Meet the artists <span className="nudge">→</span>
                 </Link>
               </Magnetic>
