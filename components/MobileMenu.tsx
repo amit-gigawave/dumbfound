@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { site } from "@/lib/site";
@@ -36,13 +37,17 @@ export default function MobileMenu({
       className="fixed inset-0 z-[60] flex flex-col bg-paper px-[clamp(16px,4vw,40px)] md:hidden"
     >
       <div className="flex h-[84px] items-center justify-between border-b border-rule">
-        <span className="font-display text-[26px] leading-none">
-          {site.name}
-        </span>
+        <Image
+          src="/logos/sculpted-india-wordmark.png"
+          alt={site.name}
+          width={480}
+          height={71}
+          className="h-auto w-[clamp(150px,16vw,203px)]"
+        />
         <button
           type="button"
           onClick={onClose}
-          className="text-[11px] uppercase tracking-[0.22em]"
+          className="text-[15px]"
         >
           Close
         </button>
@@ -55,7 +60,7 @@ export default function MobileMenu({
             href={link.href}
             onClick={onClose}
             aria-current={isActive(link.href) ? "page" : undefined}
-            className={`font-display text-3xl uppercase leading-snug tracking-[0.06em] ${isActive(link.href) ? "text-accent" : ""}`}
+            className={`font-display text-3xl leading-snug tracking-[0.01em] ${isActive(link.href) ? "text-accent" : ""}`}
           >
             {link.label}
           </Link>

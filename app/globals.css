@@ -474,9 +474,3 @@ html.js .home [data-reveal-stagger] > :not(.is-visible) {
   opacity: 1;
   transform: none;
 }
-/* Home: the header's menu and labels in normal case, like the rest of the page. */
-body:has(main.home) header .uppercase {
-  text-transform: none;
-  letter-spacing: 0.005em;
-  font-size: 15px;
-}
