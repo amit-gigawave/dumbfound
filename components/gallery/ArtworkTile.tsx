@@ -39,8 +39,6 @@ const TURN_AFTER = 0;
  * load (with a progress bar), then turn in the round like a Sketchfab preview
  * once the bar completes. `ambient` (the artworks grid) also lets a random one
  * or two visible works start turning on their own for a few seconds.
- * `bare` (home page) drops the plate frame and sets the caption like a museum
- * label: artist, title in italics, then year and material.
  */
 const ArtworkTile = ({
   work,
@@ -49,7 +47,6 @@ const ArtworkTile = ({
   showcase = false,
   ambient = false,
   backdrop = false,
-  bare = false,
   sizes = "(min-width: 1024px) 33vw, 50vw",
 }: {
   work: Sculpture;
@@ -59,7 +56,6 @@ const ArtworkTile = ({
   ambient?: boolean;
   /** Studio-light plate with a floor shadow, for tiles on a tinted section. */
   backdrop?: boolean;
-  bare?: boolean;
   sizes?: string;
 }) => {
   const artist = getArtist(work.artistSlug);
@@ -162,16 +158,14 @@ const ArtworkTile = ({
       <div
         ref={plateRef}
         data-turning={active || undefined}
-        onPointerMove={showcase && !bare ? (e) => tilt(e, 5) : undefined}
-        onPointerLeave={showcase && !bare ? untilt : undefined}
-        className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] ${
-          bare
-            ? ""
-            : backdrop
+        onPointerMove={showcase ? (e) => tilt(e, 5) : undefined}
+        onPointerLeave={showcase ? untilt : undefined}
+        className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] ${
+          backdrop
             ? "border-white/80 bg-[radial-gradient(120%_80%_at_50%_22%,#ffffff_0%,#f6f7f5_45%,#dde2dd_100%)] shadow-[0_18px_34px_-24px_rgba(20,40,28,.45)]"
             : "border-rule bg-plate group-hover:bg-[#e8e8e8]"
-        } ${bare ? "" : "rounded-[14px] border"} ${
-          showcase && !bare
+        } ${
+          showcase
             ? "group-hover:shadow-[0_26px_46px_-30px_rgba(0,0,0,.5)]"
             : ""
         }`}
@@ -241,7 +235,7 @@ const ArtworkTile = ({
             />
           </div>
         )}
-        {showcase && !bare && (
+        {showcase && (
           // Hint that slides up on hover; tracks the 3D preview as it loads.
           <span
             aria-hidden
@@ -260,33 +254,19 @@ const ArtworkTile = ({
           </span>
         )}
       </div>
-      {bare ? (
-        <div className="grid gap-0.5 text-[14px] leading-snug">
-          {showArtist && artist && <span>{artist.name}</span>}
-          <span className="font-text text-[17px] italic transition-colors group-hover:text-accent">
-            {work.title}
-          </span>
-          {(work.year || work.material) && (
-            <span className="text-stone">
-              {[work.year, work.material].filter(Boolean).join(", ")}
-            </span>
-          )}
-        </div>
-      ) : (
-        <div className="grid gap-0.5">
-          {showArtist && artist && <span className="label">{artist.name}</span>}
-          <span className="font-display text-[17px] leading-snug sm:text-[21px] tracking-[0.03em] transition-colors group-hover:text-accent">
-            {work.title}
-          </span>
-          <span className="text-[13px] text-stone">
-            {[work.year, work.material].filter(Boolean).join(" · ")}
-          </span>
-          <span
-            aria-hidden
-            className="mt-2 block h-px w-0 bg-accent transition-[width] duration-500 ease-out group-hover:w-12"
-          />
-        </div>
-      )}
+      <div className="grid gap-0.5">
+        {showArtist && artist && <span className="label">{artist.name}</span>}
+        <span className="font-display text-[17px] leading-snug sm:text-[21px] tracking-[0.03em] transition-colors group-hover:text-accent">
+          {work.title}
+        </span>
+        <span className="text-[13px] text-stone">
+          {[work.year, work.material].filter(Boolean).join(" · ")}
+        </span>
+        <span
+          aria-hidden
+          className="mt-2 block h-px w-0 bg-accent transition-[width] duration-500 ease-out group-hover:w-12"
+        />
+      </div>
     </Link>
   );
 };
