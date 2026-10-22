@@ -3,6 +3,7 @@ import { Inter, Marcellus, Lora } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import EnquiryBand from "@/components/EnquiryBand";
 import RevealObserver from "@/components/RevealObserver";
 import { openGraphDefaults, site, siteUrl } from "@/lib/site";
 
@@ -52,6 +53,7 @@ export default function RootLayout({
       <body className="bg-paper text-ink antialiased" suppressHydrationWarning>
         <Navbar />
         {children}
+        <EnquiryBand />
         <Footer />
         <RevealObserver />
       </body>
