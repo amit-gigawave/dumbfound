@@ -66,7 +66,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 
 | Route | Page |
 | --- | --- |
-| `/` | Home: scroll-driven hero with the finished sculpture, About Sculpted India (a statement and the opening of the story, from `lib/about.ts`), ten artists, featured works, More from the collection (four works listed in `EXPLORE`), an artist quote, events (Recent exhibitions when nothing is coming up). Tiles show photos only. Its sentence-case buttons, links and labels are scoped under `main.home` in `globals.css` |
+| `/` | Home: scroll-driven hero with the finished sculpture, About Sculpted India (a statement and the opening of the story, from `lib/about.ts`), ten artists, featured works, More from the collection (four works listed in `EXPLORE`), an artist quote, events (Recent exhibitions when nothing is coming up). Tiles turn the work on hover, and in More from the collection one or two turn on their own. Its sentence-case buttons, links and labels are scoped under `main.home` in `globals.css` |
 | `/artists`, `/artists/[slug]` | Artist list and artist pages |
 | `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
 | `/events` | Upcoming and past exhibitions |

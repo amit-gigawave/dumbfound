@@ -120,6 +120,7 @@ export default function Home() {
                 key={work.slug}
                 work={work}
                 priority={i < 3}
+                showcase
               />
             ))}
           </div>
@@ -141,6 +142,8 @@ export default function Home() {
                 <ArtworkTile
                   key={work.slug}
                   work={work}
+                  showcase
+                  ambient
                   sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
