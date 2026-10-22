@@ -39,6 +39,7 @@ const TURN_AFTER = 0;
  * load (with a progress bar), then turn in the round like a Sketchfab preview
  * once the bar completes. `ambient` (the artworks grid) also lets a random one
  * or two visible works start turning on their own for a few seconds.
+ * `quiet` (home page) keeps the turning but drops the lean and the hint pill.
  */
 const ArtworkTile = ({
   work,
@@ -47,6 +48,7 @@ const ArtworkTile = ({
   showcase = false,
   ambient = false,
   backdrop = false,
+  quiet = false,
   sizes = "(min-width: 1024px) 33vw, 50vw",
 }: {
   work: Sculpture;
@@ -56,6 +58,8 @@ const ArtworkTile = ({
   ambient?: boolean;
   /** Studio-light plate with a floor shadow, for tiles on a tinted section. */
   backdrop?: boolean;
+  /** No lean toward the cursor and no hint pill; works still turn. */
+  quiet?: boolean;
   sizes?: string;
 }) => {
   const artist = getArtist(work.artistSlug);
@@ -158,8 +162,8 @@ const ArtworkTile = ({
       <div
         ref={plateRef}
         data-turning={active || undefined}
-        onPointerMove={showcase ? (e) => tilt(e, 5) : undefined}
-        onPointerLeave={showcase ? untilt : undefined}
+        onPointerMove={showcase && !quiet ? (e) => tilt(e, 5) : undefined}
+        onPointerLeave={showcase && !quiet ? untilt : undefined}
         className={`relative isolate grid aspect-[4/5] place-items-center overflow-hidden rounded-[14px] border transition-[background-color,transform,box-shadow] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] ${
           backdrop
             ? "border-white/80 bg-[radial-gradient(120%_80%_at_50%_22%,#ffffff_0%,#f6f7f5_45%,#dde2dd_100%)] shadow-[0_18px_34px_-24px_rgba(20,40,28,.45)]"
@@ -235,7 +239,7 @@ const ArtworkTile = ({
             />
           </div>
         )}
-        {showcase && (
+        {showcase && !quiet && (
           // Hint that slides up on hover; tracks the 3D preview as it loads.
           <span
             aria-hidden
