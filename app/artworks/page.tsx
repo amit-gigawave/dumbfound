@@ -42,7 +42,7 @@ export default async function ArtworksPage({
         title="Artworks"
         line="Each work is presented as in a catalogue. Open any piece to read about its maker, its material and its story."
       />
-      <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)]">
+      <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(40px,6vw,72px)]">
         <SectionHeader
           title={selected ? `Works by ${selected.name}` : "All artworks"}
           action={

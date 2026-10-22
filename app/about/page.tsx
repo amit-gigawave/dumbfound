@@ -22,7 +22,7 @@ export default function AboutPage() {
         line="Placing sculpture at the centre of contemporary cultural discourse."
       />
 
-      <section className="border-y border-rule bg-white py-[clamp(70px,10vw,140px)]">
+      <section className="border-b border-rule bg-white py-[clamp(70px,10vw,140px)]">
         <div className={wrap}>
           <Manifesto text={MANIFESTO} />
         </div>
