@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
-import SectionHeader from "@/components/gallery/SectionHeader";
 import Manifesto from "@/components/about/Manifesto";
 import StaggerStory from "@/components/about/StaggerStory";
 import PageHeader from "@/components/PageHeader";
@@ -33,18 +32,6 @@ export default function AboutPage() {
           <span className="label md:sticky md:top-36 md:self-start">Our story</span>
           <StaggerStory paragraphs={STORY} />
         </div>
-      </section>
-
-      <section
-        id="privacy"
-        className={`${wrap} scroll-mt-28 pb-[clamp(64px,8vw,104px)]`}
-      >
-        <SectionHeader title="Privacy" />
-        <p className="font-text max-w-[62ch] text-[17px] leading-[1.75] text-stone">
-          {/* TODO: replace with the approved privacy policy. */}
-          We only use the details you send us to reply to your enquiry or, if
-          you ask, to send our occasional letter. We do not sell or share them.
-        </p>
       </section>
     </main>
   );
