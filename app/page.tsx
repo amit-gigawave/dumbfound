@@ -158,7 +158,7 @@ export default function Home() {
         <section className="bg-[#edf1ee] py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="In the Round"
+              title="The Artist’s Hand"
               number="04"
               link={{ label: "All artworks", href: "/artworks" }}
             />
