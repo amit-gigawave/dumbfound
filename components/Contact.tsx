@@ -66,6 +66,13 @@ const bodyOf = (e: Enquiry) =>
 const mailto = (to: string, e: Enquiry) =>
   `mailto:${to}?subject=${encodeURIComponent(subjectOf(e))}&body=${encodeURIComponent(bodyOf(e))}`;
 
+/**
+ * Gmail compose window with the enquiry pre-filled, for visitors whose
+ * computer has no email app set up (mailto: then silently does nothing).
+ */
+const gmailLink = (to: string, e: Enquiry) =>
+  `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subjectOf(e))}&body=${encodeURIComponent(bodyOf(e))}`;
+
 /** wa.me link with the enquiry pre-filled; `phone` may contain spaces and "+". */
 const whatsappLink = (phone: string, e: Enquiry) =>
   `https://wa.me/${phone.replace(/\D/g, "")}?text=${encodeURIComponent(`${subjectOf(e)}\n\n${bodyOf(e)}`)}`;
@@ -142,6 +149,7 @@ export default function Contact({
   const [topic, setTopic] = useState(work ? "artwork" : "exhibitions");
   const [status, setStatus] = useState<"idle" | Via>("idle");
   const [last, setLast] = useState<Enquiry | null>(null);
+  const [copied, setCopied] = useState(false);
 
   if (status !== "idle" && last) {
     const onWhatsApp = status === "whatsapp";
@@ -171,6 +179,38 @@ export default function Contact({
           </a>{" "}
           or write to us directly.
         </p>
+        {!onWhatsApp && (
+          <p className="text-[13px] text-stone">
+            No email app?{" "}
+            <a
+              href={gmailLink(email, last)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-link"
+            >
+              Open in Gmail
+            </a>{" "}
+            or{" "}
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(
+                    `To: ${email}
+Subject: ${subjectOf(last)}
+
+${bodyOf(last)}`,
+                  );
+                  setCopied(true);
+                } catch {}
+              }}
+              className="text-link"
+              aria-live="polite"
+            >
+              {copied ? "Copied" : "Copy message"}
+            </button>
+          </p>
+        )}
         <div className="mt-2 flex flex-wrap items-center gap-6">
           <Link href="/artworks" className="btn">
             View the artworks
@@ -180,7 +220,10 @@ export default function Contact({
           </Link>
           <button
             type="button"
-            onClick={() => setStatus("idle")}
+            onClick={() => {
+              setStatus("idle");
+              setCopied(false);
+            }}
             className="text-[11px] uppercase tracking-[0.16em] text-stone transition-colors hover:text-accent"
           >
             Write another
