@@ -386,13 +386,13 @@ select:focus-visible {
   transform: none !important;
 }
 
-/* Solid button in the logo green, sentence case, darker on hover. */
+/* Solid button: dark, sentence case, the logo green on hover. */
 .v2 .btn {
   overflow: visible;
   gap: 0;
-  border: 1px solid #396046;
+  border: 1px solid #1c1c1c;
   border-radius: 3px;
-  background: #396046;
+  background: #1c1c1c;
   color: #ffffff;
   padding: 12px 22px;
   font-size: 15px;
@@ -407,8 +407,8 @@ select:focus-visible {
   content: none;
 }
 .v2 .btn:hover {
-  background: #2c4c37;
-  border-color: #2c4c37;
+  background: #396046;
+  border-color: #396046;
   color: #ffffff;
   translate: none;
   box-shadow: none;
@@ -416,7 +416,7 @@ select:focus-visible {
 .v2 .deep .btn {
   background: #f2f2f2;
   border-color: #f2f2f2;
-  color: #396046;
+  color: #1c1c1c;
 }
 
 /* Text link: ordinary size and case, a plain underline. */
