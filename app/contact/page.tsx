@@ -7,11 +7,15 @@ import { getArtist } from "@/lib/artists";
 import { upcomingEvents } from "@/lib/events";
 import Contact from "@/components/Contact";
 import ContactCards from "@/components/contact/ContactCards";
+import PageHeader from "@/components/PageHeader";
+import SectionHeader from "@/components/gallery/SectionHeader";
 
 export const metadata: Metadata = {
   title: "Enquiry",
   description: `For exhibitions, artworks, collaborations, and patronage — write to ${site.name}.`,
 };
+
+const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
 export default async function ContactPage({
   searchParams,
@@ -29,23 +33,19 @@ export default async function ContactPage({
   }));
 
   return (
-    <main className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(56px,9vw,120px)]">
-      <div className="grid gap-[clamp(40px,6vw,88px)] md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)]">
-        <aside
-          data-reveal-stagger
-          className="grid content-start gap-10 md:sticky md:top-28 md:self-start"
-        >
-          <div>
-            <span className="label">Get in touch</span>
-            <h1 className="heading-caps mt-5 text-[clamp(34px,5vw,60px)] leading-[1.1] tracking-[0.05em]">
-              Enquiry
-            </h1>
-            <p className="font-text mt-6 max-w-[40ch] text-lg leading-[1.75] text-stone">
-              For exhibitions, artworks, collaborations, and patronage — write
-              to us and we will respond promptly.
-            </p>
-          </div>
+    <main>
+      <PageHeader
+        label="Get in touch"
+        title="Enquiry"
+        line="For exhibitions, artworks, collaborations, and patronage — write to us and we will respond promptly."
+      />
 
+      <section className={`${wrap} pt-[clamp(40px,6vw,72px)]`}>
+        <SectionHeader title="Contact details" />
+        <div
+          data-reveal-stagger
+          className={`grid items-start gap-6 ${next ? "md:grid-cols-2" : ""}`}
+        >
           <ContactCards
             email={site.email}
             people={site.contacts.filter((c) => c.phone)}
@@ -70,9 +70,14 @@ export default async function ContactPage({
               </span>
             </Link>
           )}
-        </aside>
+        </div>
+      </section>
 
-        <section data-reveal className="grid content-start gap-6">
+      <section
+        className={`${wrap} pb-[clamp(64px,8vw,104px)] pt-[clamp(56px,8vw,96px)]`}
+      >
+        <SectionHeader title="Send an enquiry" />
+        <div data-reveal className="grid gap-6">
           {work && (
             <div className="flex items-center gap-5 rounded-[14px] border border-rule bg-white p-4 pr-6">
               <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-[10px] bg-plate">
@@ -114,8 +119,8 @@ export default async function ContactPage({
               workSlug={work?.slug}
             />
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
