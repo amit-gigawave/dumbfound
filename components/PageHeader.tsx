@@ -1,7 +1,8 @@
 /**
- * Top of a main page (About, Artists, Artworks, Events): a small label, the
- * page title in capitals, and one line under it, on a faint green band with a
- * rule below.
+ * Top of a main page (About, Artists, Artworks, Events, Enquiry), laid out
+ * like the home page's About section: a small label and the title on the
+ * left, the description on the right, aligned along the bottom. Normal case
+ * throughout, on a faint green band with a rule below. Stacks on phones.
  */
 export default function PageHeader({
   label,
@@ -14,15 +15,14 @@ export default function PageHeader({
 }) {
   return (
     <section className="border-b border-rule bg-accent-light/5">
-      <div
-        data-reveal-stagger
-        className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(48px,7vw,90px)] pt-[clamp(56px,9vw,120px)]"
-      >
-        <span className="label">{label}</span>
-        <h1 className="heading-caps mt-5 max-w-[16ch] text-[clamp(34px,5.2vw,64px)] leading-[1.1] tracking-[0.04em]">
-          {title}
-        </h1>
-        <p className="font-display mt-5 max-w-[48ch] text-[clamp(18px,2.4vw,24px)] leading-[1.5] text-stone">
+      <div className="mx-auto grid max-w-[1200px] gap-5 px-[clamp(16px,4vw,40px)] pb-[clamp(40px,5vw,64px)] pt-[clamp(48px,7vw,96px)] md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-end md:gap-[clamp(28px,5vw,80px)]">
+        <div>
+          <span className="text-[14px] text-accent">{label}</span>
+          <h1 className="font-display mt-3 text-[clamp(40px,5.6vw,72px)] leading-[1.05] tracking-[0.005em]">
+            {title}
+          </h1>
+        </div>
+        <p className="font-text max-w-[46ch] text-[18px] leading-[1.8] text-stone md:pb-2">
           {line}
         </p>
       </div>
