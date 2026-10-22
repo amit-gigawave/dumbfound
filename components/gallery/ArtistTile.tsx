@@ -6,8 +6,8 @@ import { initials, type Artist } from "@/lib/artists";
 
 /**
  * Portrait (or initials) with name, birth and medium. Placeholders don't link.
- * Portraits are black and white until hovered, when they ease into full
- * colour over ~2s and the plate grows a little. Inside a [data-spotlight]
+ * Portraits are black and white until hovered on desktop (lg+), when they
+ * ease into full colour over ~2s and the plate grows a little. Inside a [data-spotlight]
  * grid, every other artist goes dark meanwhile, so the hovered one is in
  * focus (styles in globals.css). No tilt.
  */
@@ -24,7 +24,7 @@ const ArtistTile = ({ artist, compact = false }: { artist: Artist; compact?: boo
             alt={artist.name}
             fill
             sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-            className="object-cover grayscale transition-[filter] duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] group-hover:grayscale-0"
+            className="object-cover grayscale transition-[filter] duration-[2200ms] ease-[cubic-bezier(0.45,0,0.2,1)] lg:group-hover:grayscale-0"
           />
         ) : (
           <span
