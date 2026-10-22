@@ -318,6 +318,19 @@ const RevealModel: FC<{
       return;
     }
 
+    // The model stands on a floor at its base: panning can't drag the view
+    // below it (with the polar limit, the camera stays above the floor too,
+    // so the underside is never shown).
+    if (extent) {
+      const orbit = get().controls as unknown as OrbitControlsImpl | null;
+      const floor = -extent.h / 2;
+      if (orbit && orbit.target.y < floor) {
+        const lift = floor - orbit.target.y;
+        orbit.target.y += lift;
+        orbit.object.position.y += lift;
+      }
+    }
+
     frameCount.current++;
 
     if (!readyRef.current && frameCount.current >= 2) {
@@ -471,7 +484,9 @@ export const SculptureContents: FC<
         autoRotateSpeed={1.4}
         enableDamping
         dampingFactor={0.08}
-        maxPolarAngle={interactive ? Math.PI : Math.PI / 1.6}
+        // Auto-framed viewers stop at eye level, so the camera never goes
+        // under the floor the model stands on.
+        maxPolarAngle={interactive ? (fit ? Math.PI / 2 : Math.PI) : Math.PI / 1.6}
         minPolarAngle={interactive ? 0 : Math.PI / 3}
       />
     </>
