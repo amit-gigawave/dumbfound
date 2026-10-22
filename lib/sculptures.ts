@@ -262,6 +262,18 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "11 - Krishna Khanna 02" (original in .glb-backup/). Title to be
+  // confirmed: a horn player in a blue uniform; no title came with the scan.
+  {
+    slug: "khanna-untitled-horn-player",
+    title: "Untitled (Horn Player)",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-untitled-horn-player.webp",
+    modelUrl: "/sculptures/khanna-untitled-horn-player.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
