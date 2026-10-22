@@ -35,7 +35,7 @@ const heroWorkFor = (slug: string): HeroWork | undefined => {
   };
 };
 
-/** Painted scans for "Explore in 3D": one row, in colour. */
+/** Painted scans for "In the Round": one row, in colour. */
 const EXPLORE = [
   "meditating",
   "khanna-patinder-rawat-trumpet-walae",
@@ -158,7 +158,7 @@ export default function Home() {
         <section className="bg-[#edf1ee] py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="Explore in 3D"
+              title="In the Round"
               number="04"
               link={{ label: "All artworks", href: "/artworks" }}
             />
@@ -166,8 +166,8 @@ export default function Home() {
               data-reveal
               className="font-text -mt-4 mb-10 max-w-[56ch] text-[17px] leading-relaxed text-stone"
             >
-              Turn a work in the round, then open it to look from every side or
-              place it in your room with AR.
+              Sculpture is made to be seen from every side. Open a work to walk
+              around it, or see it in your own space.
             </p>
             <div
               data-reveal-stagger
