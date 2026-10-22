@@ -140,7 +140,7 @@ export default function EnquiryBand() {
             href={whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2.5 rounded-[3px] border border-accent bg-accent px-6 py-3.5 text-[15px] font-medium text-white transition-colors hover:border-[#2c4c37] hover:bg-[#2c4c37]"
+            className="inline-flex items-center justify-center gap-2.5 rounded-[3px] border border-[#1c1c1c] bg-[#1c1c1c] px-6 py-3.5 text-[15px] font-medium text-white transition-colors hover:border-accent hover:bg-accent"
           >
             <MessageCircle size={17} aria-hidden />
             WhatsApp us
