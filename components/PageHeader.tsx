@@ -13,7 +13,7 @@ export default function PageHeader({
   line: string;
 }) {
   return (
-    <section className="border-b border-rule bg-accent-light/10">
+    <section className="border-b border-rule bg-accent-light/5">
       <div
         data-reveal-stagger
         className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(48px,7vw,90px)] pt-[clamp(56px,9vw,120px)]"
