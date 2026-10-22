@@ -353,41 +353,41 @@ select:focus-visible {
 }
 
 /* ------------------------------------------------------------------
- * Home v2 (/v2): the same page without the template tells. Buttons and
- * links in sentence case with no arrows or effects, quiet labels, headings
- * in sentence case, and no decorative lines or section numbers.
+ * Home page (main.home): buttons and links in sentence case with no arrows
+ * or effects, quiet labels, headings in sentence case, and no decorative
+ * lines or section numbers.
  * ------------------------------------------------------------------ */
-.v2 .heading-caps {
+.home .heading-caps {
   text-transform: none;
   letter-spacing: 0.005em;
 }
 /* Small capital text (meta lines, link labels, status pills) reads as
    ordinary text instead. */
-.v2 .uppercase {
+.home .uppercase {
   text-transform: none;
   letter-spacing: 0.005em;
   font-size: 14px;
 }
-.v2 .label {
+.home .label {
   text-transform: none;
   letter-spacing: 0.005em;
   font-size: 14px;
   font-weight: 400;
   color: #396046;
 }
-.v2 .deep .label {
+.home .deep .label {
   color: #95c6a5;
 }
-.v2 .nudge,
-.v2 [aria-hidden].h-px {
+.home .nudge,
+.home [aria-hidden].h-px {
   display: none;
 }
-.v2 [data-magnetic] {
+.home [data-magnetic] {
   transform: none !important;
 }
 
 /* Solid button: dark, sentence case, the logo green on hover. */
-.v2 .btn {
+.home .btn {
   overflow: visible;
   gap: 0;
   border: 1px solid #1c1c1c;
@@ -403,24 +403,24 @@ select:focus-visible {
     background-color 0.2s ease,
     border-color 0.2s ease;
 }
-.v2 .btn::before {
+.home .btn::before {
   content: none;
 }
-.v2 .btn:hover {
+.home .btn:hover {
   background: #396046;
   border-color: #396046;
   color: #ffffff;
   translate: none;
   box-shadow: none;
 }
-.v2 .deep .btn {
+.home .deep .btn {
   background: #f2f2f2;
   border-color: #f2f2f2;
   color: #1c1c1c;
 }
 
 /* Text link: ordinary size and case, a plain underline. */
-.v2 .text-link {
+.home .text-link {
   font-size: 15px;
   letter-spacing: 0;
   text-transform: none;
@@ -433,14 +433,14 @@ select:focus-visible {
   text-decoration-color: rgba(57, 96, 70, 0.45);
   color: #396046;
 }
-.v2 .text-link:hover {
+.home .text-link:hover {
   color: #2c4c37;
   text-decoration-color: currentColor;
 }
 
-/* v2 hero: the second action ("Meet the artists") as a hollow button,
+/* Home hero: the second action ("Meet the artists") as a hollow button,
    matching the dark main button's size. Full width on phones like it. */
-.v2 .text-link.hero-secondary {
+.home .text-link.hero-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -456,26 +456,26 @@ select:focus-visible {
     border-color 0.2s ease,
     color 0.2s ease;
 }
-.v2 .text-link.hero-secondary:hover {
+.home .text-link.hero-secondary:hover {
   border-color: #396046;
   color: #396046;
 }
 @media (max-width: 639px) {
-  .v2 [data-magnetic]:has(> .hero-secondary),
-  .v2 .text-link.hero-secondary {
+  .home [data-magnetic]:has(> .hero-secondary),
+  .home .text-link.hero-secondary {
     display: flex;
     width: 100%;
   }
 }
 
-/* v2: content is simply there; no fade-up as sections scroll into view. */
-html.js .v2 [data-reveal]:not(.is-visible),
-html.js .v2 [data-reveal-stagger] > :not(.is-visible) {
+/* Home: content is simply there; no fade-up as sections scroll into view. */
+html.js .home [data-reveal]:not(.is-visible),
+html.js .home [data-reveal-stagger] > :not(.is-visible) {
   opacity: 1;
   transform: none;
 }
-/* v2: the header's menu and labels in normal case, like the rest of v2. */
-body:has(main.v2) header .uppercase {
+/* Home: the header's menu and labels in normal case, like the rest of the page. */
+body:has(main.home) header .uppercase {
   text-transform: none;
   letter-spacing: 0.005em;
   font-size: 15px;

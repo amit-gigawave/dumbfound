@@ -37,24 +37,7 @@ const ease = (t: number) => t * t * (3 - 2 * t);
  * states only apply once JS has marked the page (html.js), so nothing is lost
  * without scripts.
  */
-/** The intro paragraph under the heading. */
-const INTRO =
-  "A gallery of artists and their works, established names and new voices, across every medium, each presented with the care of a museum catalogue.";
-
-export default function HeroScroll({
-  work,
-  intro = INTRO,
-  calm = false,
-}: {
-  work: HeroWork;
-  /** Replaces the intro paragraph (used by /v2). */
-  intro?: string;
-  /**
-   * /v2: a shorter pinned scroll, and the sculpture appears finished instead
-   * of drawing itself in as a wireframe.
-   */
-  calm?: boolean;
-}) {
+export default function HeroScroll({ work }: { work: HeroWork }) {
   const pinRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<HTMLDivElement>(null);
@@ -154,7 +137,7 @@ export default function HeroScroll({
   return (
     <section
       ref={pinRef}
-      className={`relative ${calm ? "lg:h-[170vh]" : "lg:h-[260vh]"} motion-reduce:lg:h-auto`}
+      className="relative lg:h-[170vh] motion-reduce:lg:h-auto"
     >
       <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] lg:sticky lg:top-[84px] lg:h-[calc(100svh-84px)] motion-reduce:lg:static motion-reduce:lg:h-auto">
         <div className="relative grid gap-8 pb-[clamp(40px,6vw,64px)] pt-[clamp(56px,9vw,100px)] lg:h-full lg:grid-cols-2 lg:items-center lg:py-0 motion-reduce:lg:py-[clamp(56px,9vw,100px)]">
@@ -173,7 +156,9 @@ export default function HeroScroll({
               Art, and the hands that made it.
             </h1>
             <p className="font-text mt-[26px] max-w-[46ch] text-[clamp(17px,1.6vw,19px)] leading-relaxed text-stone">
-              {intro}
+              Modern and contemporary Indian sculpture, from established names
+              and new voices. Open any work to see it up close and meet the
+              artist who made it.
             </p>
             {/* Phones: a full-width button with the link centred under it,
                 instead of the two wrapping onto ragged lines. */}
@@ -203,7 +188,8 @@ export default function HeroScroll({
                 the body off-centre; on phones nudge it back over the middle.
                 (On desktop the scroll transform owns this box.) */}
             <div className="h-full max-lg:translate-x-[6%]">
-              <HeroScene drawIn={!calm} />
+              {/* Shown finished, without the wireframe draw-in. */}
+              <HeroScene drawIn={false} />
             </div>
           </div>
 

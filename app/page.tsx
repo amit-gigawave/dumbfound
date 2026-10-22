@@ -56,14 +56,17 @@ export default function Home() {
   const homeArtists = live.filter((a) => a.portrait).slice(0, 10);
   const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
   const quote = quoted?.quotes[0];
-  const homeEvents = [...upcomingEvents(), ...pastEvents()].slice(0, 2);
+  const upcoming = upcomingEvents();
+  const homeEvents = [...upcoming, ...pastEvents()].slice(0, 2);
   const heroWork = heroWorkFor(HERO_WORK);
 
   return (
-    <main>
+    <main className="home">
       {/* Hero: intro left, a featured sculpture right; on scroll the
           sculpture slides left and its details appear (HeroScroll). */}
-      {heroWork && <HeroScroll work={heroWork} />}
+      {heroWork && (
+        <HeroScroll work={heroWork} />
+      )}
 
       {/* About: what Sculpted India stands for, set as plain text. */}
       <section id="about" className="pb-[clamp(8px,2vw,24px)] pt-[clamp(88px,12vw,168px)]">
@@ -87,8 +90,7 @@ export default function Home() {
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Artists"
-          number="02"
-          link={{ label: `All ${live.length} artists`, href: "/artists" }}
+                    link={{ label: `All ${live.length} artists`, href: "/artists" }}
         />
         <div
           data-reveal-stagger
@@ -107,8 +109,7 @@ export default function Home() {
         <div className={wrap}>
           <SectionHeader
             title="Featured works"
-            number="03"
-            link={{ label: "All artworks", href: "/artworks" }}
+                        link={{ label: "All artworks", href: "/artworks" }}
           />
           <div
             data-reveal-stagger
@@ -119,7 +120,6 @@ export default function Home() {
                 key={work.slug}
                 work={work}
                 priority={i < 3}
-                showcase
               />
             ))}
           </div>
@@ -127,20 +127,12 @@ export default function Home() {
       </section>
 
       {explore.length > 0 && (
-        <section className="bg-[#edf1ee] py-[clamp(64px,8vw,110px)]">
+        <section className="py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="The Artist’s Hand"
-              number="04"
-              link={{ label: "All artworks", href: "/artworks" }}
+              title="More from the collection"
+                            link={{ label: "All artworks", href: "/artworks" }}
             />
-            <p
-              data-reveal
-              className="font-text -mt-4 mb-10 max-w-[56ch] text-[17px] leading-relaxed text-stone"
-            >
-              Sculpture is made to be seen from every side. Open a work to walk
-              around it, or see it in your own space.
-            </p>
             <div
               data-reveal-stagger
               className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
@@ -149,9 +141,6 @@ export default function Home() {
                 <ArtworkTile
                   key={work.slug}
                   work={work}
-                  showcase
-                  ambient
-                  backdrop
                   sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
@@ -164,11 +153,7 @@ export default function Home() {
         <section className="deep">
           <div className={`${wrap} py-[clamp(72px,10vw,140px)]`}>
             <figure data-reveal-stagger className="mx-auto grid max-w-[900px] gap-9 text-center">
-              <span className="label flex items-center justify-center gap-3">
-                05
-                <span aria-hidden className="h-px w-10 bg-current opacity-60" />
-                In the artist&rsquo;s words
-              </span>
+              <span className="label">In the artist&rsquo;s words</span>
               <blockquote className="font-display text-[clamp(28px,4.4vw,56px)] leading-[1.22] tracking-[0.01em]">
                 &ldquo;{quote.text}&rdquo;
               </blockquote>
@@ -198,7 +183,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="text-[11px] uppercase tracking-[0.16em] text-deep-muted transition-colors hover:text-accent"
                   >
-                    {quote.source} ↗
+                    {quote.source}
                   </a>
                 </span>
               </figcaption>
@@ -211,9 +196,8 @@ export default function Home() {
         <section className="py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="Events"
-              number="06"
-              link={{ label: "All events", href: "/events" }}
+              title={upcoming.length ? "Events" : "Recent exhibitions"}
+                            link={{ label: "All events", href: "/events" }}
             />
             <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
               {homeEvents.map((e) => (
@@ -226,11 +210,11 @@ export default function Home() {
                   <div className="grid gap-3">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="label">{e.kind}</span>
-                      {e.start && e.end && (
+                      {e.start && e.end && !isPast(e) && (
                         <EventStatus
                           start={e.start}
                           end={e.end}
-                          fallback={isPast(e) ? "Ended" : "Upcoming"}
+                          fallback="Upcoming"
                         />
                       )}
                     </div>
@@ -244,7 +228,7 @@ export default function Home() {
                       {e.description}
                     </p>
                     <span className="mt-1 text-[11px] uppercase tracking-[0.16em] text-accent">
-                      Details <span className="nudge">→</span>
+                      Details
                     </span>
                   </div>
                 </Link>
