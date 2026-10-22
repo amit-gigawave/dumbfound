@@ -142,16 +142,9 @@ export default function HomeV2() {
         <section className="py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="View from every angle"
+              title="More from the collection"
                             link={{ label: "All artworks", href: "/artworks" }}
             />
-            <p
-              data-reveal
-              className="font-text -mt-4 mb-10 max-w-[56ch] text-[17px] leading-relaxed text-stone"
-            >
-              Sculpture is made to be seen from every side. Open a work to walk
-              around it, or see it in your own space.
-            </p>
             <div
               data-reveal-stagger
               className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
