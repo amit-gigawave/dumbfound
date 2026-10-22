@@ -139,7 +139,7 @@ export default function HomeV2() {
       </section>
 
       {explore.length > 0 && (
-        <section className="bg-plate py-[clamp(64px,8vw,110px)]">
+        <section className="py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
               title="View from every angle"
@@ -162,7 +162,6 @@ export default function HomeV2() {
                   work={work}
                   showcase
                   ambient
-                  backdrop
                   sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
