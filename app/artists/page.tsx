@@ -23,7 +23,7 @@ export default function ArtistsPage() {
         title="Artists"
         line="Established names and new voices, across every medium — each presented with their story, in their own words."
       />
-      <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)]">
+      <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(40px,6vw,72px)]">
         <div
           data-reveal-stagger
           data-spotlight

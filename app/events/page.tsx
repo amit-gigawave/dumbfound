@@ -300,7 +300,7 @@ export default function EventsPage() {
       {featured ? (
         <Featured e={featured} />
       ) : (
-        <p className={`${wrap} font-text text-[17px] text-stone`}>
+        <p className={`${wrap} font-text pt-[clamp(40px,6vw,72px)] text-[17px] text-stone`}>
           Nothing is scheduled right now. Our latest exhibitions are below.
         </p>
       )}
