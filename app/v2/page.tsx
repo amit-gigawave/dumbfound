@@ -72,7 +72,12 @@ export default function HomeV2() {
     <main className="v2">
       {/* Hero: intro left, a featured sculpture right; on scroll the
           sculpture slides left and its details appear (HeroScroll). */}
-      {heroWork && <HeroScroll work={heroWork} />}
+      {heroWork && (
+        <HeroScroll
+          work={heroWork}
+          intro="Modern and contemporary Indian sculpture, from established names and new voices. Open any work to see it up close and meet the artist who made it."
+        />
+      )}
 
       {/* About: what Sculpted India stands for, set as plain text. */}
       <section id="about" className="pb-[clamp(8px,2vw,24px)] pt-[clamp(88px,12vw,168px)]">
@@ -134,10 +139,10 @@ export default function HomeV2() {
       </section>
 
       {explore.length > 0 && (
-        <section className="bg-[#edf1ee] py-[clamp(64px,8vw,110px)]">
+        <section className="bg-plate py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="The Artist’s Hand"
+              title="View from every angle"
                             link={{ label: "All artworks", href: "/artworks" }}
             />
             <p
