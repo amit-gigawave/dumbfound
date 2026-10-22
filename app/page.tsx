@@ -1,21 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
-import { events, isPast, pastEvents, upcomingEvents } from "@/lib/events";
+import { isPast, pastEvents, upcomingEvents } from "@/lib/events";
 import DateTile from "@/components/events/DateTile";
 import EventStatus from "@/components/events/EventStatus";
 import { artists, publishedArtists } from "@/lib/artists";
-import { getFeaturedWorks, getSculpture, sculptures } from "@/lib/sculptures";
+import { getFeaturedWorks, getSculpture } from "@/lib/sculptures";
 import HeroScroll, { type HeroWork } from "@/components/HeroScroll";
 import ArtistTile from "@/components/gallery/ArtistTile";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
-import Magnetic from "@/components/Magnetic";
-import Manifesto from "@/components/about/Manifesto";
 import { HOME_HEADING, HOME_INTRO } from "@/lib/about";
-import StaggerStory from "@/components/about/StaggerStory";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
+
+/** Copy with its **highlight** markers removed. */
+const plain = (text: string) => text.replaceAll("**", "");
 
 /** The sculpture in the hero (needs a 3D model). */
 const HERO_WORK = "dancing-shiva";
@@ -54,11 +54,6 @@ export default function Home() {
   );
   // Ten portraits fill two rows of five; the rest are a click away.
   const homeArtists = live.filter((a) => a.portrait).slice(0, 10);
-  const stats: [number, string][] = [
-    [live.length, "Artists"],
-    [sculptures.length, "Works"],
-    [events.length, "Events"],
-  ];
   const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
   const quote = quoted?.quotes[0];
   const homeEvents = [...upcomingEvents(), ...pastEvents()].slice(0, 2);
@@ -70,47 +65,24 @@ export default function Home() {
           sculpture slides left and its details appear (HeroScroll). */}
       {heroWork && <HeroScroll work={heroWork} />}
 
-      {/* About: what Sculpted India stands for, in one line. The artists
-          follow in the next section, so no portraits here. */}
-      <section id="about" className="py-[clamp(96px,13vw,180px)]">
-        <div data-reveal-stagger className={`${wrap} grid justify-items-center gap-[clamp(28px,3.5vw,44px)] text-center`}>
-          <span className="label flex items-center gap-3">
-            <span aria-hidden className="h-px w-10 bg-current opacity-60" />
-            About Sculpted India
-            <span aria-hidden className="h-px w-10 bg-current opacity-60" />
-          </span>
-          <Manifesto
-            as="h2"
-            text={HOME_HEADING}
-            className="font-display max-w-[18ch] text-[clamp(32px,5vw,68px)] leading-[1.14] tracking-[0.01em]"
-          />
-          <StaggerStory paragraphs={[HOME_INTRO]} />
-          <Magnetic>
-            <Link href="/about" className="btn mt-[clamp(8px,1.5vw,16px)]">
-              Our story <span className="nudge">→</span>
+      {/* About: what Sculpted India stands for, set as plain text. */}
+      <section id="about" className="pb-[clamp(8px,2vw,24px)] pt-[clamp(88px,12vw,168px)]">
+        <div
+          className={`${wrap} grid gap-[clamp(28px,5vw,80px)] md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:items-end`}
+        >
+          <h2 className="font-display max-w-[16ch] text-[clamp(34px,4.8vw,64px)] leading-[1.1] tracking-[0.005em]">
+            {plain(HOME_HEADING)}
+          </h2>
+          <div className="grid justify-items-start gap-6">
+            <p className="font-text max-w-[46ch] text-[18px] leading-[1.8] text-stone">
+              {plain(HOME_INTRO)}
+            </p>
+            <Link href="/about" className="home-link">
+              Read our story
             </Link>
-          </Magnetic>
+          </div>
         </div>
       </section>
-
-      {/* The collection in three figures. */}
-      <div className="border-y border-rule bg-white">
-        <dl
-          data-reveal-stagger
-          className={`${wrap} grid grid-cols-3 divide-x divide-rule py-[clamp(28px,4vw,48px)] text-center`}
-        >
-          {stats.map(([n, label]) => (
-            <div key={label} className="grid gap-1.5 px-2">
-              <dt className="order-2 text-[10px] uppercase tracking-[0.2em] text-stone sm:text-[11px]">
-                {label}
-              </dt>
-              <dd className="font-display text-[clamp(34px,5vw,60px)] leading-none tracking-[0.02em] text-accent">
-                {n}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
 
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
