@@ -303,7 +303,7 @@ export default function Contact({
         })}
       </div>
 
-      <div className="grid gap-7 sm:grid-cols-2">
+      <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
         <label className="grid gap-1.5">
           <span className="label">Name</span>
           <input name="name" required autoComplete="name" className={field} />
@@ -318,7 +318,7 @@ export default function Contact({
             className={field}
           />
         </label>
-        <label className="grid gap-1.5 sm:col-span-2">
+        <label className="grid gap-1.5 sm:col-span-2 lg:col-span-1">
           <span className="label">
             Phone{" "}
             <span className="normal-case tracking-normal text-stone/70">
@@ -334,7 +334,7 @@ export default function Contact({
         <textarea
           name="message"
           required
-          rows={5}
+          rows={4}
           defaultValue={
             work ? `I would like to know more about “${work.label}”.` : ""
           }

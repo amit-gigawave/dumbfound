@@ -42,92 +42,78 @@ export default async function ContactPage({
 
       <section className={`${wrap} pt-[clamp(40px,6vw,72px)]`}>
         <SectionHeader title="Contact details" />
-        <div data-reveal>
+        <div data-reveal-stagger className="grid gap-6">
           <ContactCards
             email={site.email}
             people={site.contacts.filter((c) => c.phone)}
           />
+          {next && (
+            <Link
+              href="/events"
+              className="group block rounded-[14px] md:max-w-md border border-rule bg-white p-6 transition-[border-color,transform,box-shadow] duration-500 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,.45)]"
+            >
+              <span className="label">Meet us at</span>
+              <p className="font-display mt-3 text-[22px] leading-snug tracking-[0.02em] transition-colors group-hover:text-accent">
+                {next.title}
+              </p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-stone">
+                {next.kind} · {next.dates}
+                <br />
+                {next.venue}
+              </p>
+              <span className="mt-4 inline-block text-[11px] uppercase tracking-[0.16em] text-accent">
+                All events <span className="nudge">→</span>
+              </span>
+            </Link>
+          )}
         </div>
       </section>
 
       <section
         className={`${wrap} pb-[clamp(64px,8vw,104px)] pt-[clamp(56px,8vw,96px)]`}
       >
-        <div className="grid gap-[clamp(32px,5vw,72px)] md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <aside
-            data-reveal-stagger
-            className="grid content-start gap-8 md:sticky md:top-28 md:self-start"
-          >
-            <div>
-              <SectionHeader title="Send an enquiry" />
-              <p className="font-text -mt-4 max-w-[36ch] text-[17px] leading-[1.75] text-stone">
-                Choose what you&apos;re writing about, then send it on WhatsApp
-                or by email.
-              </p>
-            </div>
-            {next && (
-              <Link
-                href="/events"
-                className="group block rounded-[14px] border border-rule bg-white p-6 transition-[border-color,transform,box-shadow] duration-500 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[0_18px_40px_-28px_rgba(0,0,0,.45)]"
-              >
-                <span className="label">Meet us at</span>
-                <p className="font-display mt-3 text-[22px] leading-snug tracking-[0.02em] transition-colors group-hover:text-accent">
-                  {next.title}
-                </p>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-stone">
-                  {next.kind} · {next.dates}
-                  <br />
-                  {next.venue}
-                </p>
-                <span className="mt-4 inline-block text-[11px] uppercase tracking-[0.16em] text-accent">
-                  All events <span className="nudge">→</span>
-                </span>
-              </Link>
-            )}
-          </aside>
-
-          <div data-reveal className="grid content-start gap-6">
-            {work && (
-              <div className="flex items-center gap-5 rounded-[14px] border border-rule bg-white p-4 pr-6">
-                <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-[10px] bg-plate">
-                  <Image
-                    src={work.thumbnail}
-                    alt=""
-                    fill
-                    sizes="80px"
-                    className="object-contain p-1.5"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <span className="label">You&apos;re enquiring about</span>
-                  <p className="font-display mt-1.5 truncate text-[21px] tracking-[0.02em]">
-                    {work.title}
-                  </p>
-                  <p className="text-[13px] text-stone">
-                    {[artist?.name, work.year, work.material]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                </div>
-                <Link
-                  href="/contact"
-                  scroll={false}
-                  className="shrink-0 text-[11px] uppercase tracking-[0.16em] text-stone transition-colors hover:text-accent"
-                >
-                  Change
-                </Link>
+        <SectionHeader title="Send an enquiry" />
+        <div data-reveal className="grid gap-6">
+          {work && (
+            <div className="flex items-center gap-5 rounded-[14px] border border-rule bg-white p-4 pr-6">
+              <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-[10px] bg-plate">
+                <Image
+                  src={work.thumbnail}
+                  alt=""
+                  fill
+                  sizes="80px"
+                  className="object-contain p-1.5"
+                />
               </div>
-            )}
-
-            <div className="rounded-[18px] border border-rule bg-white p-[clamp(22px,4vw,44px)]">
-              <Contact
-                key={work?.slug ?? "general"}
-                email={site.email}
-                whatsapp={site.phone}
-                works={works}
-                workSlug={work?.slug}
-              />
+              <div className="min-w-0 flex-1">
+                <span className="label">You&apos;re enquiring about</span>
+                <p className="font-display mt-1.5 truncate text-[21px] tracking-[0.02em]">
+                  {work.title}
+                </p>
+                <p className="text-[13px] text-stone">
+                  {[artist?.name, work.year, work.material]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              </div>
+              <Link
+                href="/contact"
+                scroll={false}
+                className="shrink-0 text-[11px] uppercase tracking-[0.16em] text-stone transition-colors hover:text-accent"
+              >
+                Change
+              </Link>
             </div>
+          )}
+
+          <div className="rounded-[18px] border border-rule bg-white p-[clamp(22px,4vw,44px)]">
+            <Contact
+              key={work?.slug ?? "general"}
+              email={site.email}
+              whatsapp={site.phone}
+              works={works}
+              workSlug={work?.slug}
+            />
           </div>
         </div>
       </section>
