@@ -121,6 +121,7 @@ export default function Home() {
                 work={work}
                 priority={i < 3}
                 showcase
+                quiet
               />
             ))}
           </div>
@@ -144,6 +145,7 @@ export default function Home() {
                   work={work}
                   showcase
                   ambient
+                  quiet
                   sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
