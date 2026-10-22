@@ -74,7 +74,7 @@ export default async function ContactPage({
         className={`${wrap} pb-[clamp(64px,8vw,104px)] pt-[clamp(56px,8vw,96px)]`}
       >
         <SectionHeader title="Send an enquiry" />
-        <div data-reveal className="grid gap-6">
+        <div data-reveal className="grid max-w-[820px] gap-6">
           {work && (
             <div className="flex items-center gap-5 rounded-[14px] border border-rule bg-white p-4 pr-6">
               <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-[10px] bg-plate">
