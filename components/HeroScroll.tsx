@@ -44,10 +44,16 @@ const INTRO =
 export default function HeroScroll({
   work,
   intro = INTRO,
+  calm = false,
 }: {
   work: HeroWork;
   /** Replaces the intro paragraph (used by /v2). */
   intro?: string;
+  /**
+   * /v2: a shorter pinned scroll, and the sculpture appears finished instead
+   * of drawing itself in as a wireframe.
+   */
+  calm?: boolean;
 }) {
   const pinRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -148,7 +154,7 @@ export default function HeroScroll({
   return (
     <section
       ref={pinRef}
-      className="relative lg:h-[260vh] motion-reduce:lg:h-auto"
+      className={`relative ${calm ? "lg:h-[170vh]" : "lg:h-[260vh]"} motion-reduce:lg:h-auto`}
     >
       <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] lg:sticky lg:top-[84px] lg:h-[calc(100svh-84px)] motion-reduce:lg:static motion-reduce:lg:h-auto">
         <div className="relative grid gap-8 pb-[clamp(40px,6vw,64px)] pt-[clamp(56px,9vw,100px)] lg:h-full lg:grid-cols-2 lg:items-center lg:py-0 motion-reduce:lg:py-[clamp(56px,9vw,100px)]">
@@ -197,7 +203,7 @@ export default function HeroScroll({
                 the body off-centre; on phones nudge it back over the middle.
                 (On desktop the scroll transform owns this box.) */}
             <div className="h-full max-lg:translate-x-[6%]">
-              <HeroScene />
+              <HeroScene drawIn={!calm} />
             </div>
           </div>
 

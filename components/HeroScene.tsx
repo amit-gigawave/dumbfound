@@ -44,7 +44,8 @@ const ScrollFrames = () => {
   return null;
 };
 
-const Model = () => {
+/** `drawIn` false: the work appears finished, without wireframe or pop. */
+const Model = ({ drawIn }: { drawIn: boolean }) => {
   const { scene } = useGLTF("/sculptures/DancingShivaHero.glb", DRACO_PATH);
   const groupRef = useRef<THREE.Group>(null);
   const wireRef = useRef<THREE.Group>(null);
@@ -141,6 +142,12 @@ const Model = () => {
       clip.wireBottom.constant = boundsRef.current.min - 1;
       clip.tex.constant = boundsRef.current.min - 1;
       clip.wireTop.constant = -(boundsRef.current.min - 1);
+      if (!drawIn) {
+        popRef.current = 1;
+        progressRef.current = 1;
+        if (wireRef.current) wireRef.current.visible = false;
+        clip.tex.constant = 9999;
+      }
       return;
     }
 
@@ -188,7 +195,7 @@ const Model = () => {
   );
 };
 
-export default function HeroScene() {
+export default function HeroScene({ drawIn = true }: { drawIn?: boolean }) {
   // Client-only component (loaded with ssr: false), so window is available.
   const [margin] = useState(() =>
     window.matchMedia("(min-width: 1024px)").matches
@@ -225,7 +232,7 @@ export default function HeroScene() {
             environment={null}
             shadows={false}
           >
-            <Model />
+            <Model drawIn={drawIn} />
           </Stage>
           <OrbitControls
             enableZoom={false}

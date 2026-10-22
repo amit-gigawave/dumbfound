@@ -65,7 +65,8 @@ export default function HomeV2() {
   const homeArtists = live.filter((a) => a.portrait).slice(0, 10);
   const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
   const quote = quoted?.quotes[0];
-  const homeEvents = [...upcomingEvents(), ...pastEvents()].slice(0, 2);
+  const upcoming = upcomingEvents();
+  const homeEvents = [...upcoming, ...pastEvents()].slice(0, 2);
   const heroWork = heroWorkFor(HERO_WORK);
 
   return (
@@ -76,6 +77,7 @@ export default function HomeV2() {
         <HeroScroll
           work={heroWork}
           intro="Modern and contemporary Indian sculpture, from established names and new voices. Open any work to see it up close and meet the artist who made it."
+          calm
         />
       )}
 
@@ -131,7 +133,6 @@ export default function HomeV2() {
                 key={work.slug}
                 work={work}
                 priority={i < 3}
-                showcase
               />
             ))}
           </div>
@@ -153,8 +154,6 @@ export default function HomeV2() {
                 <ArtworkTile
                   key={work.slug}
                   work={work}
-                  showcase
-                  ambient
                   sizes="(min-width: 1024px) 25vw, 50vw"
                 />
               ))}
@@ -210,7 +209,7 @@ export default function HomeV2() {
         <section className="py-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <SectionHeader
-              title="Events"
+              title={upcoming.length ? "Events" : "Recent exhibitions"}
                             link={{ label: "All events", href: "/events" }}
             />
             <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
@@ -224,11 +223,11 @@ export default function HomeV2() {
                   <div className="grid gap-3">
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="label">{e.kind}</span>
-                      {e.start && e.end && (
+                      {e.start && e.end && !isPast(e) && (
                         <EventStatus
                           start={e.start}
                           end={e.end}
-                          fallback={isPast(e) ? "Ended" : "Upcoming"}
+                          fallback="Upcoming"
                         />
                       )}
                     </div>
