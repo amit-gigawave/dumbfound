@@ -70,6 +70,8 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `/artists`, `/artists/[slug]` | Artist list and artist pages |
 | `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
 | `/events` | Upcoming and past exhibitions |
+| `/blog`, `/blog/[slug]` | Blog: articles on the artists and their works, from `lib/blog.ts` (see [Writing a blog post](#writing-a-blog-post)) |
+| `/blog/feed.xml` | RSS feed of the blog |
 | `/about` | About the platform |
 | `/contact` | Enquiry form. It opens WhatsApp (to `site.phone`) or the visitor's mail app (to `site.email`) with the message filled in |
 | `/artworks/thumb/[slug]` | Hidden page that `npm run thumbnails` renders thumbnails from |
@@ -104,6 +106,8 @@ lib/
   artists.ts            Artists (facts must be sourced; `placeholder` entries fill the layout)
   sculptures.ts         Artworks: the catalogue behind every page, search and AR
   events.ts             Exhibitions
+  blog.ts               Blog posts (facts must be sourced)
+  jsonLd.ts             Shared schema.org structured data (organisation, breadcrumbs)
   search.ts             Search over artists and works
 scripts/
   add-model.mjs         `npm run add-model`
@@ -146,3 +150,11 @@ To add or change artworks and artists, follow **[docs/adding-artworks.md](docs/a
 ## License
 
 All Rights Reserved © 2026 Sculpted India
+
+## Writing a blog post
+
+Posts live in `lib/blog.ts` as data: a title, a description, dates, tags, a share image, the works and artists the post is about, its sources and a body of blocks (`h2`, `p`, `ul`/`ol`, `work`, `quote`, `faq`). Two or more `work` blocks in a row become a gallery. Links in text are written `[label](/path)`.
+
+- **Facts need sources**, as everywhere on the site. List them in `sources` (shown at the end of the post) and leave out anything you can't source.
+- **For search:** put the main keyword (usually the artist's name) in the slug, the title (under about 60 characters), the description (under 160) and the first paragraph. Phrase `h2`s and FAQ questions the way people search, and link every named work and artist into the site.
+- Each post gets, automatically: a canonical URL, Open Graph article tags, `BlogPosting`, `BreadcrumbList` and (with an `faq` block) `FAQPage` structured data, a table of contents, a sitemap entry with its date, an RSS item, and a "From the blog" link on the pages of the artists in `artistSlugs`.

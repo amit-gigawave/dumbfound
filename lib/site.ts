@@ -15,6 +15,7 @@ export const site = {
     { label: "Artists", href: "/artists" },
     { label: "Artworks", href: "/artworks" },
     { label: "Events", href: "/events" },
+    { label: "Blog", href: "/blog" },
     { label: "Enquiry", href: "/contact" },
   ],
 
