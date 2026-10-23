@@ -10,7 +10,7 @@ const post: BlogPost = {
   description:
     "Thota Vaikuntam is known for painting the women and men of rural Telangana. See how he carries them into sculpture, with four works from the collection.",
   published: "2026-10-23",
-  category: "Artists",
+  category: "In the collection",
   tags: ["Thota Vaikuntam", "Telangana", "Indian sculpture", "Contemporary Indian art"],
   image: thumb("dancing-shiva", "Dancing Shiva, a sculpture by Thota Vaikuntam"),
   workSlugs: ["telangana-woman", "lord-krishna", "sacred-gaze", "dancing-shiva"],

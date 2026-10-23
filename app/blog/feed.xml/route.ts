@@ -35,7 +35,7 @@ export function GET() {
   <channel>
     <title>${esc(`${site.name} Blog`)}</title>
     <link>${absUrl("/blog")}</link>
-    <description>${esc("Articles on modern and contemporary Indian sculptors and their works.")}</description>
+    <description>${esc("Stories about Indian artists and the art they make.")}</description>
     <language>en-in</language>
     <atom:link href="${absUrl("/blog/feed.xml")}" rel="self" type="application/rss+xml" />
 ${posts[0] ? `    <lastBuildDate>${rfc822(posts[0].updated ?? posts[0].published)}</lastBuildDate>\n` : ""}${items}

@@ -368,6 +368,32 @@ export default async function BlogPostPage({
         </header>
 
         <div className="mx-auto max-w-[820px] px-[clamp(16px,4vw,40px)] pt-[clamp(36px,5vw,56px)]">
+          {post.image.credit && (
+            <figure className="mb-10 flex items-center gap-5">
+              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-plate">
+                <Image
+                  src={post.image.src}
+                  alt={post.image.alt}
+                  fill
+                  sizes="96px"
+                  priority
+                  className="object-cover"
+                />
+              </div>
+              <figcaption className="text-[13px] leading-relaxed text-stone">
+                {post.image.alt}.{" "}
+                <a
+                  href={post.image.credit.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-link"
+                >
+                  {post.image.credit.text}
+                </a>
+              </figcaption>
+            </figure>
+          )}
+
           {toc.length > 1 && (
             <nav
               aria-label="In this article"
