@@ -290,7 +290,7 @@ export default function EventsPage() {
   const [featured, ...moreUpcoming] = upcoming;
 
   return (
-    <main>
+    <main className="pb-[clamp(56px,8vw,96px)]">
       <PageHeader
         label="Exhibitions"
         title="Events"
@@ -326,39 +326,6 @@ export default function EventsPage() {
           </div>
         </section>
       )}
-
-      <section
-        className={`${wrap} grid gap-5 py-[clamp(56px,8vw,96px)] md:grid-cols-2`}
-      >
-        {[
-          {
-            title: "Seen our artists elsewhere?",
-            line: "An artist we show, or a work of ours, in an exhibition we haven't listed? Let us know and we'll add it here.",
-            cta: "Let us know",
-          },
-          {
-            title: "Host or collaborate",
-            line: "Planning an exhibition, a fair or a public installation? We would be glad to talk about bringing sculpture to it.",
-            cta: "Write to us",
-          },
-        ].map((c) => (
-          <Link
-            key={c.title}
-            href="/contact"
-            className="group rounded-[18px] border border-rule p-7 transition-[border-color,background-color] duration-500 hover:border-accent/50 hover:bg-white"
-          >
-            <p className="font-display text-[24px] tracking-[0.02em] transition-colors group-hover:text-accent">
-              {c.title}
-            </p>
-            <p className="mt-2 max-w-[44ch] text-[14px] leading-relaxed text-stone">
-              {c.line}
-            </p>
-            <span className="mt-5 inline-block text-[11px] uppercase tracking-[0.16em] text-accent">
-              {c.cta} <span className="nudge">→</span>
-            </span>
-          </Link>
-        ))}
-      </section>
     </main>
   );
 }
