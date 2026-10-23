@@ -14,9 +14,17 @@
  * site with [label](/path).
  */
 
+import krishen_khanna_life from "./blog-posts/krishen-khanna-life";
+import mf_husain_life from "./blog-posts/mf-husain-life";
+import nataraja_meaning from "./blog-posts/nataraja-meaning";
+import jogen_chowdhury_life from "./blog-posts/jogen-chowdhury-life";
+import lost_wax_casting_india from "./blog-posts/lost-wax-casting-india";
+import madhvi_parekh_life from "./blog-posts/madhvi-parekh-life";
+import himmat_shah_heads from "./blog-posts/himmat-shah-heads";
+import papier_mache_india from "./blog-posts/papier-mache-india";
+import india_wedding_brass_bands from "./blog-posts/india-wedding-brass-bands";
 import thota_vaikuntam_sculptures from "./blog-posts/thota-vaikuntam-sculptures";
 import krishen_khanna_sculptures from "./blog-posts/krishen-khanna-sculptures";
-import himmat_shah_heads from "./blog-posts/himmat-shah-heads";
 import contemporary_indian_sculptors from "./blog-posts/contemporary-indian-sculptors";
 
 export type BlogBlock =
@@ -38,8 +46,8 @@ export interface BlogPost {
   /** ISO dates (YYYY-MM-DD). */
   published: string;
   updated?: string;
-  /** Shown above the title and used as the article section. */
-  category: string;
+  /** Shown above the title, used as the article section and to group the blog page. */
+  category: BlogCategory;
   tags: string[];
   /** Share image, from public/: a work's thumbnail or a credited portrait (see blog-posts/images.ts). */
   image: {
@@ -58,12 +66,28 @@ export interface BlogPost {
   body: BlogBlock[];
 }
 
+/** Blog sections, in the order the blog page shows them. */
+export const BLOG_CATEGORIES = [
+  "Artists' lives",
+  "Art explained",
+  "In the collection",
+] as const;
+export type BlogCategory = (typeof BLOG_CATEGORIES)[number];
+
 export const FAQ_ID = "faq";
 
 export const blog: BlogPost[] = [
+  krishen_khanna_life,
+  mf_husain_life,
+  nataraja_meaning,
+  jogen_chowdhury_life,
+  lost_wax_casting_india,
+  madhvi_parekh_life,
+  himmat_shah_heads,
+  papier_mache_india,
+  india_wedding_brass_bands,
   thota_vaikuntam_sculptures,
   krishen_khanna_sculptures,
-  himmat_shah_heads,
   contemporary_indian_sculptors,
 ];
 

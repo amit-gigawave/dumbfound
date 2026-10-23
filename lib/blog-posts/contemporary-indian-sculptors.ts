@@ -10,7 +10,7 @@ const post: BlogPost = {
   description:
     "Meena Sansanwal, Subba Ghosh and Yashika Sugandh work in papier-mâché, fibreglass and resin. Meet three contemporary artists and their works in the collection.",
   published: "2026-10-23",
-  category: "Artists",
+  category: "In the collection",
   tags: [
     "Contemporary Indian sculpture",
     "Meena Sansanwal",

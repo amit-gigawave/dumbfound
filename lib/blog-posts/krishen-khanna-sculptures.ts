@@ -9,7 +9,7 @@ const post: BlogPost = {
   description:
     "Krishen Khanna, a senior Indian modernist known for his Bandwallahs, in four sculptures: a cymbal player, a trumpet player, a horn player and a seated man.",
   published: "2026-10-23",
-  category: "Artists",
+  category: "In the collection",
   tags: ["Krishen Khanna", "Bandwallahs", "Bronze sculpture", "Indian modern art"],
   image: thumb(
     "khanna-untitled-horn-player",
