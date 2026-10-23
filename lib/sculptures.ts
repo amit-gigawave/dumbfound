@@ -107,7 +107,7 @@ export const sculptures: Sculpture[] = [
     title: "Dancing Shiva",
     description: "A contemporary sculpture by Thota Vaikuntam.",
     modelUrl: "/sculptures/DancingShiva.glb",
-    facing: 310,
+    facing: 290,
     thumbnail: "/thumbnails/dancing-shiva.webp",
     artistSlug: "thota-vaikuntam",
     featured: true,
