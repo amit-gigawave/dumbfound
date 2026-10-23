@@ -134,6 +134,23 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
     };
   }, []);
 
+  // Phones: a full-width button with the link centred under it, instead of
+  // the two wrapping onto ragged lines.
+  const ctas = (
+    <div className="grid justify-items-center gap-6 sm:flex sm:flex-wrap sm:items-center sm:gap-[30px]">
+      <Magnetic className="block w-full sm:inline-block sm:w-auto">
+        <Link href="/artworks" className="btn w-full justify-center sm:w-auto">
+          View the artworks <span className="nudge">→</span>
+        </Link>
+      </Magnetic>
+      <Magnetic>
+        <Link href="/artists" className="text-link hero-secondary">
+          Meet the artists <span className="nudge">→</span>
+        </Link>
+      </Magnetic>
+    </div>
+  );
+
   return (
     <section
       ref={pinRef}
@@ -160,23 +177,7 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
               and new voices. Open any work to see it up close and meet the
               artist who made it.
             </p>
-            {/* Phones: a full-width button with the link centred under it,
-                instead of the two wrapping onto ragged lines. */}
-            <div className="mt-[34px] grid justify-items-center gap-6 sm:flex sm:flex-wrap sm:items-center sm:gap-[30px]">
-              <Magnetic className="block w-full sm:inline-block sm:w-auto">
-                <Link
-                  href="/artworks"
-                  className="btn w-full justify-center sm:w-auto"
-                >
-                  View the artworks <span className="nudge">→</span>
-                </Link>
-              </Magnetic>
-              <Magnetic>
-                <Link href="/artists" className="text-link hero-secondary">
-                  Meet the artists <span className="nudge">→</span>
-                </Link>
-              </Magnetic>
-            </div>
+            <div className="mt-[34px] max-lg:hidden">{ctas}</div>
           </div>
 
           {/* The sculpture — starts on the right, slides to the left */}
@@ -192,6 +193,9 @@ export default function HeroScroll({ work }: { work: HeroWork }) {
               <HeroScene drawIn={false} />
             </div>
           </div>
+
+          {/* Phones and tablets: the buttons come after the sculpture. */}
+          <div className="lg:hidden">{ctas}</div>
 
           {/* The work's details — take the right half once the sculpture has moved */}
           <div
