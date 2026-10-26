@@ -320,6 +320,20 @@ export const sculptures: Sculpture[] = [
     dimensions: "12 × 7 × 6 inches",
     edition: "3 of 9",
   },
+  // Scan "sculptureE.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // no stock no. Year not given there.
+  {
+    slug: "khanna-davinder-raj-tutu-walae",
+    title: "Davinder Raj Tutu Walae",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-davinder-raj-tutu-walae.webp",
+    modelUrl: "/sculptures/khanna-davinder-raj-tutu-walae.glb",
+    material: "Bronze",
+    year: "",
+    dimensions: "10 × 6 × 10 inches",
+    edition: "3 of 9",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
