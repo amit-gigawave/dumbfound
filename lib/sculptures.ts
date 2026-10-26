@@ -305,6 +305,21 @@ export const sculptures: Sculpture[] = [
     dimensions: "12 × 8 × 12 inches",
     edition: "2 of 9",
   },
+  // Scan "sculptureD.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // no stock no. Year not given there.
+  {
+    slug: "khanna-rajinder-kaka-horn-walae",
+    title: "Rajinder Kaka Horn Walae",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-rajinder-kaka-horn-walae.webp",
+    modelUrl: "/sculptures/khanna-rajinder-kaka-horn-walae.glb",
+    facing: 270,
+    material: "Bronze",
+    year: "",
+    dimensions: "12 × 7 × 6 inches",
+    edition: "3 of 9",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
