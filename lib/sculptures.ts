@@ -275,6 +275,21 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "SculptureA.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // HM-0406. Year not given there.
+  {
+    slug: "shah-tirthankar",
+    title: "Tirthankar",
+    description: "",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/shah-tirthankar.webp",
+    modelUrl: "/sculptures/shah-tirthankar.glb",
+    facing: 180,
+    material: "Bronze",
+    year: "",
+    dimensions: "48 × 26 × 20 inches",
+    edition: "AP 1/1",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
