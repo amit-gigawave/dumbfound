@@ -363,6 +363,20 @@ export const sculptures: Sculpture[] = [
     year: "2024",
     dimensions: "102 × 30 × 25 inches",
   },
+  // Scan "tailor.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // Yusuf-0547 (untitled there). Year not given there.
+  {
+    slug: "yusuf-untitled-sewing-machine",
+    title: "Untitled",
+    description: "",
+    artistSlug: "yusuf",
+    thumbnail: "/thumbnails/yusuf-untitled-sewing-machine.webp",
+    modelUrl: "/sculptures/yusuf-untitled-sewing-machine.glb",
+    facing: 180,
+    material: "Bronze",
+    year: "",
+    dimensions: "18 × 28 × 18 inches",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
