@@ -349,6 +349,20 @@ export const sculptures: Sculpture[] = [
     dimensions: "12 × 5 × 5 inches",
     edition: "3 of 9",
   },
+  // Scan "eggshellwithBeans.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // YS-0060.
+  {
+    slug: "sugandh-matar",
+    title: "Matar",
+    description: "",
+    artistSlug: "yashika-sugandh",
+    thumbnail: "/thumbnails/sugandh-matar.webp",
+    modelUrl: "/sculptures/sugandh-matar.glb",
+    facing: 90,
+    material: "Acrylic on Fiber Resin and Nylon",
+    year: "2024",
+    dimensions: "102 × 30 × 25 inches",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
