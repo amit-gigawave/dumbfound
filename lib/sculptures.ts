@@ -377,6 +377,20 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "18 × 28 × 18 inches",
   },
+  // Scan "POLKADOTCAT.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // Yusuf-0548 (untitled there). Year not given there.
+  {
+    slug: "yusuf-untitled-cat",
+    title: "Untitled",
+    description: "",
+    artistSlug: "yusuf",
+    thumbnail: "/thumbnails/yusuf-untitled-cat.webp",
+    modelUrl: "/sculptures/yusuf-untitled-cat.glb",
+    facing: 270,
+    material: "Bronze",
+    year: "",
+    dimensions: "20 × 10 × 11 inches",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
