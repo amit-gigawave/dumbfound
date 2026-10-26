@@ -334,6 +334,21 @@ export const sculptures: Sculpture[] = [
     dimensions: "10 × 6 × 10 inches",
     edition: "3 of 9",
   },
+  // Scan "muscianbeatingdrums.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // no stock no. Year not given there.
+  {
+    slug: "khanna-adhikari-dada-drum-walae",
+    title: "Adhikari Dada Drum Walae",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-adhikari-dada-drum-walae.webp",
+    modelUrl: "/sculptures/khanna-adhikari-dada-drum-walae.glb",
+    facing: 270,
+    material: "Bronze",
+    year: "",
+    dimensions: "12 × 5 × 5 inches",
+    edition: "3 of 9",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
