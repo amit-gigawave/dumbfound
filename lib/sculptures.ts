@@ -392,6 +392,19 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "20 × 10 × 11 inches",
   },
+  // Added with npm run add-model from 14 - Thotta -  Man with Mridangam.glb.
+  // Title and artist come from that file name; none of the Thota Vaikuntam
+  // works in the Artlogic view matches it, so medium, year and size are unknown.
+  {
+    slug: "thota-man-with-mridangam",
+    title: "Man with Mridangam",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-man-with-mridangam.webp",
+    modelUrl: "/sculptures/thota-man-with-mridangam.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
