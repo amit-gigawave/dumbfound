@@ -418,6 +418,21 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "72 × 38 × 38 inches",
   },
+  // Scan "27 - Krishan Khanna - 04 - 2nd.glb". Artist from the file name. A horn
+  // player in a grey uniform on an oval base; no title came with the scan and no
+  // work in the Artlogic view matches it by photo, so title, medium, year and
+  // size are unknown. TODO: confirm details.
+  {
+    slug: "khanna-untitled-bandsman",
+    title: "Untitled (Bandsman)",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-untitled-bandsman.webp",
+    modelUrl: "/sculptures/khanna-untitled-bandsman.glb",
+    facing: 310,
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
