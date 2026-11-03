@@ -275,6 +275,19 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "18 - Sujata Bajaj - Ganesha.glb". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // SUJ-0012, matched by photo. Year not given there.
+  {
+    slug: "bajaj-ganesha",
+    title: "Ganesha",
+    description: "",
+    artistSlug: "sujata-bajaj",
+    thumbnail: "/thumbnails/bajaj-ganesha.webp",
+    modelUrl: "/sculptures/bajaj-ganesha.glb",
+    material: "Acrylic on fiberglass",
+    year: "",
+    dimensions: "72 × 38 × 38 inches",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
