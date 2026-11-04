@@ -303,6 +303,22 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "27 - Krishan Khanna - 05.glb" (original in .glb-backup/). Artist from
+  // the file name. A trumpeter in a copper-coloured coat with one leg kicked up,
+  // on a small base; no title came with the scan and no work in the Artlogic
+  // view matches it by photo, so title, medium, year and size are unknown.
+  // TODO: confirm details.
+  {
+    slug: "khanna-untitled-trumpeter",
+    title: "Untitled (Trumpeter)",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-untitled-trumpeter.webp",
+    modelUrl: "/sculptures/khanna-untitled-trumpeter.glb",
+    facing: 270,
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
