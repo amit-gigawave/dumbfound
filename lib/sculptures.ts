@@ -459,7 +459,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     artistSlug: "",
     thumbnail: "/thumbnails/untitled-figure-with-spear.webp",
-    modelUrl: "/sculptures/untitled-figure-with-spear.glb",
+    modelUrl: "/sculptures/untitled-figure-with-spear.glb?v=2",
     facing: 270,
     material: "",
     year: "",
