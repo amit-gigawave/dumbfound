@@ -449,6 +449,21 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "31.glb" (original in .glb-backup/web/). A rough figure with a disc and a
+  // long rod like a shield and spear, on a dark red plinth. No title or artist came
+  // with the scan and no work in the Artlogic view matches it by photo, so title,
+  // artist, medium, year and size are unknown. TODO: confirm details.
+  {
+    slug: "untitled-figure-with-spear",
+    title: "Untitled (Figure with Spear)",
+    description: "",
+    artistSlug: "",
+    thumbnail: "/thumbnails/untitled-figure-with-spear.webp",
+    modelUrl: "/sculptures/untitled-figure-with-spear.glb",
+    facing: 270,
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
