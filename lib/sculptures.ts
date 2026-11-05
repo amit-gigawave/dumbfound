@@ -464,6 +464,20 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "33 - Thotta - Female Head - 05.glb" (original in .glb-backup/web/).
+  // Title and artist come from that file name. In the Artlogic view it only
+  // resembles TV-0070 (that one has red lips and black hair, this one doesn't),
+  // so medium, year and size are left unknown. TODO: confirm details.
+  {
+    slug: "thota-female-head-05",
+    title: "Female Head",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-female-head-05.webp",
+    modelUrl: "/sculptures/thota-female-head-05.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
