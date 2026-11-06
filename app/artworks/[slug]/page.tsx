@@ -139,7 +139,7 @@ export default async function ArtworkPage({
           </dl>
 
           <Link href={`/contact?work=${work.slug}`} className="btn mt-8">
-            Enquire about this work <span className="nudge">→</span>
+            Interested in this artwork <span className="nudge">→</span>
           </Link>
 
           {artist && !artist.placeholder && (
