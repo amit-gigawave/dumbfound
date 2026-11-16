@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
 import MobileMenu from "./MobileMenu";
 import SearchDialog, { SearchIcon } from "./SearchDialog";
 
-/** Catalogue header: wordmark left, small uppercase links and search right. */
+/** Catalogue header: wordmark left, page links in normal case, search right. */
 export default function Navbar() {
   const pathname = usePathname() ?? "/";
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,7 +66,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 aria-current={isActive(link.href) ? "page" : undefined}
-                className={`nav-link py-1.5 text-[11px] uppercase tracking-[0.22em] ${
+                className={`nav-link py-1.5 text-[15px] ${
                   isActive(link.href)
                     ? "text-accent"
                     : "text-ink/75 hover:text-accent"
@@ -100,7 +100,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen(true)}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
-              className="text-[11px] uppercase tracking-[0.22em] md:hidden"
+              className="text-[15px] md:hidden"
             >
               Menu
             </button>

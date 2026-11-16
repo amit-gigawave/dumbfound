@@ -9,6 +9,7 @@ import {
   type Fact,
 } from "@/lib/artists";
 import { getWorksByArtist } from "@/lib/sculptures";
+import { formatDate, postsAboutArtist } from "@/lib/blog";
 import { openGraphDefaults } from "@/lib/site";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
@@ -71,6 +72,7 @@ export default async function ArtistPage({
   if (!artist || artist.placeholder) notFound();
 
   const works = getWorksByArtist(artist.slug);
+  const posts = postsAboutArtist(artist.slug);
   const [leadQuote, ...moreQuotes] = artist.quotes;
   // Artists with no bio yet skip the Profile/Works tabs; the works follow directly.
   const hasProfile = Boolean(artist.summary) || artist.bio.length > 0;
@@ -240,6 +242,32 @@ export default async function ArtistPage({
             </p>
           )}
         </section>
+
+        {posts.length > 0 && (
+          <section className="pb-[clamp(64px,8vw,104px)]">
+            <SectionHeader title="From the blog" />
+            <ul data-reveal className="grid gap-6 md:grid-cols-2">
+              {posts.map((p) => (
+                <li key={p.slug}>
+                  <Link
+                    href={`/blog/${p.slug}`}
+                    className="group block h-full rounded-[18px] border border-rule bg-white p-6 transition-colors hover:border-accent/50"
+                  >
+                    <time dateTime={p.published} className="text-[13px] text-stone">
+                      {formatDate(p.published)}
+                    </time>
+                    <p className="font-display mt-2 text-[22px] leading-snug transition-colors group-hover:text-accent">
+                      {p.title}
+                    </p>
+                    <p className="font-text mt-2 text-[15px] leading-relaxed text-stone">
+                      {p.description}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </main>
   );

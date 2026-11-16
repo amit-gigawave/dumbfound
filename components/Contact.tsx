@@ -387,16 +387,13 @@ ${bodyOf(last)}`,
 
       <div className="flex flex-wrap items-center justify-between gap-5">
         <p className="max-w-[40ch] text-[12px] leading-relaxed text-stone">
-          We only use your details to reply.{" "}
-          <Link href="/about#privacy" className="text-link">
-            Privacy
-          </Link>
+          We only use your details to reply.
         </p>
         <div className="grid w-full gap-3 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
           <button type="submit" value="whatsapp" className="btn justify-center">
             Send on WhatsApp <span className="nudge">→</span>
           </button>
-          <button type="submit" value="mail" className="btn justify-center">
+          <button type="submit" value="mail" className="btn btn-hollow justify-center">
             Send by email <span className="nudge">→</span>
           </button>
         </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { sculptures } from "@/lib/sculptures";
+import { catalogueOrder } from "@/lib/catalogue-order";
 import { getArtist, initials, publishedArtists } from "@/lib/artists";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import ArtistFilter, {
@@ -21,9 +22,11 @@ export default async function ArtworksPage({
 }) {
   const { artist: artistSlug } = await searchParams;
   const selected = artistSlug ? getArtist(artistSlug) : undefined;
-  const works = selected
-    ? sculptures.filter((w) => w.artistSlug === selected.slug)
-    : sculptures;
+  const works = catalogueOrder(
+    selected
+      ? sculptures.filter((w) => w.artistSlug === selected.slug)
+      : sculptures,
+  );
   // Only artists with works listed, so no choice leads to an empty grid.
   const options: ArtistOption[] = publishedArtists()
     .map((a) => ({

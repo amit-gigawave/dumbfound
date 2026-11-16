@@ -9,6 +9,7 @@ import {
   hasValue,
 } from "@/lib/sculptures";
 import { getArtist, initials } from "@/lib/artists";
+import { catalogueOrder } from "@/lib/catalogue-order";
 import { openGraphDefaults } from "@/lib/site";
 import ArtworkStage from "@/components/gallery/ArtworkStage";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
@@ -57,8 +58,8 @@ export default async function ArtworkPage({
   if (!work) notFound();
 
   const artist = getArtist(work.artistSlug);
-  const more = getWorksByArtist(work.artistSlug).filter(
-    (w) => w.slug !== work.slug,
+  const more = catalogueOrder(
+    getWorksByArtist(work.artistSlug).filter((w) => w.slug !== work.slug),
   );
 
   // Optional fields are only listed when filled in (never "TODO" placeholders).
@@ -126,20 +127,23 @@ export default async function ArtworkPage({
             </p>
           )}
 
-          <dl className="mt-8 border-t border-rule">
-            {details.map(([label, value]) => (
-              <div
-                key={label}
-                className="flex justify-between gap-5 border-b border-rule py-2.5 text-sm"
-              >
-                <dt className="text-stone">{label}</dt>
-                <dd className="text-right">{value}</dd>
-              </div>
-            ))}
-          </dl>
+          {/* Works with no known details get no empty table (and no stray rule). */}
+          {details.length > 0 && (
+            <dl className="mt-8 border-t border-rule">
+              {details.map(([label, value]) => (
+                <div
+                  key={label}
+                  className="flex justify-between gap-5 border-b border-rule py-2.5 text-sm"
+                >
+                  <dt className="text-stone">{label}</dt>
+                  <dd className="text-right">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
 
           <Link href={`/contact?work=${work.slug}`} className="btn mt-8">
-            Enquire about this work <span className="nudge">→</span>
+            Interested in this artwork <span className="nudge">→</span>
           </Link>
 
           {artist && !artist.placeholder && (
