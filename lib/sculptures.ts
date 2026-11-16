@@ -133,6 +133,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "14 × 5 × 6 inches",
     edition: "3 of 9",
+    heightCm: 36,
   },
   // Low-poly model "Trumpet_Musician_Orange_LPoly". Matched by photo (orange jacket, horn) to Gulratan Bhon Bhon
   // Walae in the Artlogic view; details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F, row "41 - Krishan Khanna - 07".
@@ -149,6 +150,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "12 × 6 × 4 inches",
     edition: "3 of 9",
+    heightCm: 30,
   },
   // Scan "12 - Krishan Khanna 03". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "12 - Krishan Khanna - 03": KK-0305.
@@ -164,6 +166,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "30 × 30 × 32 inches",
     edition: "3 of 9",
+    heightCm: 76,
   },
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "29 - Yashika Sugandh Meri Patang, 2026". (The Artlogic view lists a 71 × 50 × 30 inch version, YS-0101.)
@@ -179,6 +182,7 @@ export const sculptures: Sculpture[] = [
     material: "Acrylic on Nylon",
     year: "2026",
     dimensions: "12 × 9 × 5 inches",
+    heightCm: 30,
   },
 
   // ---- Newly scanned heads (USDZ → GLB). Artist/title to be confirmed. ----
@@ -196,6 +200,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "49 × 29 × 35 inches",
     edition: "Edition of 5 + AP",
+    heightCm: 124,
   },
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "19 - Himmat Shah Bronze": HS-0420, which this scan matches by photo in the Artlogic view.
@@ -212,6 +217,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "42 × 27 × 37 inches",
     edition: "Edition of 5 + AP",
+    heightCm: 107,
   },
   // Subba Ghosh, not Himmat Shah: details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // SG-0029 (untitled there).
@@ -226,6 +232,7 @@ export const sculptures: Sculpture[] = [
     material: "Fibreglass, Resin, Paper Mache, Oil and Acrylic Paint",
     year: "",
     dimensions: "17 × 11 × 16 inches",
+    heightCm: 43,
   },
   // Scan "headG.usdz". Matched by the photo in row "13 - Thotta - Female Head - 04" of the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F.
   // That row is marked "[TO CONFIRM]": TV-0107, "3D scan shows no collar colour; alt. TVA-0015". It was listed as Himmat Shah until 2026-11-16.
@@ -240,6 +247,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",
+    heightCm: 61,
   },
   // Scan "04 - Female with blue saree". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "4 - Thotta - Female with blue saree": TV-0014. Year not given there.
@@ -253,6 +261,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "",
     dimensions: "23 × 9 × 7 inches",
+    heightCm: 58,
   },
   // First scanned as "05 - Female Head"; the model is now the more detailed rescan
   // "37 - Thotta - Female Head - 09.glb" (original in .glb-backup/web/), the same sculpture.
@@ -268,6 +277,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",
+    heightCm: 61,
   },
   // Scan "meditating.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // MS-0095. Year not given there.
@@ -282,6 +292,7 @@ export const sculptures: Sculpture[] = [
     material: "Papermache, Marble And Acrylic Paint",
     year: "",
     dimensions: "24 × 22 × 14 inches",
+    heightCm: 61,
   },
   // Scan "03 - Female with green Saree" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "3 - Thotta - Female with green Saree": TV-0171. Year not given there.
@@ -295,6 +306,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "",
     dimensions: "23 × 7 × 6 inches",
+    heightCm: 58,
   },
   // Scan "11 - Krishna Khanna 02" (original in .glb-backup/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "11 - Krishan Khanna - 02": KK-0165. Year not given there.
@@ -308,6 +320,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "",
     dimensions: "17 × 9 × 8 inches",
+    heightCm: 43,
   },
   // Scan "SculptureA.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // HM-0406. Year not given there.
@@ -323,6 +336,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "48 × 26 × 20 inches",
     edition: "AP 1/1",
+    heightCm: 122,
   },
   // Scan "sculptureB.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // no stock no. Year not given there.
@@ -338,6 +352,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "12 × 8 × 12 inches",
     edition: "2 of 9",
+    heightCm: 30,
   },
   // Scan "sculptureD.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // no stock no. Year not given there.
@@ -353,6 +368,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "12 × 7 × 6 inches",
     edition: "3 of 9",
+    heightCm: 30,
   },
   // Scan "sculptureE.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // no stock no. Year not given there.
@@ -368,6 +384,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "10 × 6 × 10 inches",
     edition: "3 of 9",
+    heightCm: 25,
   },
   // Scan "muscianbeatingdrums.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // no stock no. Year not given there.
@@ -383,6 +400,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "12 × 5 × 5 inches",
     edition: "3 of 9",
+    heightCm: 30,
   },
   // Scan "eggshellwithBeans.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "39 - Yashika Sugandh Matar, 2024": YS-0205. (The Artlogic view lists a 102 × 30 × 25 inch version, YS-0060.)
@@ -427,6 +445,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "",
     dimensions: "20 × 10 × 11 inches",
+    heightCm: 51,
   },
   // Scan "14 - Thotta - Man with Mridangam.glb". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "14 - Thotta - Man with Mridangam". Year not given there.
@@ -440,6 +459,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "",
     dimensions: "59 × 24 × 23 inches",
+    heightCm: 150,
   },
   // Scan "18 - Sujata Bajaj - Ganesha.glb". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // SUJ-0012, matched by photo. Year not given there.
@@ -453,6 +473,7 @@ export const sculptures: Sculpture[] = [
     material: "Acrylic on fiberglass",
     year: "",
     dimensions: "72 × 38 × 38 inches",
+    heightCm: 183,
   },
   // Scan "27 - Krishan Khanna - 04 - 2nd.glb". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "27 - Krishan Khanna - 04"; it also matches Patinder Rawat Trumpet Walae in the Artlogic view by photo
@@ -469,6 +490,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "12 × 5 × 5 inches",
     edition: "3 of 9",
+    heightCm: 30,
   },
   // Scan "27 - Krishan Khanna - 05.glb" (original in .glb-backup/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "32 - Krishan Khanna - 05" (KKA/YF/Nov2025/001–010), matched by the name "Krishan Khanna - 05";
@@ -485,6 +507,7 @@ export const sculptures: Sculpture[] = [
     year: "2025",
     dimensions: "56 × 32 × 18 inches",
     edition: "Edition of 9 + AP",
+    heightCm: 142,
   },
   // Scan "31.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "31", marked there "[TO CONFIRM CAST]": a small edition series whose exact cast/patina
@@ -515,6 +538,7 @@ export const sculptures: Sculpture[] = [
     year: "2025",
     dimensions: "25 × 17 × 24 inches",
     edition: "Edition of 9 + AP",
+    heightCm: 64,
   },
   // Scan "COUPLE.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // JC-0002, matched by photo. Year not given there.
@@ -530,6 +554,7 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "11 × 13 × 9 inches",
     edition: "5 of 9",
+    heightCm: 28,
   },
   // Scan "MadhaviParekh_Sculpture.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // no stock no., matched by photo. Also noted there: inscribed in Devnagari and dated in English (front right corner).
@@ -545,6 +570,7 @@ export const sculptures: Sculpture[] = [
     year: "2006",
     dimensions: "31 × 26 × 16 inches",
     edition: "2 of 7",
+    heightCm: 79,
   },
   // Scan "RedBandGuy.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "10 - Krishan Khanna - 01": KK-0302, matched by the photo in that row. Size and year not given there.
@@ -574,6 +600,7 @@ export const sculptures: Sculpture[] = [
     material: "Resinated Fibre Glass with Automotive Paint",
     year: "",
     dimensions: "99 × 85 × 53 inches",
+    heightCm: 251,
   },
   // Scan "38 - Thotta - Female Head - 10 .glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "38 - Thotta - Female Head - 10": TV-0105 (edition cast).
@@ -587,6 +614,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",
+    heightCm: 61,
   },
   // Scan "Drone_07.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "55 - Drone 07": TVA/Sep2025/005.
@@ -601,6 +629,7 @@ export const sculptures: Sculpture[] = [
     material: "Fiberglass",
     year: "2025",
     dimensions: "97 × 50 × 72 inches",
+    heightCm: 246,
   },
   // Scan "Drone06_FINAL.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "54 - Drone 06", and the Artlogic view (matched by photo): TV-0070. Year not given.
@@ -616,6 +645,7 @@ export const sculptures: Sculpture[] = [
     material: "Bronze",
     year: "",
     dimensions: "58 × 58 × 47 inches",
+    heightCm: 147,
   },
   // Scan "Female_Head_7.usdz" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "35 - Thotta - Female Head - 07": TVA-0018.
@@ -632,6 +662,7 @@ export const sculptures: Sculpture[] = [
     year: "2025",
     dimensions: "26 × 17 × 24 inches",
     edition: "Edition of 9 + AP",
+    heightCm: 66,
   },
 ];
 
