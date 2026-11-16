@@ -580,6 +580,22 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "58 × 58 × 47 inches",
   },
+  // Scan "Female_Head_7.usdz" (original in .glb-backup/web/). Title and artist come
+  // from the file and its mesh name "Thotta_Female_Head_07". Same series as
+  // thota-female-head-10 but a different work (nose ring, drop earrings). No work in
+  // the Artlogic view matches it by photo, so medium, year and size are unknown.
+  // TODO: confirm details.
+  {
+    slug: "thota-female-head-07",
+    title: "Female Head",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-female-head-07.webp",
+    modelUrl: "/sculptures/thota-female-head-07.glb",
+    facing: 260,
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
