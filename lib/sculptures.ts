@@ -364,6 +364,20 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "DRONE05.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // TVA/Dec2025/001 (untitled there), matched by photo. Year not given there.
+  {
+    slug: "thota-untitled-head-polka-dot",
+    title: "Untitled",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-untitled-head-polka-dot.webp",
+    modelUrl: "/sculptures/thota-untitled-head-polka-dot.glb",
+    facing: 180,
+    material: "Resinated Fibre Glass with Automotive Paint",
+    year: "",
+    dimensions: "99 × 85 × 53 inches",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
