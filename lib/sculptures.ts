@@ -393,6 +393,19 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "Drone_07.glb" (original in .glb-backup/web/). Artist confirmed by the user
+  // (2026-11-16). It resembles TVA/Sep2025/005 in the Artlogic view, but the face colour
+  // and moustache differ, so title, medium, year and size are left unknown. TODO: confirm details.
+  {
+    slug: "thota-untitled-head-with-turban",
+    title: "Untitled (Head with Turban)",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-untitled-head-with-turban.webp",
+    modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
