@@ -349,6 +349,21 @@ export const sculptures: Sculpture[] = [
     dimensions: "31 × 26 × 16 inches",
     edition: "2 of 7",
   },
+  // Scan "RedBandGuy.usdz". A bandsman in a maroon uniform and cap playing a horn,
+  // with no base. No title or artist came with the scan and no work in the Artlogic
+  // view matches it by photo, so title, artist, medium, year and size are unknown.
+  // TODO: confirm details.
+  {
+    slug: "untitled-bandsman-in-red",
+    title: "Untitled (Bandsman in Red)",
+    description: "",
+    artistSlug: "",
+    thumbnail: "/thumbnails/untitled-bandsman-in-red.webp",
+    modelUrl: "/sculptures/untitled-bandsman-in-red.glb",
+    facing: 200,
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
