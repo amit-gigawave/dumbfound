@@ -167,13 +167,15 @@ export const sculptures: Sculpture[] = [
   },
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "29 - Yashika Sugandh Meri Patang, 2026". (The Artlogic view lists a 71 × 50 × 30 inch version, YS-0101.)
+  // Model from the colour scan "ElephantKite.usdz" (2026-11-16); it replaced an untextured low-poly mesh.
   {
     slug: "sugandh-meri-patang",
     title: "Meri Patang",
     description: "",
     artistSlug: "yashika-sugandh",
     thumbnail: "/thumbnails/sugandh-meri-patang.webp",
-    modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb",
+    modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb?v=2",
+    facing: 340,
     material: "Acrylic on Nylon",
     year: "2026",
     dimensions: "12 × 9 × 5 inches",
