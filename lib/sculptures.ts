@@ -407,6 +407,20 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "Drone06_FINAL.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // TV-0070 (untitled there), matched by photo: red lips, nose ring, black hair, green collar.
+  // thota-female-head-05 is the same form in another finish. Year not given there.
+  {
+    slug: "thota-untitled-head-with-nose-ring",
+    title: "Untitled",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-untitled-head-with-nose-ring.webp",
+    modelUrl: "/sculptures/thota-untitled-head-with-nose-ring.glb",
+    material: "Bronze",
+    year: "",
+    dimensions: "58 × 58 × 47 inches",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
