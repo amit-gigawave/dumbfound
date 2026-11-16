@@ -68,9 +68,10 @@ export const sculptures: Sculpture[] = [
   // Thota Vaikuntam's works. Their earlier titles, years, materials and
   // descriptions had no source and were removed (2026-10-15). Titles are named
   // after the model files until the real ones are known. TODO: confirm details.
+  // Titled "Untitled (Lady)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "telangana-woman",
-    title: "Untitled (Lady)",
+    title: "Lady",
     description: "",
     modelUrl: "/sculptures/Lady.glb",
     thumbnail: "/thumbnails/telangana-woman.webp",
@@ -79,9 +80,10 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Titled "Untitled (Lord Krishna)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "lord-krishna",
-    title: "Untitled (Lord Krishna)",
+    title: "Lord Krishna",
     description: "",
     modelUrl: "/sculptures/LordKrishna.glb",
     thumbnail: "/thumbnails/lord-krishna.webp",
@@ -90,9 +92,10 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Titled "Untitled (Pandit)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "sacred-gaze",
-    title: "Untitled (Pandit)",
+    title: "Pandit",
     description: "",
     modelUrl: "/sculptures/Pandit.glb",
     thumbnail: "/thumbnails/sacred-gaze.webp",
@@ -149,9 +152,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "12 - Krishan Khanna 03". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "12 - Krishan Khanna - 03": KK-0305.
+  // Titled "Untitled (Seated Bandsman with Horn)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "khanna-untitled-seated-man",
-    title: "Untitled (Seated Bandsman with Horn)",
+    title: "Seated Bandsman with Horn",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-untitled-seated-man.webp",
@@ -178,9 +182,10 @@ export const sculptures: Sculpture[] = [
   // ---- Newly scanned heads (USDZ → GLB). Artist/title to be confirmed. ----
   // Scan "headA.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "18 - Himmat Shah Bronze": HS-0426, matched by the photo in that row.
+  // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "head-a",
-    title: "Untitled (Head)",
+    title: "Head with Bared Teeth",
     description: "",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-a.webp",
@@ -192,9 +197,10 @@ export const sculptures: Sculpture[] = [
   },
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "19 - Himmat Shah Bronze": HS-0420, which this scan matches by photo in the Artlogic view.
+  // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "head-c",
-    title: "Untitled (Head)",
+    title: "Head with Pinpoint Eyes",
     description: "",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-c.webp",
@@ -207,9 +213,10 @@ export const sculptures: Sculpture[] = [
   },
   // Subba Ghosh, not Himmat Shah: details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // SG-0029 (untitled there).
+  // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "head-e",
-    title: "Untitled",
+    title: "Head in Fragments",
     description: "",
     artistSlug: "subba-ghosh",
     thumbnail: "/thumbnails/head-e.webp",
@@ -391,9 +398,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "tailor.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // Yusuf-0547 (untitled there). Year not given there.
+  // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "yusuf-untitled-sewing-machine",
-    title: "Untitled",
+    title: "The Tailor",
     description: "",
     artistSlug: "yusuf",
     thumbnail: "/thumbnails/yusuf-untitled-sewing-machine.webp",
@@ -405,9 +413,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "POLKADOTCAT.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // Yusuf-0548 (untitled there). Year not given there.
+  // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "yusuf-untitled-cat",
-    title: "Untitled",
+    title: "Polka Dot Cat",
     description: "",
     artistSlug: "yusuf",
     thumbnail: "/thumbnails/yusuf-untitled-cat.webp",
@@ -492,9 +501,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "33 - Thotta - Female Head - 05.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "33 - Thotta - Female Head - 05": TVA-0016.
+  // Titled "Untitled (Female Head, side braid, green collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-05",
-    title: "Untitled (Female Head, side braid, green collar)",
+    title: "Female Head with Side Braid and Green Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-05.webp",
@@ -550,9 +560,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "DRONE05.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "53 - Drone 05", and the Artlogic view (matched by photo): TVA/Dec2025/001. Year not given.
+  // Titled "Untitled (Female Head, polka-dot collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-untitled-head-polka-dot",
-    title: "Untitled (Female Head, polka-dot collar)",
+    title: "Female Head with Polka-dot Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-untitled-head-polka-dot.webp",
@@ -577,9 +588,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "Drone_07.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "55 - Drone 07": TVA/Sep2025/005.
+  // Titled "Untitled (Male Head, blue turban, moustache)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-untitled-head-with-turban",
-    title: "Untitled (Male Head, blue turban, moustache)",
+    title: "Male Head with Blue Turban and Moustache",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-untitled-head-with-turban.webp",
@@ -591,9 +603,10 @@ export const sculptures: Sculpture[] = [
   // Scan "Drone06_FINAL.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "54 - Drone 06", and the Artlogic view (matched by photo): TV-0070. Year not given.
   // thota-female-head-05 is the same form in another finish.
+  // Titled "Untitled (Female Head, bronze with long hair)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-untitled-head-with-nose-ring",
-    title: "Untitled (Female Head, bronze with long hair)",
+    title: "Bronze Female Head with Long Hair",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-untitled-head-with-nose-ring.webp",
@@ -604,9 +617,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "Female_Head_7.usdz" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "35 - Thotta - Female Head - 07": TVA-0018.
+  // Titled "Untitled (Female Head, nose ring, red collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-07",
-    title: "Untitled (Female Head, nose ring, red collar)",
+    title: "Female Head with Nose Ring and Red Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-07.webp",
