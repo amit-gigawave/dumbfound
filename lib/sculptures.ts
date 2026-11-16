@@ -380,6 +380,19 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "99 × 85 × 53 inches",
   },
+  // Scan "38 - Thotta - Female Head - 10 .glb" (original in .glb-backup/web/).
+  // Title and artist come from that file name. No work in the Artlogic view
+  // matches it by photo, so medium, year and size are unknown. TODO: confirm details.
+  {
+    slug: "thota-female-head-10",
+    title: "Female Head",
+    description: "",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-female-head-10.webp",
+    modelUrl: "/sculptures/thota-female-head-10.glb",
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
