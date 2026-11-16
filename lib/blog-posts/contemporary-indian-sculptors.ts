@@ -18,8 +18,8 @@ const post: BlogPost = {
     "Yashika Sugandh",
     "Papier-mâché",
   ],
-  image: thumb("meditating", "Levitation, a papier-mâché sculpture by Meena Sansanwal"),
-  workSlugs: ["meditating", "head-e", "sugandh-elephant-kite"],
+  image: thumb("sansanwal-levitation", "Levitation, a papier-mâché sculpture by Meena Sansanwal"),
+  workSlugs: ["sansanwal-levitation", "ghosh-head-in-fragments", "sugandh-meri-patang"],
   artistSlugs: ["meena-sansanwal", "subba-ghosh", "yashika-sugandh"],
   sources: [
     { label: "Saffronart: Meena Sansanwal", url: "https://www.saffronart.com/artists/meena--sansanwal" },
@@ -42,8 +42,8 @@ const post: BlogPost = {
     },
     {
       type: "work",
-      slug: "meditating",
-      caption: "[Levitation](/artworks/meditating), Meena Sansanwal. Papier-mâché, marble and acrylic paint.",
+      slug: "sansanwal-levitation",
+      caption: "[Levitation](/artworks/sansanwal-levitation), Meena Sansanwal. Papier-mâché, marble and acrylic paint.",
     },
     { type: "h2", id: "subba-ghosh", text: "Subba Ghosh: Delhi, Moscow and London" },
     {
@@ -56,8 +56,8 @@ const post: BlogPost = {
     },
     {
       type: "work",
-      slug: "head-e",
-      caption: "[Untitled](/artworks/head-e), Subba Ghosh. Fibreglass, resin, papier-mâché, oil and acrylic paint.",
+      slug: "ghosh-head-in-fragments",
+      caption: "[Head in Fragments](/artworks/ghosh-head-in-fragments), Subba Ghosh. Fibreglass, resin, papier-mâché, oil and acrylic paint.",
     },
     { type: "h2", id: "yashika-sugandh", text: "Yashika Sugandh: nature reclaiming the city" },
     {
@@ -66,15 +66,15 @@ const post: BlogPost = {
     },
     {
       type: "work",
-      slug: "sugandh-elephant-kite",
-      caption: "[Meri Patang](/artworks/sugandh-elephant-kite), Yashika Sugandh, 2026. Acrylic on PETG and fibre resin.",
+      slug: "sugandh-meri-patang",
+      caption: "[Meri Patang](/artworks/sugandh-meri-patang), Yashika Sugandh, 2026. Acrylic on nylon.",
     },
     {
       type: "faq",
       items: [
         {
           q: "What materials do contemporary Indian sculptors use?",
-          a: "Not only bronze and stone. The three works in this article are made of papier-mâché, marble, fibreglass, resin, PETG, and oil and acrylic paint.",
+          a: "Not only bronze and stone. The three works in this article are made of papier-mâché, marble, fibreglass, resin, nylon, and oil and acrylic paint.",
         },
         {
           q: "Who is Meena Sansanwal?",

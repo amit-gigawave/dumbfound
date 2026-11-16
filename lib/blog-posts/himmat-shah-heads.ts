@@ -12,12 +12,12 @@ const post: BlogPost = {
   slug: "himmat-shah-heads",
   title: "Himmat Shah: the sculptor of heads, from Lothal to Jaipur",
   description:
-    "Himmat Shah (1933–2025) burned holes in paper with cigarettes, built his own tools and made the heads he is known for. His life, and three heads in the collection.",
+    "Himmat Shah (1933–2025) burned holes in paper with cigarettes, built his own tools and made the heads he is known for. His life, and two heads in the collection.",
   published: "2026-10-23",
   category: "Artists' lives",
   tags: ["Himmat Shah", "Group 1890", "Terracotta", "Indian sculpture"],
-  image: thumb("head-g", "Untitled (Head G), a sculpted head by Himmat Shah"),
-  workSlugs: ["head-a", "head-c", "head-g"],
+  image: thumb("shah-head-with-pinpoint-eyes", "Head with Pinpoint Eyes, a bronze head by Himmat Shah"),
+  workSlugs: ["shah-head-with-bared-teeth", "shah-head-with-pinpoint-eyes"],
   artistSlugs: ["himmat-shah"],
   sources: [
     { label: "ArtAsiaPacific (2025): Himmat Shah, 1933–2025", url: "https://artasiapacific.com/news/himmat-shah-1933-2025" },
@@ -29,7 +29,7 @@ const post: BlogPost = {
   body: [
     {
       type: "p",
-      text: "[Himmat Shah](/artists/himmat-shah) was born in 1933 in Lothal, Gujarat, and died in Jaipur on 2 March 2025, aged 92. He worked in terracotta, plaster, ceramic, bronze, cement and burnt paper, but he is best known for one subject: the human head. Three of his heads are in the Sculpted India [collection](/artworks).",
+      text: "[Himmat Shah](/artists/himmat-shah) was born in 1933 in Lothal, Gujarat, and died in Jaipur on 2 March 2025, aged 92. He worked in terracotta, plaster, ceramic, bronze, cement and burnt paper, but he is best known for one subject: the human head. Two of his heads are in the Sculpted India [collection](/artworks).",
     },
     { type: "h2", id: "lothal", text: "A childhood in Lothal" },
     {
@@ -67,11 +67,10 @@ const post: BlogPost = {
     },
     {
       type: "p",
-      text: "The three heads in the collection are untitled and known by letter.",
+      text: "The two heads in the collection are bronze.",
     },
-    { type: "work", slug: "head-a" },
-    { type: "work", slug: "head-c" },
-    { type: "work", slug: "head-g" },
+    { type: "work", slug: "shah-head-with-bared-teeth" },
+    { type: "work", slug: "shah-head-with-pinpoint-eyes" },
     {
       type: "p",
       text: "He received the Lalit Kala Akademi's National Award in 1956 and 1962, the Kalidas Samman of Madhya Pradesh in 2003 and the Lalit Kala Akademi Fellowship in 2021.",

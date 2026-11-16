@@ -7,19 +7,19 @@ const post: BlogPost = {
   slug: "krishen-khanna-sculptures",
   title: "Krishen Khanna's musicians: four sculptures in the collection",
   description:
-    "Krishen Khanna, a senior Indian modernist known for his Bandwallahs, in four sculptures: a cymbal player, a trumpet player, a horn player and a seated man.",
+    "Krishen Khanna, a senior Indian modernist known for his Bandwallahs, in four sculptures: a cymbal player, two trumpeters and a seated bandsman.",
   published: "2026-10-23",
   category: "In the collection",
   tags: ["Krishen Khanna", "Bandwallahs", "Bronze sculpture", "Indian modern art"],
   image: thumb(
-    "khanna-untitled-horn-player",
-    "Untitled (Horn Player), a sculpture by Krishen Khanna",
+    "khanna-trumpeter",
+    "Trumpeter, a sculpture by Krishen Khanna",
   ),
   workSlugs: [
     "khanna-satwant-sher-singh-cymbal-walae",
     "khanna-patinder-rawat-trumpet-walae",
-    "khanna-untitled-horn-player",
-    "khanna-untitled-seated-man",
+    "khanna-trumpeter",
+    "khanna-seated-bandsman-with-horn",
   ],
   artistSlugs: ["krishen-khanna"],
   sources: [
@@ -29,7 +29,7 @@ const post: BlogPost = {
   body: [
     {
       type: "p",
-      text: "[Krishen Khanna](/artists/krishen-khanna), born in 1925, is one of India's senior modern painters, known for abstracted figurative work including his Truckwallahs and Bandwallahs series. Four of his sculptures, three musicians and a seated man, are in the Sculpted India [collection](/artworks).",
+      text: "[Krishen Khanna](/artists/krishen-khanna), born in 1925, is one of India's senior modern painters, known for abstracted figurative work including his Truckwallahs and Bandwallahs series. Four of his sculptures in the Sculpted India [collection](/artworks), all of them bandsmen, are shown here.",
     },
     { type: "h2", id: "who-is-krishen-khanna", text: "Who is Krishen Khanna?" },
     {
@@ -47,7 +47,7 @@ const post: BlogPost = {
     { type: "h2", id: "truckwallahs-and-bandwallahs", text: "Truckwallahs and Bandwallahs" },
     {
       type: "p",
-      text: "Two of the series Khanna is known for are named after working people: the Truckwallahs, after truck drivers, and the Bandwallahs, after band musicians. Three of the four sculptures in the collection are musicians too.",
+      text: "Two of the series Khanna is known for are named after working people: the Truckwallahs, after truck drivers, and the Bandwallahs, after band musicians. The four sculptures here are musicians too.",
     },
     { type: "h2", id: "sculptures-in-the-collection", text: "Krishen Khanna sculptures in the collection" },
     {
@@ -56,8 +56,8 @@ const post: BlogPost = {
     },
     { type: "work", slug: "khanna-satwant-sher-singh-cymbal-walae" },
     { type: "work", slug: "khanna-patinder-rawat-trumpet-walae" },
-    { type: "work", slug: "khanna-untitled-horn-player" },
-    { type: "work", slug: "khanna-untitled-seated-man" },
+    { type: "work", slug: "khanna-trumpeter" },
+    { type: "work", slug: "khanna-seated-bandsman-with-horn" },
     {
       type: "faq",
       items: [

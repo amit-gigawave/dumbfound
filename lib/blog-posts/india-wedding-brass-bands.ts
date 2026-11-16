@@ -20,7 +20,7 @@ const post: BlogPost = {
   workSlugs: [
     "khanna-patinder-rawat-trumpet-walae",
     "khanna-satwant-sher-singh-cymbal-walae",
-    "khanna-untitled-horn-player",
+    "khanna-trumpeter",
   ],
   artistSlugs: ["krishen-khanna"],
   sources: [
@@ -62,7 +62,7 @@ const post: BlogPost = {
     },
     { type: "work", slug: "khanna-patinder-rawat-trumpet-walae" },
     { type: "work", slug: "khanna-satwant-sher-singh-cymbal-walae" },
-    { type: "work", slug: "khanna-untitled-horn-player" },
+    { type: "work", slug: "khanna-trumpeter" },
     {
       type: "faq",
       items: [

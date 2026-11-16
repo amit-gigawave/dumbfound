@@ -15,8 +15,8 @@ const post: BlogPost = {
   published: "2026-10-23",
   category: "Art explained",
   tags: ["Papier-mâché", "Kashmir", "Indian crafts", "Contemporary Indian sculpture"],
-  image: thumb("meditating", "Levitation, a papier-mâché sculpture by Meena Sansanwal"),
-  workSlugs: ["meditating", "head-e"],
+  image: thumb("sansanwal-levitation", "Levitation, a papier-mâché sculpture by Meena Sansanwal"),
+  workSlugs: ["sansanwal-levitation", "ghosh-head-in-fragments"],
   artistSlugs: ["meena-sansanwal", "subba-ghosh"],
   sources: [
     { label: "Kashmir Life: Papier mache, an introduction", url: "https://kashmirlife.net/papier-mache-an-introduction-vol-15-issue-51-346737/" },
@@ -67,10 +67,10 @@ const post: BlogPost = {
     { type: "h2", id: "contemporary-sculpture", text: "Papier-mâché in contemporary Indian sculpture" },
     {
       type: "p",
-      text: "Some contemporary sculptors have taken up the material. [Meena Sansanwal](/artists/meena-sansanwal), whose work centres on feminine divinity, has worked in papier-mâché since 2016; her [Levitation](/artworks/meditating) combines papier-mâché, marble and acrylic paint. [Subba Ghosh](/artists/subba-ghosh)'s untitled head in the collection mixes papier-mâché with fibreglass, resin, and oil and acrylic paint. You can read more about both in [Contemporary Indian sculpture: three artists to know](/blog/contemporary-indian-sculptors).",
+      text: "Some contemporary sculptors have taken up the material. [Meena Sansanwal](/artists/meena-sansanwal), whose work centres on feminine divinity, has worked in papier-mâché since 2016; her [Levitation](/artworks/sansanwal-levitation) combines papier-mâché, marble and acrylic paint. [Subba Ghosh](/artists/subba-ghosh)'s [Head in Fragments](/artworks/ghosh-head-in-fragments) in the collection mixes papier-mâché with fibreglass, resin, and oil and acrylic paint. You can read more about both in [Contemporary Indian sculpture: three artists to know](/blog/contemporary-indian-sculptors).",
     },
-    { type: "work", slug: "meditating" },
-    { type: "work", slug: "head-e" },
+    { type: "work", slug: "sansanwal-levitation" },
+    { type: "work", slug: "ghosh-head-in-fragments" },
     {
       type: "faq",
       items: [

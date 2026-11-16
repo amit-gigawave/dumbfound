@@ -13,7 +13,7 @@ const post: BlogPost = {
   category: "In the collection",
   tags: ["Thota Vaikuntam", "Telangana", "Indian sculpture", "Contemporary Indian art"],
   image: thumb("dancing-shiva", "Dancing Shiva, a sculpture by Thota Vaikuntam"),
-  workSlugs: ["telangana-woman", "lord-krishna", "sacred-gaze", "dancing-shiva"],
+  workSlugs: ["thota-lady", "lord-krishna", "thota-pandit", "dancing-shiva"],
   artistSlugs: ["thota-vaikuntam"],
   sources: [
     { label: "DAG: Thota Vaikuntam", url: "https://dagworld.com/thota-vaikuntam.html" },
@@ -69,9 +69,9 @@ const post: BlogPost = {
       type: "p",
       text: "The four works below are in the Sculpted India collection. Sculpted India also showed his work at [Design Democracy 2026](/events) in Hyderabad.",
     },
-    { type: "work", slug: "telangana-woman" },
+    { type: "work", slug: "thota-lady" },
     { type: "work", slug: "lord-krishna" },
-    { type: "work", slug: "sacred-gaze" },
+    { type: "work", slug: "thota-pandit" },
     { type: "work", slug: "dancing-shiva" },
     {
       type: "quote",
@@ -88,7 +88,7 @@ const post: BlogPost = {
         },
         {
           q: "Does Thota Vaikuntam make sculptures?",
-          a: "Yes. In recent years he has turned the subjects of his paintings into sculpture. Four of his sculptures are in the Sculpted India collection: Untitled (Lady), Untitled (Lord Krishna), Untitled (Pandit) and Dancing Shiva.",
+          a: "Yes. In recent years he has turned the subjects of his paintings into sculpture. His sculptures in the Sculpted India collection include Lady, Lord Krishna, Pandit and Dancing Shiva.",
         },
         {
           q: "Where did Thota Vaikuntam study?",

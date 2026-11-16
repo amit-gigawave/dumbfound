@@ -37,10 +37,10 @@ const heroWorkFor = (slug: string): HeroWork | undefined => {
 
 /** Painted scans for "In the Round": one row, in colour. */
 const EXPLORE = [
-  "meditating",
+  "sansanwal-levitation",
   "khanna-patinder-rawat-trumpet-walae",
-  "head-e",
-  "female-with-green-saree",
+  "ghosh-head-in-fragments",
+  "thota-female-in-dotted-saree",
 ];
 
 // Upcoming and past events are worked out from today's date, so rebuild hourly.
