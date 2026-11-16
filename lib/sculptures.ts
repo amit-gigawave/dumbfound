@@ -175,7 +175,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "yashika-sugandh",
     thumbnail: "/thumbnails/sugandh-meri-patang.webp",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb?v=2",
-    facing: 340,
+    facing: 270,
     material: "Acrylic on Nylon",
     year: "2026",
     dimensions: "12 × 9 × 5 inches",
