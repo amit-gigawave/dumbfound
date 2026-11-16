@@ -319,6 +319,21 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "COUPLE.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // JC-0002, matched by photo. Year not given there.
+  {
+    slug: "chowdhury-couple",
+    title: "Couple",
+    description: "",
+    artistSlug: "jogen-chowdhury",
+    thumbnail: "/thumbnails/chowdhury-couple.webp",
+    modelUrl: "/sculptures/chowdhury-couple.glb",
+    facing: 180,
+    material: "Bronze",
+    year: "",
+    dimensions: "11 × 13 × 9 inches",
+    edition: "5 of 9",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
