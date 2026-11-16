@@ -115,14 +115,16 @@ export const sculptures: Sculpture[] = [
   },
 
   // ---- Scanned works with a 3D model (integrated via the USDZ/GLB pipeline) ----
-  // no stock no.
+  // no stock no. Model from the colour scan "RedCymbalsGuy.usdz" (2026-11-16); it replaced
+  // an untextured low-poly mesh.
   {
     slug: "khanna-satwant-sher-singh-cymbal-walae",
     title: "Satwant Sher Singh Cymbal Walae",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-satwant-sher-singh-cymbal-walae.webp",
-    modelUrl: "/sculptures/Red_Cymbals_Guy_LPoly.glb",
+    modelUrl: "/sculptures/Red_Cymbals_Guy_LPoly.glb?v=2",
+    facing: 30,
     material: "Bronze",
     year: "",
     dimensions: "14 × 5 × 6 inches",
