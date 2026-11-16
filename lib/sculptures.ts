@@ -176,15 +176,19 @@ export const sculptures: Sculpture[] = [
   },
 
   // ---- Newly scanned heads (USDZ → GLB). Artist/title to be confirmed. ----
+  // Scan "headA.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "18 - Himmat Shah Bronze": HS-0426, matched by the photo in that row.
   {
     slug: "head-a",
-    title: "Untitled (Head A)",
+    title: "Untitled (Head)",
     description: "",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-a.webp",
     modelUrl: "/sculptures/head-a.glb?v=2",
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "49 × 29 × 35 inches",
+    edition: "Edition of 5 + AP",
   },
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "19 - Himmat Shah Bronze": HS-0420, which this scan matches by photo in the Artlogic view.
@@ -214,16 +218,19 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "17 × 11 × 16 inches",
   },
+  // Scan "headG.usdz". Matched by the photo in row "13 - Thotta - Female Head - 04" of the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F.
+  // That row is marked "[TO CONFIRM]": TV-0107, "3D scan shows no collar colour; alt. TVA-0015". It was listed as Himmat Shah until 2026-11-16.
   {
     slug: "head-g",
-    title: "Untitled (Head G)",
+    title: "Dark Green Saree Lady",
     description: "",
-    artistSlug: "himmat-shah",
+    artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/head-g.webp",
     modelUrl: "/sculptures/head-g.glb?v=2",
     facing: 180,
-    material: "",
-    year: "",
+    material: "Bronze",
+    year: "2026",
+    dimensions: "24 × 16 × 24 inches",
   },
   // Scan "04 - Female with blue saree". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "4 - Thotta - Female with blue saree": TV-0014. Year not given there.
@@ -527,20 +534,19 @@ export const sculptures: Sculpture[] = [
     dimensions: "31 × 26 × 16 inches",
     edition: "2 of 7",
   },
-  // Scan "RedBandGuy.usdz". A bandsman in a maroon uniform and cap playing a horn,
-  // with no base. No title or artist came with the scan and no work in the Artlogic
-  // view matches it by photo, so title, artist, medium, year and size are unknown.
-  // TODO: confirm details.
+  // Scan "RedBandGuy.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "10 - Krishan Khanna - 01": KK-0302, matched by the photo in that row. Size and year not given there.
   {
     slug: "untitled-bandsman-in-red",
-    title: "Untitled (Bandsman in Red)",
+    title: "Bandwalla",
     description: "",
-    artistSlug: "",
+    artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/untitled-bandsman-in-red.webp",
     modelUrl: "/sculptures/untitled-bandsman-in-red.glb",
     facing: 200,
-    material: "",
+    material: "Bronze",
     year: "",
+    edition: "Edition of 9",
   },
   // Scan "DRONE05.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "53 - Drone 05", and the Artlogic view (matched by photo): TVA/Dec2025/001. Year not given.
