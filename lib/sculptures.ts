@@ -173,7 +173,7 @@ export const sculptures: Sculpture[] = [
     title: "Meri Patang",
     description: "",
     artistSlug: "yashika-sugandh",
-    thumbnail: "/thumbnails/sugandh-meri-patang.webp",
+    thumbnail: "/thumbnails/sugandh-meri-patang.webp?v=2",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb?v=2",
     facing: 270,
     material: "Acrylic on Nylon",

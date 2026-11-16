@@ -41,6 +41,9 @@ const renamedArtworks: [string, string][] = [
 ];
 
 const nextConfig: NextConfig = {
+  // Local images may carry ?v=N, so a changed thumbnail gets a new address
+  // and browsers and the image optimiser don't keep showing the old one.
+  images: { localPatterns: [{ pathname: "/**" }] },
   // The collection used to live at /gallery.
   async redirects() {
     return [

@@ -266,6 +266,7 @@ Optional details only appear on the page when filled in. Text that starts with `
 | The thumbnail looks wrong | Run `npm run thumbnails -- <slug>` again |
 | A model looks see-through, inside faces showing | Its material is set to transparent (`BLEND`). Convert the scan again with the Blender command above, then compress, and make the thumbnail and AR model again |
 | A replaced model still shows the old version | Models are cached for a day. Add `?v=2` (then `?v=3`, …) to its `modelUrl` |
+| A new thumbnail still shows the old picture | Thumbnails are cached for a day too. Add `?v=2` (then `?v=3`, …) to its `thumbnail` |
 | Search doesn't find it | Search reads `title`, `subtitle`, `description`, `tags`, medium, year and artist name |
 
 ## Things to know about AR
