@@ -88,8 +88,9 @@ does 1–3, 5 and 6 itself and asks about 4. `npm run check-model -- <file>`
 reports on 1–3 and 5 without changing anything.
 
 1. **Opaque and single-sided**: `alphaMode: OPAQUE` (unless the texture really
-   has transparency) and backface culling on. Scans often arrive as `BLEND` and
-   double-sided, which looks see-through.
+   has transparency) and backface culling on, with no transmission. Scans often
+   arrive as `BLEND` and double-sided, or with full transmission
+   (`KHR_materials_transmission`), which looks see-through.
 2. **Winding**: the triangles must face the same way as their normals, or
    backface culling opens holes. Fix in Blender (Mesh → Normals → Recalculate
    Outside).

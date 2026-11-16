@@ -3,7 +3,8 @@
 // `fix` repairs what can be repaired automatically.
 //
 //   1. Opaque + single-sided: scans often export as BLEND and double-sided,
-//      which looks see-through on the site.
+//      which looks see-through on the site. Some USD scans also come with
+//      full transmission (a white transmission texture), which renders as glass.
 //   2. Winding: if many triangles face against their normals, backface
 //      culling would open holes, so the model is refused instead.
 //   3. Vertex colours: all-white COLOR layers are dropped (they only wash the
@@ -13,6 +14,8 @@ import { createRequire } from "node:module";
 import { ImageUtils, NodeIO } from "@gltf-transform/core";
 import { ALL_EXTENSIONS } from "@gltf-transform/extensions";
 import draco3d from "draco3dgltf";
+
+const TRANSMISSION = "KHR_materials_transmission";
 
 /** Above this share of reversed triangles the model is refused. */
 export const MAX_FLIPPED = 0.05;
@@ -107,6 +110,7 @@ export async function inspect(doc) {
       fixes.push(`${name}: alphaMode ${mat.getAlphaMode()} → OPAQUE`);
     }
     if (mat.getDoubleSided()) fixes.push(`${name}: double-sided → single-sided (backface culling)`);
+    if (mat.getExtension(TRANSMISSION)) fixes.push(`${name}: transmission (glass-like) removed`);
   }
 
   let hasTexture = root.listTextures().length > 0;
@@ -148,6 +152,7 @@ export async function fix(doc) {
     const tex = mat.getBaseColorTexture();
     if (mat.getAlphaMode() !== "OPAQUE" && !(tex && (await usesAlpha(tex)))) mat.setAlphaMode("OPAQUE");
     mat.setDoubleSided(false);
+    mat.setExtension(TRANSMISSION, null);
   }
   for (const mesh of root.listMeshes()) {
     for (const prim of mesh.listPrimitives()) {
