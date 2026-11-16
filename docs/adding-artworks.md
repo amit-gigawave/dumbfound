@@ -51,8 +51,8 @@ It doesn't commit. At the end it prints the files it made and a ready
 Other uses:
 
 ```bash
-npm run add-model -- "new-scan.glb" --slug female-head --replace   # new model for an existing work
-npm run add-model -- --slug female-head --facing 180               # turn a work, redo thumbnail and AR copy
+npm run add-model -- "new-scan.glb" --slug thota-yellow-saree-lady --replace   # new model for an existing work
+npm run add-model -- --slug thota-yellow-saree-lady --facing 180   # turn a work, redo thumbnail and AR copy
 npm run check-model -- "scan.usdz"                                 # only report on a file, change nothing
 ```
 

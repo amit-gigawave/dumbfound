@@ -70,11 +70,11 @@ export const sculptures: Sculpture[] = [
   // after the model files until the real ones are known. TODO: confirm details.
   // Titled "Untitled (Lady)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "telangana-woman",
+    slug: "thota-lady",
     title: "Lady",
     description: "",
     modelUrl: "/sculptures/Lady.glb",
-    thumbnail: "/thumbnails/telangana-woman.webp",
+    thumbnail: "/thumbnails/thota-lady.webp",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",
@@ -94,11 +94,11 @@ export const sculptures: Sculpture[] = [
   },
   // Titled "Untitled (Pandit)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "sacred-gaze",
+    slug: "thota-pandit",
     title: "Pandit",
     description: "",
     modelUrl: "/sculptures/Pandit.glb",
-    thumbnail: "/thumbnails/sacred-gaze.webp",
+    thumbnail: "/thumbnails/thota-pandit.webp",
     artistSlug: "thota-vaikuntam",
     featured: false,
     material: "",
@@ -137,11 +137,11 @@ export const sculptures: Sculpture[] = [
   // Walae in the Artlogic view; details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F, row "41 - Krishan Khanna - 07".
   // It was listed as Patinder Rawat Trumpet Walae until 2026-11-16; the address (slug) was kept.
   {
-    slug: "khanna-patinder-rawat-trumpet-walae",
+    slug: "khanna-gulratan-bhon-bhon-walae",
     title: "Gulratan Bhon Bhon Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp",
+    thumbnail: "/thumbnails/khanna-gulratan-bhon-bhon-walae.webp",
     modelUrl: "/sculptures/Trumpet_Musician_Orange_LPoly.glb",
     facing: 190,
     material: "Bronze",
@@ -153,11 +153,11 @@ export const sculptures: Sculpture[] = [
   // row "12 - Krishan Khanna - 03": KK-0305.
   // Titled "Untitled (Seated Bandsman with Horn)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "khanna-untitled-seated-man",
+    slug: "khanna-seated-bandsman-with-horn",
     title: "Seated Bandsman with Horn",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-untitled-seated-man.webp",
+    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp",
     modelUrl: "/sculptures/khanna-untitled-seated-man.glb?v=2",
     material: "Bronze",
     year: "",
@@ -167,11 +167,11 @@ export const sculptures: Sculpture[] = [
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "29 - Yashika Sugandh Meri Patang, 2026". (The Artlogic view lists a 71 × 50 × 30 inch version, YS-0101.)
   {
-    slug: "sugandh-elephant-kite",
+    slug: "sugandh-meri-patang",
     title: "Meri Patang",
     description: "",
     artistSlug: "yashika-sugandh",
-    thumbnail: "/thumbnails/sugandh-elephant-kite.webp",
+    thumbnail: "/thumbnails/sugandh-meri-patang.webp",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb",
     material: "Acrylic on Nylon",
     year: "2026",
@@ -183,11 +183,11 @@ export const sculptures: Sculpture[] = [
   // row "18 - Himmat Shah Bronze": HS-0426, matched by the photo in that row.
   // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "head-a",
+    slug: "shah-head-with-bared-teeth",
     title: "Head with Bared Teeth",
     description: "",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/head-a.webp",
+    thumbnail: "/thumbnails/shah-head-with-bared-teeth.webp",
     modelUrl: "/sculptures/head-a.glb?v=2",
     material: "Bronze",
     year: "",
@@ -198,11 +198,11 @@ export const sculptures: Sculpture[] = [
   // row "19 - Himmat Shah Bronze": HS-0420, which this scan matches by photo in the Artlogic view.
   // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "head-c",
+    slug: "shah-head-with-pinpoint-eyes",
     title: "Head with Pinpoint Eyes",
     description: "",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/head-c.webp",
+    thumbnail: "/thumbnails/shah-head-with-pinpoint-eyes.webp",
     modelUrl: "/sculptures/head-c.glb",
     facing: 90,
     material: "Bronze",
@@ -214,11 +214,11 @@ export const sculptures: Sculpture[] = [
   // SG-0029 (untitled there).
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "head-e",
+    slug: "ghosh-head-in-fragments",
     title: "Head in Fragments",
     description: "",
     artistSlug: "subba-ghosh",
-    thumbnail: "/thumbnails/head-e.webp",
+    thumbnail: "/thumbnails/ghosh-head-in-fragments.webp",
     modelUrl: "/sculptures/head-e.glb",
     material: "Fibreglass, Resin, Paper Mache, Oil and Acrylic Paint",
     year: "",
@@ -227,11 +227,11 @@ export const sculptures: Sculpture[] = [
   // Scan "headG.usdz". Matched by the photo in row "13 - Thotta - Female Head - 04" of the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F.
   // That row is marked "[TO CONFIRM]": TV-0107, "3D scan shows no collar colour; alt. TVA-0015". It was listed as Himmat Shah until 2026-11-16.
   {
-    slug: "head-g",
+    slug: "thota-dark-green-saree-lady",
     title: "Dark Green Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/head-g.webp",
+    thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp",
     modelUrl: "/sculptures/head-g.glb?v=2",
     facing: 180,
     material: "Bronze",
@@ -241,11 +241,11 @@ export const sculptures: Sculpture[] = [
   // Scan "04 - Female with blue saree". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "4 - Thotta - Female with blue saree": TV-0014. Year not given there.
   {
-    slug: "female-with-blue-saree",
+    slug: "thota-blue-saree",
     title: "Blue Saree",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/female-with-blue-saree.webp",
+    thumbnail: "/thumbnails/thota-blue-saree.webp",
     modelUrl: "/sculptures/female-with-blue-saree.glb?v=4",
     material: "Bronze",
     year: "",
@@ -256,11 +256,11 @@ export const sculptures: Sculpture[] = [
   // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // rows "5 - Thotta - Female Head - 02" and "37 - Thotta - Female Head - 09": TV-0106 (edition cast).
   {
-    slug: "female-head",
+    slug: "thota-yellow-saree-lady",
     title: "Yellow Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/female-head.webp",
+    thumbnail: "/thumbnails/thota-yellow-saree-lady.webp",
     modelUrl: "/sculptures/female-head.glb?v=3",
     material: "Bronze",
     year: "2026",
@@ -269,11 +269,11 @@ export const sculptures: Sculpture[] = [
   // Scan "meditating.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // MS-0095. Year not given there.
   {
-    slug: "meditating",
+    slug: "sansanwal-levitation",
     title: "Levitation",
     description: "",
     artistSlug: "meena-sansanwal",
-    thumbnail: "/thumbnails/meditating.webp",
+    thumbnail: "/thumbnails/sansanwal-levitation.webp",
     modelUrl: "/sculptures/meditating.glb?v=2",
     facing: 180,
     material: "Papermache, Marble And Acrylic Paint",
@@ -283,11 +283,11 @@ export const sculptures: Sculpture[] = [
   // Scan "03 - Female with green Saree" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "3 - Thotta - Female with green Saree": TV-0171. Year not given there.
   {
-    slug: "female-with-green-saree",
+    slug: "thota-female-in-dotted-saree",
     title: "Female in Dotted Saree",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/female-with-green-saree.webp",
+    thumbnail: "/thumbnails/thota-female-in-dotted-saree.webp",
     modelUrl: "/sculptures/female-with-green-saree.glb?v=3",
     material: "Bronze",
     year: "",
@@ -323,11 +323,11 @@ export const sculptures: Sculpture[] = [
   // row "27 - Krishan Khanna - 04"; it also matches Patinder Rawat Trumpet Walae in the Artlogic view by photo
   // (grey jacket, tuba, oval base). Year not given there.
   {
-    slug: "khanna-untitled-bandsman",
+    slug: "khanna-patinder-rawat-trumpet-walae",
     title: "Patinder Rawat Trumpet Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-untitled-bandsman.webp",
+    thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp",
     modelUrl: "/sculptures/khanna-untitled-bandsman.glb",
     facing: 310,
     material: "Bronze",
@@ -339,11 +339,11 @@ export const sculptures: Sculpture[] = [
   // row "32 - Krishan Khanna - 05" (KKA/YF/Nov2025/001–010), matched by the name "Krishan Khanna - 05";
   // the "27" in the file name is the sheet number of "Krishan Khanna - 04". No photo to check against.
   {
-    slug: "khanna-untitled-trumpeter",
+    slug: "khanna-patinder-ji-haran-walla",
     title: "Patinder Ji Haran Walla",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-untitled-trumpeter.webp",
+    thumbnail: "/thumbnails/khanna-patinder-ji-haran-walla.webp",
     modelUrl: "/sculptures/khanna-untitled-trumpeter.glb",
     facing: 270,
     material: "Bronze",
@@ -384,11 +384,11 @@ export const sculptures: Sculpture[] = [
   // Scan "RedBandGuy.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "10 - Krishan Khanna - 01": KK-0302, matched by the photo in that row. Size and year not given there.
   {
-    slug: "untitled-bandsman-in-red",
+    slug: "khanna-bandwalla",
     title: "Bandwalla",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/untitled-bandsman-in-red.webp",
+    thumbnail: "/thumbnails/khanna-bandwalla.webp",
     modelUrl: "/sculptures/untitled-bandsman-in-red.glb",
     facing: 200,
     material: "Bronze",
@@ -399,11 +399,11 @@ export const sculptures: Sculpture[] = [
   // row "53 - Drone 05", and the Artlogic view (matched by photo): TVA/Dec2025/001. Year not given.
   // Titled "Untitled (Female Head, polka-dot collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "thota-untitled-head-polka-dot",
+    slug: "thota-female-head-with-polka-dot-collar",
     title: "Female Head with Polka-dot Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-untitled-head-polka-dot.webp",
+    thumbnail: "/thumbnails/thota-female-head-with-polka-dot-collar.webp",
     modelUrl: "/sculptures/thota-untitled-head-polka-dot.glb",
     facing: 180,
     material: "Resinated Fibre Glass with Automotive Paint",
@@ -413,11 +413,11 @@ export const sculptures: Sculpture[] = [
   // Scan "38 - Thotta - Female Head - 10 .glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "38 - Thotta - Female Head - 10": TV-0105 (edition cast).
   {
-    slug: "thota-female-head-10",
+    slug: "thota-ruby-saree-lady",
     title: "Ruby Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-head-10.webp",
+    thumbnail: "/thumbnails/thota-ruby-saree-lady.webp",
     modelUrl: "/sculptures/thota-female-head-10.glb",
     material: "Bronze",
     year: "2026",
@@ -427,11 +427,11 @@ export const sculptures: Sculpture[] = [
   // row "55 - Drone 07": TVA/Sep2025/005.
   // Titled "Untitled (Male Head, blue turban, moustache)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "thota-untitled-head-with-turban",
+    slug: "thota-male-head-with-blue-turban",
     title: "Male Head with Blue Turban and Moustache",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-untitled-head-with-turban.webp",
+    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp",
     modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
     material: "Fiberglass",
     year: "2025",
@@ -442,11 +442,11 @@ export const sculptures: Sculpture[] = [
   // thota-female-head-05 is the same form in another finish.
   // Titled "Untitled (Female Head, bronze with long hair)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "thota-untitled-head-with-nose-ring",
+    slug: "thota-bronze-female-head-with-long-hair",
     title: "Bronze Female Head with Long Hair",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-untitled-head-with-nose-ring.webp",
+    thumbnail: "/thumbnails/thota-bronze-female-head-with-long-hair.webp",
     modelUrl: "/sculptures/thota-untitled-head-with-nose-ring.glb",
     material: "Bronze",
     year: "",
@@ -456,11 +456,11 @@ export const sculptures: Sculpture[] = [
   // row "35 - Thotta - Female Head - 07": TVA-0018.
   // Titled "Untitled (Female Head, nose ring, red collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
-    slug: "thota-female-head-07",
+    slug: "thota-female-head-with-nose-ring",
     title: "Female Head with Nose Ring and Red Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-head-07.webp",
+    thumbnail: "/thumbnails/thota-female-head-with-nose-ring.webp",
     modelUrl: "/sculptures/thota-female-head-07.glb",
     facing: 260,
     material: "Bronze",
