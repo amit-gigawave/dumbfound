@@ -334,6 +334,21 @@ export const sculptures: Sculpture[] = [
     dimensions: "11 × 13 × 9 inches",
     edition: "5 of 9",
   },
+  // Scan "MadhaviParekh_Sculpture.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
+  // no stock no., matched by photo. Also noted there: inscribed in Devnagari and dated in English (front right corner).
+  {
+    slug: "parekh-bronze-2-1",
+    title: "Bronze 2 - 1",
+    description: "",
+    artistSlug: "madhvi-parekh",
+    thumbnail: "/thumbnails/parekh-bronze-2-1.webp",
+    modelUrl: "/sculptures/parekh-bronze-2-1.glb",
+    facing: 180,
+    material: "Bronze",
+    year: "2006",
+    dimensions: "31 × 26 × 16 inches",
+    edition: "2 of 7",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
