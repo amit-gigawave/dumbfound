@@ -228,15 +228,16 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
-  // Scan "05 - Female Head" (original in .glb-backup/web/). TODO: artist, year and medium not known yet.
+  // First scanned as "05 - Female Head"; the model is now the more detailed rescan
+  // "37 - Thotta - Female Head - 09.glb" (original in .glb-backup/web/), the same
+  // sculpture. Artist from that file name. TODO: year and medium not known yet.
   {
     slug: "female-head",
     title: "Female Head",
     description: "",
-    artistSlug: "",
+    artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/female-head.webp",
-    modelUrl: "/sculptures/female-head.glb?v=2",
-    facing: 180,
+    modelUrl: "/sculptures/female-head.glb?v=3",
     material: "",
     year: "",
   },
