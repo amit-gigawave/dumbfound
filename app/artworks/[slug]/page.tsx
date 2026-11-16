@@ -9,6 +9,7 @@ import {
   hasValue,
 } from "@/lib/sculptures";
 import { getArtist, initials } from "@/lib/artists";
+import { catalogueOrder } from "@/lib/catalogue-order";
 import { openGraphDefaults } from "@/lib/site";
 import ArtworkStage from "@/components/gallery/ArtworkStage";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
@@ -57,8 +58,8 @@ export default async function ArtworkPage({
   if (!work) notFound();
 
   const artist = getArtist(work.artistSlug);
-  const more = getWorksByArtist(work.artistSlug).filter(
-    (w) => w.slug !== work.slug,
+  const more = catalogueOrder(
+    getWorksByArtist(work.artistSlug).filter((w) => w.slug !== work.slug),
   );
 
   // Optional fields are only listed when filled in (never "TODO" placeholders).

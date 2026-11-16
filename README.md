@@ -68,7 +68,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | --- | --- |
 | `/` | Home: scroll-driven hero with the finished sculpture, About Sculpted India (a statement and the opening of the story, from `lib/about.ts`), ten artists, featured works, More from the collection (four works listed in `EXPLORE`), an artist quote, events (Recent exhibitions when nothing is coming up). Tiles turn the work on hover, and in More from the collection one or two turn on their own. Its sentence-case buttons, links and labels now apply site-wide (the `body .btn` block in `globals.css`; `btn-hollow` is the outlined second button) |
 | `/artists`, `/artists/[slug]` | Artist list and artist pages |
-| `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, and artwork pages, which open in 3D (with a Photo switch) and offer AR |
+| `/artworks`, `/artworks/[slug]` | Artwork grid with an artist filter, in catalogue order (by artist, works with details first; `lib/catalogue-order.ts`), and artwork pages, which open in 3D (with a Photo switch) and offer AR at the work's real height |
 | `/events` | Upcoming and past exhibitions |
 | `/blog`, `/blog/[slug]` | Blog: artists' lives, art explained, and the works in the collection, grouped by category (see [Writing a blog post](#writing-a-blog-post)) |
 | `/blog/feed.xml` | RSS feed of the blog |
