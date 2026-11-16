@@ -130,10 +130,12 @@ export const sculptures: Sculpture[] = [
     dimensions: "14 × 5 × 6 inches",
     edition: "3 of 9",
   },
-  // no stock no.
+  // Low-poly model "Trumpet_Musician_Orange_LPoly". Matched by photo (orange jacket, horn) to Gulratan Bhon Bhon
+  // Walae in the Artlogic view; details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F, row "41 - Krishan Khanna - 07".
+  // It was listed as Patinder Rawat Trumpet Walae until 2026-11-16; the address (slug) was kept.
   {
     slug: "khanna-patinder-rawat-trumpet-walae",
-    title: "Patinder Rawat Trumpet Walae",
+    title: "Gulratan Bhon Bhon Walae",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp",
@@ -141,7 +143,7 @@ export const sculptures: Sculpture[] = [
     facing: 190,
     material: "Bronze",
     year: "",
-    dimensions: "12 × 5 × 5 inches",
+    dimensions: "12 × 6 × 4 inches",
     edition: "3 of 9",
   },
   // Scan "12 - Krishan Khanna 03". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
@@ -303,20 +305,21 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "72 × 38 × 38 inches",
   },
-  // Scan "27 - Krishan Khanna - 04 - 2nd.glb". Artist from the file name. A horn
-  // player in a grey uniform on an oval base; no title came with the scan and no
-  // work in the Artlogic view matches it by photo, so title, medium, year and
-  // size are unknown. TODO: confirm details.
+  // Scan "27 - Krishan Khanna - 04 - 2nd.glb". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "27 - Krishan Khanna - 04"; it also matches Patinder Rawat Trumpet Walae in the Artlogic view by photo
+  // (grey jacket, tuba, oval base). Year not given there.
   {
     slug: "khanna-untitled-bandsman",
-    title: "Untitled (Bandsman)",
+    title: "Patinder Rawat Trumpet Walae",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-untitled-bandsman.webp",
     modelUrl: "/sculptures/khanna-untitled-bandsman.glb",
     facing: 310,
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "12 × 5 × 5 inches",
+    edition: "3 of 9",
   },
   // Scan "27 - Krishan Khanna - 05.glb" (original in .glb-backup/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "32 - Krishan Khanna - 05" (KKA/YF/Nov2025/001–010), matched by the name "Krishan Khanna - 05";
