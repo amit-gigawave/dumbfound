@@ -145,20 +145,22 @@ export const sculptures: Sculpture[] = [
     dimensions: "12 × 5 × 5 inches",
     edition: "3 of 9",
   },
-  // Scan "12 - Krishan Khanna 03" (original in .glb-backup/). Title to be
-  // confirmed: the pose resembles Untitled (KK-0305), but the scan is unpainted
-  // and has no trumpet beside him.
+  // Scan "12 - Krishan Khanna 03". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "12 - Krishan Khanna - 03": KK-0305.
   {
     slug: "khanna-untitled-seated-man",
-    title: "Untitled (Seated Man)",
+    title: "Untitled (Seated Bandsman with Horn)",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-untitled-seated-man.webp",
     modelUrl: "/sculptures/khanna-untitled-seated-man.glb?v=2",
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "30 × 30 × 32 inches",
+    edition: "3 of 9",
   },
-  // Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), YS-0101.
+  // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "29 - Yashika Sugandh Meri Patang, 2026". (The Artlogic view lists a 71 × 50 × 30 inch version, YS-0101.)
   {
     slug: "sugandh-elephant-kite",
     title: "Meri Patang",
@@ -166,9 +168,9 @@ export const sculptures: Sculpture[] = [
     artistSlug: "yashika-sugandh",
     thumbnail: "/thumbnails/sugandh-elephant-kite.webp",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb",
-    material: "Acrylic on PETG and Fiber Resin",
+    material: "Acrylic on Nylon",
     year: "2026",
-    dimensions: "71 × 50 × 30 inches",
+    dimensions: "12 × 9 × 5 inches",
   },
 
   // ---- Newly scanned heads (USDZ → GLB). Artist/title to be confirmed. ----
@@ -182,16 +184,20 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "19 - Himmat Shah Bronze": HS-0420, which this scan matches by photo in the Artlogic view.
   {
     slug: "head-c",
-    title: "Untitled (Head C)",
+    title: "Untitled (Head)",
     description: "",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/head-c.webp",
     modelUrl: "/sculptures/head-c.glb",
     facing: 90,
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "42 × 27 × 37 inches",
+    edition: "Edition of 5 + AP",
   },
   // Subba Ghosh, not Himmat Shah: details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // SG-0029 (untitled there).
@@ -217,29 +223,33 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
-  // Scan "04 - Female with blue saree". TODO: artist, year and medium not known yet.
+  // Scan "04 - Female with blue saree". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "4 - Thotta - Female with blue saree": TV-0014. Year not given there.
   {
     slug: "female-with-blue-saree",
-    title: "Female with Blue Saree",
+    title: "Blue Saree",
     description: "",
-    artistSlug: "",
+    artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/female-with-blue-saree.webp",
     modelUrl: "/sculptures/female-with-blue-saree.glb?v=4",
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "23 × 9 × 7 inches",
   },
   // First scanned as "05 - Female Head"; the model is now the more detailed rescan
-  // "37 - Thotta - Female Head - 09.glb" (original in .glb-backup/web/), the same
-  // sculpture. Artist from that file name. TODO: year and medium not known yet.
+  // "37 - Thotta - Female Head - 09.glb" (original in .glb-backup/web/), the same sculpture.
+  // Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // rows "5 - Thotta - Female Head - 02" and "37 - Thotta - Female Head - 09": TV-0106 (edition cast).
   {
     slug: "female-head",
-    title: "Female Head",
+    title: "Yellow Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/female-head.webp",
     modelUrl: "/sculptures/female-head.glb?v=3",
-    material: "",
-    year: "",
+    material: "Bronze",
+    year: "2026",
+    dimensions: "24 × 16 × 24 inches",
   },
   // Scan "meditating.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // MS-0095. Year not given there.
@@ -255,28 +265,31 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "24 × 22 × 14 inches",
   },
-  // Scan "03 - Female with green Saree" (original in .glb-backup/web/). TODO: artist, year and medium not known yet.
+  // Scan "03 - Female with green Saree" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "3 - Thotta - Female with green Saree": TV-0171. Year not given there.
   {
     slug: "female-with-green-saree",
-    title: "Female with Green Saree",
+    title: "Female in Dotted Saree",
     description: "",
-    artistSlug: "",
+    artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/female-with-green-saree.webp",
     modelUrl: "/sculptures/female-with-green-saree.glb?v=3",
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "23 × 7 × 6 inches",
   },
-  // Scan "11 - Krishna Khanna 02" (original in .glb-backup/). Title to be
-  // confirmed: a horn player in a blue uniform; no title came with the scan.
+  // Scan "11 - Krishna Khanna 02" (original in .glb-backup/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "11 - Krishan Khanna - 02": KK-0165. Year not given there.
   {
     slug: "khanna-untitled-horn-player",
-    title: "Untitled (Horn Player)",
+    title: "Trumpeter",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-untitled-horn-player.webp",
     modelUrl: "/sculptures/khanna-untitled-horn-player.glb",
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "17 × 9 × 8 inches",
   },
   // Scan "SculptureA.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // HM-0406. Year not given there.
@@ -353,8 +366,8 @@ export const sculptures: Sculpture[] = [
     dimensions: "12 × 5 × 5 inches",
     edition: "3 of 9",
   },
-  // Scan "eggshellwithBeans.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
-  // YS-0060.
+  // Scan "eggshellwithBeans.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "39 - Yashika Sugandh Matar, 2024": YS-0205. (The Artlogic view lists a 102 × 30 × 25 inch version, YS-0060.)
   {
     slug: "sugandh-matar",
     title: "Matar",
@@ -365,7 +378,7 @@ export const sculptures: Sculpture[] = [
     facing: 110,
     material: "Acrylic on Fiber Resin and Nylon",
     year: "2024",
-    dimensions: "102 × 30 × 25 inches",
+    dimensions: "11 × 2 × 2 inches",
   },
   // Scan "tailor.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // Yusuf-0547 (untitled there). Year not given there.
@@ -395,9 +408,8 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "20 × 10 × 11 inches",
   },
-  // Added with npm run add-model from 14 - Thotta -  Man with Mridangam.glb.
-  // Title and artist come from that file name; none of the Thota Vaikuntam
-  // works in the Artlogic view matches it, so medium, year and size are unknown.
+  // Scan "14 - Thotta - Man with Mridangam.glb". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "14 - Thotta - Man with Mridangam". Year not given there.
   {
     slug: "thota-man-with-mridangam",
     title: "Man with Mridangam",
@@ -405,8 +417,9 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-man-with-mridangam.webp",
     modelUrl: "/sculptures/thota-man-with-mridangam.glb",
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "59 × 24 × 23 inches",
   },
   // Scan "18 - Sujata Bajaj - Ganesha.glb". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // SUJ-0012, matched by photo. Year not given there.
@@ -436,50 +449,50 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
-  // Scan "27 - Krishan Khanna - 05.glb" (original in .glb-backup/). Artist from
-  // the file name. A trumpeter in a copper-coloured coat with one leg kicked up,
-  // on a small base; no title came with the scan and no work in the Artlogic
-  // view matches it by photo, so title, medium, year and size are unknown.
-  // TODO: confirm details.
+  // Scan "27 - Krishan Khanna - 05.glb" (original in .glb-backup/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "32 - Krishan Khanna - 05" (KKA/YF/Nov2025/001–010), matched by the name "Krishan Khanna - 05";
+  // the "27" in the file name is the sheet number of "Krishan Khanna - 04". No photo to check against.
   {
     slug: "khanna-untitled-trumpeter",
-    title: "Untitled (Trumpeter)",
+    title: "Patinder Ji Haran Walla",
     description: "",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-untitled-trumpeter.webp",
     modelUrl: "/sculptures/khanna-untitled-trumpeter.glb",
     facing: 270,
-    material: "",
-    year: "",
+    material: "Bronze",
+    year: "2025",
+    dimensions: "56 × 32 × 18 inches",
+    edition: "Edition of 9 + AP",
   },
-  // Scan "31.glb" (original in .glb-backup/web/). A rough figure with a disc and a
-  // long rod like a shield and spear, on a dark red plinth. No title or artist came
-  // with the scan and no work in the Artlogic view matches it by photo, so title,
-  // artist, medium, year and size are unknown. TODO: confirm details.
+  // Scan "31.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "31", marked there "[TO CONFIRM CAST]": a small edition series whose exact cast/patina
+  // can't be identified from the photo. TODO: confirm the cast.
   {
     slug: "untitled-figure-with-spear",
-    title: "Untitled (Figure with Spear)",
+    title: "Man from Moon",
     description: "",
-    artistSlug: "",
+    artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/untitled-figure-with-spear.webp",
     modelUrl: "/sculptures/untitled-figure-with-spear.glb?v=2",
     facing: 270,
-    material: "",
+    material: "Bronze",
     year: "",
+    dimensions: "7 × 9 × 4 inches",
   },
-  // Scan "33 - Thotta - Female Head - 05.glb" (original in .glb-backup/web/).
-  // Title and artist come from that file name. In the Artlogic view it only
-  // resembles TV-0070 (that one has red lips and black hair, this one doesn't),
-  // so medium, year and size are left unknown. TODO: confirm details.
+  // Scan "33 - Thotta - Female Head - 05.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "33 - Thotta - Female Head - 05": TVA-0016.
   {
     slug: "thota-female-head-05",
-    title: "Female Head",
+    title: "Untitled (Female Head, side braid, green collar)",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-05.webp",
     modelUrl: "/sculptures/thota-female-head-05.glb",
-    material: "",
-    year: "",
+    material: "Bronze",
+    year: "2025",
+    dimensions: "25 × 17 × 24 inches",
+    edition: "Edition of 9 + AP",
   },
   // Scan "COUPLE.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
   // JC-0002, matched by photo. Year not given there.
@@ -526,11 +539,11 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
-  // Scan "DRONE05.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
-  // TVA/Dec2025/001 (untitled there), matched by photo. Year not given there.
+  // Scan "DRONE05.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "53 - Drone 05", and the Artlogic view (matched by photo): TVA/Dec2025/001. Year not given.
   {
     slug: "thota-untitled-head-polka-dot",
-    title: "Untitled",
+    title: "Untitled (Female Head, polka-dot collar)",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-untitled-head-polka-dot.webp",
@@ -540,38 +553,38 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "99 × 85 × 53 inches",
   },
-  // Scan "38 - Thotta - Female Head - 10 .glb" (original in .glb-backup/web/).
-  // Title and artist come from that file name. No work in the Artlogic view
-  // matches it by photo, so medium, year and size are unknown. TODO: confirm details.
+  // Scan "38 - Thotta - Female Head - 10 .glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "38 - Thotta - Female Head - 10": TV-0105 (edition cast).
   {
     slug: "thota-female-head-10",
-    title: "Female Head",
+    title: "Ruby Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-10.webp",
     modelUrl: "/sculptures/thota-female-head-10.glb",
-    material: "",
-    year: "",
+    material: "Bronze",
+    year: "2026",
+    dimensions: "24 × 16 × 24 inches",
   },
-  // Scan "Drone_07.glb" (original in .glb-backup/web/). Artist confirmed by the user
-  // (2026-11-16). It resembles TVA/Sep2025/005 in the Artlogic view, but the face colour
-  // and moustache differ, so title, medium, year and size are left unknown. TODO: confirm details.
+  // Scan "Drone_07.glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "55 - Drone 07": TVA/Sep2025/005.
   {
     slug: "thota-untitled-head-with-turban",
-    title: "Untitled (Head with Turban)",
+    title: "Untitled (Male Head, blue turban, moustache)",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-untitled-head-with-turban.webp",
     modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
-    material: "",
-    year: "",
+    material: "Fiberglass",
+    year: "2025",
+    dimensions: "97 × 50 × 72 inches",
   },
-  // Scan "Drone06_FINAL.usdz". Details from the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/),
-  // TV-0070 (untitled there), matched by photo: red lips, nose ring, black hair, green collar.
-  // thota-female-head-05 is the same form in another finish. Year not given there.
+  // Scan "Drone06_FINAL.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "54 - Drone 06", and the Artlogic view (matched by photo): TV-0070. Year not given.
+  // thota-female-head-05 is the same form in another finish.
   {
     slug: "thota-untitled-head-with-nose-ring",
-    title: "Untitled",
+    title: "Untitled (Female Head, bronze with long hair)",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-untitled-head-with-nose-ring.webp",
@@ -580,21 +593,20 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "58 × 58 × 47 inches",
   },
-  // Scan "Female_Head_7.usdz" (original in .glb-backup/web/). Title and artist come
-  // from the file and its mesh name "Thotta_Female_Head_07". Same series as
-  // thota-female-head-10 but a different work (nose ring, drop earrings). No work in
-  // the Artlogic view matches it by photo, so medium, year and size are unknown.
-  // TODO: confirm details.
+  // Scan "Female_Head_7.usdz" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "35 - Thotta - Female Head - 07": TVA-0018.
   {
     slug: "thota-female-head-07",
-    title: "Female Head",
+    title: "Untitled (Female Head, nose ring, red collar)",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-07.webp",
     modelUrl: "/sculptures/thota-female-head-07.glb",
     facing: 260,
-    material: "",
-    year: "",
+    material: "Bronze",
+    year: "2025",
+    dimensions: "26 × 17 × 24 inches",
+    edition: "Edition of 9 + AP",
   },
 ];
 
