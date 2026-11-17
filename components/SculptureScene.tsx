@@ -178,6 +178,11 @@ interface SculptureSceneProps {
   look?: ArtworkLook;
   /** A candidate light rig to preview (components/three/lighting.ts); default LIGHTING. */
   rig?: string;
+  /**
+   * With `interactive`: drag to turn the work, but leave the mouse wheel and
+   * panning alone, so a page that scrolls past the canvas keeps scrolling.
+   */
+  rotateOnly?: boolean;
 }
 
 const Loader = () => {
@@ -502,6 +507,7 @@ export const SculptureContents: FC<
   facing = 0,
   look,
   rig: rigName,
+  rotateOnly = false,
   card = false,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
@@ -587,9 +593,9 @@ export const SculptureContents: FC<
       <OrbitControls
         ref={controlsRef}
         makeDefault
-        enableZoom={interactive}
+        enableZoom={interactive && !rotateOnly}
         {...(!fit && { minDistance: camZ * 0.4, maxDistance: camZ * 2 })}
-        enablePan={interactive}
+        enablePan={interactive && !rotateOnly}
         autoRotate={autoRotate && !interactive && !isThumb}
         autoRotateSpeed={1.4}
         enableDamping
