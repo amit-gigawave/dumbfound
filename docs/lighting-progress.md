@@ -19,6 +19,7 @@ Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) we
   | `sideLights` | extra lights from left and right at face height (1 = key strength) |
   | `specular` | *sets* the paint's sheen 0–1 (fixes scans exported with 0) |
   | `cardLight` | multiplies light and reflections on the catalogue card only (thumbnail + hover preview), not the artwork-page viewer |
+  | `selfShadow` | `false` = the viewer drops the shadows the work casts on itself (thumbnails never have them), so the two match |
   | `rig` | `"previous"` = use the old filmic light for this work (tone mapping set per scene, so it works in the shared hover renderer too) |
 
 - **Applied in** `components/SculptureScene.tsx`: `prepareMaterial` handles the material fixes for every work (transmission off, specular colour capped) plus `look`. `SculptureContents` builds the lights.
@@ -32,11 +33,12 @@ User's taste: **matte and natural, not shiny**. The user judges each work by eye
 | Painted heads | `{ metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 }` | Ruby Saree, Polka-Dot Collar, Nose Ring |
 | … dimmer | same, `light: 0.65` | Dark Green Saree, Yellow Saree |
 | … brighter | same, `light: 1.2` | Side Braid |
-| Painted figures | `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` | 6 Khanna bandsmen, Ganesha, Meri Patang |
+| Painted figures | `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` | 5 Khanna bandsmen, Ganesha, Meri Patang |
 | … dimmer | same, `reflections: 0.51, light: 0.7` | Couple |
 | … brighter | same, `reflections: 0.9, light: 1.4` | Trumpeter |
 | … dimmer on the card only | same, `cardLight: 0.72` | Ramesh Kumar Accordian, Rajinder Kaka Horn, Davinder Raj Tutu (white uniforms glared on the light card plate; viewer was fine) |
 | Seated Bandsman | `{ light: 1.4, reflections: 1.5 }` | dark grey, needed lifting |
+| Bandwalla | painted-figure look + `light: 1.15, cardLight: 0.87, selfShadow: false` | viewer was darker than its thumbnail; this matches them (thumbnail unchanged) |
 | … brighter | same, `light: 1.3` | Dotted Saree, Man with Mridangam |
 | Blue Saree | `{ metalness: 0.2, roughness: 1.6, reflections: 1.2, light: 1.6 }` | dark bronze skin needed lifting |
 | Blue Turban | `{ metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3, specular: 0.6, sideLights: 1 }` | black face showed no form |
@@ -63,6 +65,9 @@ The last two need the file's CRLF line endings. Git Bash `sed -i` strips them, s
 Gotchas:
 - `make-thumbnails` sometimes times out, especially on `sugandh-matar` (heavy). Run it alone, last.
 - Grid rows depend on width: desktop has 3 columns, a phone 2. Order is in `lib/catalogue-order.ts`. The first rows are Dark Green Saree, Blue Saree, Yellow Saree / Dotted Saree, Mridangam, Side Braid / Polka-Dot Collar, Ruby Saree, Blue Turban.
+
+## Viewer vs thumbnail
+The artwork-page viewer differs from the card in three ways: the key light casts self-shadows there (darker faces, arms), the backdrop is chosen by the work's colour (dark for light works), and framing is wider. Use `selfShadow: false` and/or `cardLight` to match them. `scripts/.tmp-viewershot.mjs <out.png> <slug>` (untracked) screenshots the viewer.
 
 ## Still open
 - Keep tuning per work as the user reviews. There are no reference photos of the Thota heads in `public/artworks`, so the levels are chosen from renders.

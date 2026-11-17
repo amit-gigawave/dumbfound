@@ -95,6 +95,11 @@ export interface ArtworkLook {
    * light-coloured work look dimmer.
    */
   cardLight?: number;
+  /**
+   * false: the artwork page's viewer drops the shadows the work casts on
+   * itself, so it looks like its thumbnail (which has none).
+   */
+  selfShadow?: boolean;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -650,7 +655,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-bandwalla.webp?v=3",
     modelUrl: "/sculptures/untitled-bandsman-in-red.glb",
-    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.15, cardLight: 0.87, selfShadow: false },
     facing: 200,
     material: "Bronze",
     year: "",

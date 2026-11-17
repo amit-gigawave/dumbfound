@@ -497,7 +497,8 @@ export const SculptureContents: FC<
         position={rig.key.position}
         intensity={rig.key.intensity * light}
         color={rig.key.color}
-        castShadow={interactive}
+        // Shadows the work casts on itself, viewer only (thumbnails have none).
+        castShadow={interactive && look?.selfShadow !== false}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         shadow-bias={-0.0002}
