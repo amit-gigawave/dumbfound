@@ -31,7 +31,8 @@ User's taste: **matte and natural, not shiny**. The user judges each work by eye
 | Painted heads | `{ metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 }` | Ruby Saree, Polka-Dot Collar, Nose Ring |
 | … dimmer | same, `light: 0.65` | Dark Green Saree, Yellow Saree |
 | … brighter | same, `light: 1.2` | Side Braid |
-| Painted figures | `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` | 10 Khanna bandsmen, Couple, Ganesha, Meri Patang |
+| Painted figures | `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` | 10 Khanna bandsmen, Ganesha, Meri Patang |
+| … dimmer | same, `reflections: 0.51, light: 0.7` | Couple |
 | … brighter | same, `light: 1.3` | Dotted Saree, Man with Mridangam |
 | Blue Saree | `{ metalness: 0.2, roughness: 1.6, reflections: 1.2, light: 1.6 }` | dark bronze skin needed lifting |
 | Blue Turban | `{ metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3, specular: 0.6, sideLights: 1 }` | black face showed no form |
