@@ -202,6 +202,7 @@ const ArtworkTile = ({
               url={modelUrl}
               fit={FIT_CARD}
               facing={work.facing}
+              look={work.look}
               autoRotate={spinning}
               onReady={onReady}
             />

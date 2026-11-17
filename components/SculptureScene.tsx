@@ -23,6 +23,7 @@ import * as THREE from "three";
 import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 import { setupRenderer } from "./three/renderer";
+import type { ArtworkLook } from "@/lib/sculptures";
 
 // Neutral grey for the wireframe scaffold during the reveal.
 const WIRE_COLOR = "#5c5c5c";
@@ -106,6 +107,32 @@ const modelLuminance = (root: THREE.Object3D): number => {
 const pickBackground = (lum: number) =>
   lum >= 0.5 ? BG_FOR_LIGHT_MODEL : BG_FOR_DARK_MODEL;
 
+/**
+ * The surface a work is drawn with: a clone of its own material, cleaned of
+ * scan export faults and adjusted by the work's `look`.
+ */
+const prepareMaterial = (
+  m: THREE.Material,
+  look: ArtworkLook | undefined,
+  clip: THREE.Plane,
+) => {
+  const c = m.clone();
+  c.clippingPlanes = [clip];
+  if (c instanceof THREE.MeshPhysicalMaterial) {
+    // USD exports mark some scans as glass (transmission) or set specular
+    // above the physical maximum; on an opaque work both draw as glare.
+    c.transmission = 0;
+    const s = c.specularColor;
+    s.setRGB(Math.min(s.r, 1), Math.min(s.g, 1), Math.min(s.b, 1));
+  }
+  if (c instanceof THREE.MeshStandardMaterial && look) {
+    c.metalness *= look.metalness ?? 1;
+    // Scales the roughness texture too; the shader caps it at fully matte.
+    c.roughness *= look.roughness ?? 1;
+  }
+  return c;
+};
+
 interface SculptureSceneProps {
   url: string;
   offsetX?: number;
@@ -145,6 +172,8 @@ interface SculptureSceneProps {
   autoRotate?: boolean;
   /** Degrees to turn the model so it faces the camera (see Sculpture.facing). */
   facing?: number;
+  /** Per-work surface and light tuning (see Sculpture.look). */
+  look?: ArtworkLook;
 }
 
 const Loader = () => {
@@ -178,11 +207,13 @@ const RevealModel: FC<{
   reveal: boolean;
   fit?: number;
   facing: number;
+  look?: ArtworkLook;
   adaptiveBg: boolean;
   onBackground?: (hex: string) => void;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, fit, facing, adaptiveBg, onBackground, onReady }) => {
+}> = ({ url, offsetX, offsetY, reveal, fit, facing, look, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
+  const lookKey = JSON.stringify(look ?? {});
   const get = useThree((state) => state.get);
 
   // Choose a contrasting backdrop from the model's own base colour.
@@ -267,21 +298,15 @@ const RevealModel: FC<{
         child.castShadow = true;
         child.receiveShadow = true;
         const orig = child.material;
-        if (Array.isArray(orig)) {
-          child.material = orig.map((m) => {
-            const c = m.clone();
-            c.clippingPlanes = [texClip];
-            return c;
-          });
-        } else {
-          const c = orig.clone();
-          c.clippingPlanes = [texClip];
-          child.material = c;
-        }
+        child.material = Array.isArray(orig)
+          ? orig.map((m) => prepareMaterial(m, look, texClip))
+          : prepareMaterial(orig, look, texClip);
       }
     });
     return clone;
-  }, [scene, texClip]);
+    // The look is compared by value: callers may pass a fresh object each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene, texClip, lookKey]);
 
   // Center + uniform-scale once, synchronously, before first paint.
   useLayoutEffect(() => {
@@ -427,26 +452,29 @@ export const SculptureContents: FC<
   adaptiveBackground = true,
   autoRotate = true,
   facing = 0,
+  look,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
+  const light = look?.light ?? 1;
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
 
       {/* Deterministic studio lighting — independent of model load order. */}
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.5 * light} />
       <directionalLight
         position={[3, 5, 4]}
-        intensity={1.6}
+        intensity={1.6 * light}
         castShadow={interactive}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         shadow-bias={-0.0002}
       />
-      <directionalLight position={[-4, 2, -3]} intensity={0.5} />
+      <directionalLight position={[-4, 2, -3]} intensity={0.5 * light} />
 
-      {/* Reflections / specular for the bronze patina — procedural, no HDR download. */}
-      <StudioEnvironment intensity={0.9} />
+      {/* Reflections / specular for the bronze patina — procedural, no HDR download.
+          Set per scene: three ignores a material's own envMapIntensity here. */}
+      <StudioEnvironment intensity={0.9 * (look?.reflections ?? 1)} />
 
       <Suspense fallback={loader ? <Loader /> : null}>
         <RevealModel
@@ -456,6 +484,7 @@ export const SculptureContents: FC<
           reveal={reveal && !isThumb}
           fit={fit}
           facing={facing}
+          look={look}
           adaptiveBg={!isThumb && adaptiveBackground}
           onBackground={onBackground}
           onReady={onReady}

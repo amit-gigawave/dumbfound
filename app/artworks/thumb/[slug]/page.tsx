@@ -18,11 +18,14 @@ export default async function ThumbnailPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  /** `?facing=90` previews another angle without editing the catalogue. */
-  searchParams: Promise<{ facing?: string }>;
+  /**
+   * `?facing=90` previews another angle and `?look={"metalness":0.3}` another
+   * surface, without editing the catalogue.
+   */
+  searchParams: Promise<{ facing?: string; look?: string }>;
 }) {
   const { slug } = await params;
-  const { facing } = await searchParams;
+  const { facing, look } = await searchParams;
   const sculpture = getSculpture(slug);
   // Only works with a 3D model get a generated thumbnail.
   if (!sculpture?.modelUrl) notFound();
@@ -33,6 +36,7 @@ export default async function ThumbnailPage({
         ...sculpture,
         modelUrl: sculpture.modelUrl,
         ...(facing !== undefined && { facing: Number(facing) }),
+        ...(look !== undefined && { look: JSON.parse(look) }),
       }}
     />
   );

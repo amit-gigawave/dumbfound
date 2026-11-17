@@ -167,6 +167,13 @@ Scans from a phone or scanning app come as USD files. Turn them into a `.glb` wi
 
 4. **Check which way it faces.** Look at the thumbnail. Scans are often saved facing sideways or backwards. If so, set `facing` (for example `180`) and make the thumbnail again. Then make the AR model.
 
+5. **Check the shine.** Turn the work in the viewer. Scans often come out more metallic and glossy than the real piece, so paint shows hot white streaks. Set `look` to tone it down, then make the thumbnail again (and bump its `?v=`). What we use:
+   - painted heads: `{ metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 }`
+   - painted figures: `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }`
+   - bronze: `{ metalness: 0.5, roughness: 1.3 }`
+
+   `/artworks/thumb/<slug>?look={"metalness":0.2}` previews a setting without editing the catalogue.
+
 Unknown details (artist, year, medium) can stay empty (`""`), or start with `TODO`, until they are known. They are hidden on the site.
 
 ### A work without 3D (painting, photograph, drawing, …)
@@ -228,6 +235,7 @@ The entries marked `placeholder: true` ("Artist Name") only fill the layout. Del
 | `modelUrl` | The 3D model. The work's page opens in 3D (with a 3D / Photo switch) and gets "View in AR" |
 | `facing` | Degrees to turn the model (anticlockwise, seen from above) so it faces front. For scans saved facing sideways. Run `npm run thumbnails -- <slug>` and `npm run ar-models -- <slug>` again after changing it |
 | `heightCm` | The work's real height in cm: the size it appears at in AR. Without it, AR uses 50 cm. Run `npm run ar-models -- <slug>` again after changing it |
+| `look` | Tones down a scan that renders shinier than the real work. Each value multiplies the model's own: `metalness` (0 = paint), `roughness` (above 1 = more matte), `reflections`, `light`. Only the 3D views use it, not AR. Run `npm run thumbnails -- <slug>` again after changing it |
 | `usdzUrl` | A ready-made iPhone AR file. Without it, one is generated from the `.glb` |
 | `subtitle` | A short line, e.g. `"From the Nayika series"`. Searchable |
 | `longDescription` | Extra paragraph under the description |

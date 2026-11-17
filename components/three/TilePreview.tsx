@@ -10,6 +10,7 @@ import {
   type ReconcilerRoot,
 } from "@react-three/fiber";
 import { SculptureContents } from "../SculptureScene";
+import type { ArtworkLook } from "@/lib/sculptures";
 import { sharedRenderer } from "./renderer";
 
 const DPR_MAX = 1.5;
@@ -33,12 +34,14 @@ export default function TilePreview({
   url,
   fit,
   facing,
+  look,
   autoRotate,
   onReady,
 }: {
   url: string;
   fit: number;
   facing?: number;
+  look?: ArtworkLook;
   autoRotate: boolean;
   onReady: () => void;
 }) {
@@ -112,6 +115,7 @@ export default function TilePreview({
         url={url}
         fit={fit}
         facing={facing}
+        look={look}
         reveal={false}
         adaptiveBackground={false}
         autoRotate={autoRotate}
@@ -119,7 +123,7 @@ export default function TilePreview({
         loader={false}
       />,
     );
-  }, [url, fit, facing, autoRotate, onReady]);
+  }, [url, fit, facing, look, autoRotate, onReady]);
 
   return <canvas ref={canvasRef} className="pointer-events-none h-full w-full" />;
 }

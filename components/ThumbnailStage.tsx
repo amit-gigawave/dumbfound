@@ -42,6 +42,7 @@ const ThumbnailStage = ({
         mode="thumbnail"
         fit={FIT_CARD}
         facing={sculpture.facing}
+        look={sculpture.look}
         onReady={onReady}
       />
     </div>
