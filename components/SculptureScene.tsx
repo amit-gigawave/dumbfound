@@ -125,6 +125,7 @@ const prepareMaterial = (
     c.transmission = 0;
     const s = c.specularColor;
     s.setRGB(Math.min(s.r, 1), Math.min(s.g, 1), Math.min(s.b, 1));
+    if (look?.specular !== undefined) c.specularIntensity = look.specular;
   }
   if (c instanceof THREE.MeshStandardMaterial && look) {
     c.metalness *= look.metalness ?? 1;
@@ -485,6 +486,16 @@ export const SculptureContents: FC<
         <directionalLight position={rig.fill.position} intensity={rig.fill.intensity * light} />
       )}
       <directionalLight position={rig.back.position} intensity={rig.back.intensity * light} />
+      {/* Optional side lights (look.sideLights): graze dark surfaces so their form shows. */}
+      {!!look?.sideLights &&
+        ([-1, 1] as const).map((side) => (
+          <directionalLight
+            key={side}
+            position={[side * 5, 1, 1.5]}
+            intensity={rig.key.intensity * look.sideLights! * light}
+            color={rig.key.color}
+          />
+        ))}
 
       {/* Reflections / specular for the bronze patina — procedural, no HDR download.
           Set per scene: three ignores a material's own envMapIntensity here. */}

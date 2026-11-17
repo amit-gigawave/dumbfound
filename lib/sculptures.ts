@@ -74,6 +74,16 @@ export interface ArtworkLook {
   reflections?: number;
   /** Strength of the lights. */
   light?: number;
+  /**
+   * Extra lights from the viewer's left and right at face height (0 = none,
+   * 1 = as strong as the key). For dark works whose form front light can't show.
+   */
+  sideLights?: number;
+  /**
+   * Sets (not multiplies) the paint's surface sheen, 0–1. Some scans export it
+   * as 0, which leaves dark paint flat whatever the light; 1 is ordinary paint.
+   */
+  specular?: number;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -672,9 +682,9 @@ export const sculptures: Sculpture[] = [
     title: "Male Head with Blue Turban and Moustache",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp?v=4",
+    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp?v=5",
     modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
-    look: { metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3 },
+    look: { metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3, specular: 0.6, sideLights: 1 },
     material: "Fiberglass",
     year: "2025",
     dimensions: "97 × 50 × 72 inches",
