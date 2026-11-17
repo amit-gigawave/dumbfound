@@ -301,9 +301,10 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "headG.usdz". Matched by the photo in row "13 - Thotta - Female Head - 04" of the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F.
   // That row is marked "[TO CONFIRM]": TV-0107, "3D scan shows no collar colour; alt. TVA-0015". It was listed as Himmat Shah until 2026-11-16.
+  // Title given by the user on 2026-11-17 (was "Dark Green Saree Lady"); the slug is kept.
   {
     slug: "thota-dark-green-saree-lady",
-    title: "Dark Green Saree Lady",
+    title: "Saree Lady Series (White)",
     description: "",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp?v=4",
