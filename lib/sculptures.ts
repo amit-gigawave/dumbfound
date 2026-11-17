@@ -607,7 +607,7 @@ export const sculptures: Sculpture[] = [
     title: "Couple",
     description: "",
     artistSlug: "jogen-chowdhury",
-    thumbnail: "/thumbnails/chowdhury-couple.webp?v=4",
+    thumbnail: "/thumbnails/chowdhury-couple.webp?v=5",
     modelUrl: "/sculptures/chowdhury-couple.glb",
     look: { metalness: 0.2, roughness: 1.6, reflections: 0.51, light: 0.7 },
     facing: 180,
