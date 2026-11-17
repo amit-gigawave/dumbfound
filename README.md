@@ -132,6 +132,8 @@ public/
 docs/
   adding-artworks.md    How to add artworks and artists
   ar-qr-plan.md         Plan: scan a QR code to see a work in AR (not built yet)
+  lighting-progress.md  Handoff: how the 3D works are lit, settings per work, what is open
+  session-2026-11-17.md Record of the 2026-11-17 session and its to-dos (new models, lighting)
 ```
 
 ## Content

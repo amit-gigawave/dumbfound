@@ -1,7 +1,7 @@
 # Lighting the 3D works: progress notes
 
 Handoff for continuing the per-work lighting. State as of 2026-11-17.
-Branch `site-redesign-oct-2026`, last commit `e277956`. **Nothing is pushed**, so dumbfound.vercel.app still shows the old, shiny look.
+Branch `site-redesign-oct-2026`. **Live since 2026-11-17** (merged into `origin/main` `153768f` and `ayan/main`), so dumbfound.vercel.app shows the new light. Next steps: [session-2026-11-17.md](session-2026-11-17.md), to-do 2.
 
 ## The problem
 Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) were exported as polished metal (metalness 0.6–1, roughness ~0.3), so the paint showed moving chrome streaks. Some USD scans also carried faults: glass transmission (Lord Krishna, Pandit), specular colour above 1 (Gulratan), and specular strength 0 (black paint then reflects nothing).
@@ -77,4 +77,4 @@ The artwork-page viewer differs from the card in three ways: the key light casts
 - AR copies (`public/ar/`) don't get `look`, so works can still look shiny in AR. Bake it into `scripts/make-ar-models.mjs` if wanted.
 - Lord Krishna has a see-through sheet under its base. That's part of the scan's shape, not the lighting.
 - The home hero (`components/HeroScene.tsx`) has its own, much brighter light and was not changed.
-- To go live: push the branch to `origin` and `ayan`, then merge it into each `main` (no force). Only when the user asks.
+- To publish later changes: push the branch to `origin` and `ayan`, then merge it into each `main` (no force). Only when the user asks.
