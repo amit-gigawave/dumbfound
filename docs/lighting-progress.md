@@ -20,7 +20,7 @@ Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) we
   | `specular` | *sets* the paint's sheen 0–1 (fixes scans exported with 0) |
   | `cardLight` | multiplies light and reflections on the catalogue card only (thumbnail + hover preview), not the artwork-page viewer |
   | `selfShadow` | `false` = the viewer drops the shadows the work casts on itself (thumbnails never have them), so the two match |
-  | `cardZoom` / `cardShift` / `cardLift` | card framing only (thumbnail + hover): zoom, sideways shift (fraction of width, + = right), upward shift (fraction of height). Done as a camera view offset, so the turning preview still spins about the work. Check the side view too, so a turning preview isn't cropped |
+  | `cardZoom` / `cardShift` / `cardLift` | card framing only (thumbnail + hover): zoom, sideways shift (fraction of width, + = right), upward shift (fraction of height). Zoom and lift are a camera view offset; the shift moves where the camera aims, so the turning preview circles the centred part and its long sides stay on the card. Centre what the eye centres on (figure + base), not the outline. `scripts/.tmp-hovershot.mjs <prefix> <slug>` (untracked) captures a card's hover preview turning |
   | `rig` | `"previous"` = use the old filmic light for this work (tone mapping set per scene, so it works in the shared hover renderer too) |
 
 - **Applied in** `components/SculptureScene.tsx`: `prepareMaterial` handles the material fixes for every work (transmission off, specular colour capped) plus `look`. `SculptureContents` builds the lights.
@@ -48,7 +48,7 @@ User's taste: **matte and natural, not shiny**. The user judges each work by eye
 | Bronze Long-Hair head | `{ metalness: 0.2, roughness: 1.8, reflections: 0.6 }` | the bronze setting still glared on its face |
 | Lady | `{ light: 1.8, reflections: 2.5, sideLights: 1 }` | dark patina read as dull black |
 | Glossy non-metal | `{ roughness: 2, reflections: 0.6 }` / `{ roughness: 1.8, reflections: 0.7 }` | Ghosh / Matar |
-| Tailor | `{ cardZoom: 1.2, cardShift: 0.045, cardLift: 0.04 }` | framing only: its long sewing-machine base made it small and off-centre on the card |
+| Tailor | `{ cardZoom: 1.1, cardShift: 0.075, cardLift: 0.04 }` | framing only: its long sewing-machine base made it small and off-centre on the card |
 | Untouched | — | Cat, Man from Moon |
 
 ## Changing a work

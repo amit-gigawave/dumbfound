@@ -324,25 +324,23 @@ const RevealModel: FC<{
   }, [normalized]);
 
   useFrame((_, delta) => {
-    // Card framing: zoom, and a sideways shift done in screen space (a view
-    // offset), so a turning preview still spins about the work's own centre.
+    // Card framing: zoom, and a lift done in screen space (a view offset);
+    // the sideways shift moves where the camera aims (below, when framing).
     // Re-applied when the canvas size changes.
     if (cardFrame) {
       const { camera, size } = get();
       if (camera instanceof THREE.PerspectiveCamera) {
         const v = camera.view;
-        const px = -cardFrame.shift * size.width;
         const py = cardFrame.lift * size.height;
         if (
           camera.zoom !== cardFrame.zoom ||
           !v ||
           v.fullWidth !== size.width ||
           v.fullHeight !== size.height ||
-          v.offsetX !== px ||
           v.offsetY !== py
         ) {
           camera.zoom = cardFrame.zoom;
-          camera.setViewOffset(size.width, size.height, px, py, size.width, size.height);
+          camera.setViewOffset(size.width, size.height, 0, py, size.width, size.height);
         }
       }
     }
@@ -360,10 +358,16 @@ const RevealModel: FC<{
       const dist =
         Math.max(extent.h / 2 / (tanV * fit!), half / (tanH * fit!)) +
         half * 0.5;
-      camera.position.set(0, 0, dist);
-      camera.lookAt(0, 0, 0);
+      // Card framing's sideways shift (look.cardShift, a fraction of the card's
+      // width): aim beside the work, so it sits off-axis by that much and a
+      // turning preview circles that point instead of sliding off the card.
+      const aimX = cardFrame?.shift
+        ? -(cardFrame.shift * 2 * dist * tanH) / cardFrame.zoom
+        : 0;
+      camera.position.set(aimX, 0, dist);
+      camera.lookAt(aimX, 0, 0);
       const orbit = controls as unknown as OrbitControlsImpl;
-      orbit.target.set(0, 0, 0);
+      orbit.target.set(aimX, 0, 0);
       orbit.minDistance = dist * 0.35;
       orbit.maxDistance = dist * 2.5;
       orbit.update();
