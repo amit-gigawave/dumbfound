@@ -103,7 +103,7 @@ export const sculptures: Sculpture[] = [
     description: "",
     modelUrl: "/sculptures/Lady.glb",
     look: { light: 1.8, reflections: 2.5, sideLights: 1 },
-    thumbnail: "/thumbnails/thota-lady.webp?v=3",
+    thumbnail: "/thumbnails/thota-lady.webp?v=4",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",
