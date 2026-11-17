@@ -41,6 +41,12 @@ export interface Sculpture {
    * heights use AR_DEFAULT_CM. Re-run `npm run ar-models -- <slug>` after changing it.
    */
   heightCm?: number;
+  /**
+   * What the work shows, for grouping the artworks grid: "head" (a head or
+   * bust), "figure" (a whole body; the default when left out) or "other" (an
+   * animal or object). Read from the work itself; it is never shown as text.
+   */
+  form?: "head" | "figure" | "other";
   /** Prebuilt USDZ for iPhone AR. Without it, one is generated from the GLB in the browser. */
   usdzUrl?: string;
   /** A short line, e.g. "From the Nayika series". Searchable. */
@@ -234,6 +240,7 @@ export const sculptures: Sculpture[] = [
   // Model from the colour scan "ElephantKite.usdz" (2026-11-16); it replaced an untextured low-poly mesh.
   {
     slug: "sugandh-meri-patang",
+    form: "other",
     title: "Meri Patang",
     description: "",
     artistSlug: "yashika-sugandh",
@@ -253,6 +260,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "shah-head-with-bared-teeth",
+    form: "head",
     title: "Head with Bared Teeth",
     description: "",
     artistSlug: "himmat-shah",
@@ -270,6 +278,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "shah-head-with-pinpoint-eyes",
+    form: "head",
     title: "Head with Pinpoint Eyes",
     description: "",
     artistSlug: "himmat-shah",
@@ -288,6 +297,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "ghosh-head-in-fragments",
+    form: "head",
     title: "Head in Fragments",
     description: "",
     artistSlug: "subba-ghosh",
@@ -304,6 +314,7 @@ export const sculptures: Sculpture[] = [
   // Title given by the user on 2026-11-17 (was "Dark Green Saree Lady"); the slug is kept.
   {
     slug: "thota-dark-green-saree-lady",
+    form: "head",
     title: "Saree Lady Series (White)",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -337,6 +348,7 @@ export const sculptures: Sculpture[] = [
   // rows "5 - Thotta - Female Head - 02" and "37 - Thotta - Female Head - 09": TV-0106 (edition cast).
   {
     slug: "thota-yellow-saree-lady",
+    form: "head",
     title: "Yellow Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -398,6 +410,7 @@ export const sculptures: Sculpture[] = [
   // HM-0406. Year not given there.
   {
     slug: "shah-tirthankar",
+    form: "head",
     title: "Tirthankar",
     description: "",
     artistSlug: "himmat-shah",
@@ -483,6 +496,7 @@ export const sculptures: Sculpture[] = [
   // row "39 - Yashika Sugandh Matar, 2024": YS-0205. (The Artlogic view lists a 102 × 30 × 25 inch version, YS-0060.)
   {
     slug: "sugandh-matar",
+    form: "other",
     title: "Matar",
     description: "",
     artistSlug: "yashika-sugandh",
@@ -499,6 +513,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "yusuf-the-tailor",
+    form: "head",
     title: "The Tailor",
     description: "",
     artistSlug: "yusuf",
@@ -515,6 +530,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "yusuf-polka-dot-cat",
+    form: "other",
     title: "Polka Dot Cat",
     description: "",
     artistSlug: "yusuf",
@@ -597,6 +613,7 @@ export const sculptures: Sculpture[] = [
   // can't be identified from the photo. TODO: confirm the cast.
   {
     slug: "shah-man-from-moon",
+    form: "head",
     title: "Man from Moon",
     description: "",
     artistSlug: "himmat-shah",
@@ -612,6 +629,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, side braid, green collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-with-side-braid",
+    form: "head",
     title: "Female Head with Side Braid and Green Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -678,6 +696,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, polka-dot collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-with-polka-dot-collar",
+    form: "head",
     title: "Female Head with Polka-dot Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -694,6 +713,7 @@ export const sculptures: Sculpture[] = [
   // row "38 - Thotta - Female Head - 10": TV-0105 (edition cast).
   {
     slug: "thota-ruby-saree-lady",
+    form: "head",
     title: "Ruby Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -710,6 +730,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Male Head, blue turban, moustache)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-male-head-with-blue-turban",
+    form: "head",
     title: "Male Head with Blue Turban and Moustache",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -727,6 +748,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, bronze with long hair)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-bronze-female-head-with-long-hair",
+    form: "head",
     title: "Bronze Female Head with Long Hair",
     description: "",
     artistSlug: "thota-vaikuntam",
@@ -743,6 +765,7 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, nose ring, red collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-with-nose-ring",
+    form: "head",
     title: "Female Head with Nose Ring and Red Collar",
     description: "",
     artistSlug: "thota-vaikuntam",

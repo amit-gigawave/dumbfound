@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { sculptures } from "@/lib/sculptures";
-import { catalogueOrder } from "@/lib/catalogue-order";
+import { catalogueOrder, groupByForm } from "@/lib/catalogue-order";
 import { getArtist, initials, publishedArtists } from "@/lib/artists";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import type { ArtistOption } from "@/components/gallery/ArtistFilter";
@@ -54,10 +54,14 @@ export default async function ArtworksPage({
   }
 
   const selected = artistSlug ? getArtist(artistSlug) : undefined;
-  const works = catalogueOrder(
-    selected
-      ? sculptures.filter((w) => w.artistSlug === selected.slug)
-      : sculptures,
+  // Heads together, then full figures, then animals and objects; catalogue
+  // order within each group.
+  const works = groupByForm(
+    catalogueOrder(
+      selected
+        ? sculptures.filter((w) => w.artistSlug === selected.slug)
+        : sculptures,
+    ),
   );
   // Only artists with works listed, so no choice leads to an empty grid.
   const options: ArtistOption[] = publishedArtists()
