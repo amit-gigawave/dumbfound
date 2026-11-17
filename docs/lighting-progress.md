@@ -18,6 +18,7 @@ Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) we
   | `light` | multiplies every light |
   | `sideLights` | extra lights from left and right at face height (1 = key strength) |
   | `specular` | *sets* the paint's sheen 0–1 (fixes scans exported with 0) |
+  | `rig` | `"previous"` = use the old filmic light for this work (tone mapping set per scene, so it works in the shared hover renderer too) |
 
 - **Applied in** `components/SculptureScene.tsx`: `prepareMaterial` handles the material fixes for every work (transmission off, specular colour capped) plus `look`. `SculptureContents` builds the lights.
 - **Preview** without editing: `/artworks/thumb/<slug>?look={"light":1.2}&rig=previous&facing=90`.
@@ -34,11 +35,12 @@ User's taste: **matte and natural, not shiny**. The user judges each work by eye
 | … brighter | same, `light: 1.3` | Dotted Saree, Man with Mridangam |
 | Blue Saree | `{ metalness: 0.2, roughness: 1.6, reflections: 1.2, light: 1.6 }` | dark bronze skin needed lifting |
 | Blue Turban | `{ metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3, specular: 0.6, sideLights: 1 }` | black face showed no form |
-| Bronze | `{ metalness: 0.5, roughness: 1.3 }` | Krishna, Dancing Shiva, both Shah heads, Tirthankar, Levitation, Parekh |
+| Old light | `{ rig: "previous" }`: the earlier filmic studio light, nothing else changed | Lord Krishna, Pandit, Dancing Shiva (user preferred them as before) |
+| Bronze | `{ metalness: 0.5, roughness: 1.3 }` | both Shah heads, Tirthankar, Levitation, Parekh |
 | Bronze Long-Hair head | `{ metalness: 0.2, roughness: 1.8, reflections: 0.6 }` | the bronze setting still glared on its face |
 | Lady | `{ light: 1.8, reflections: 2.5, sideLights: 1 }` | dark patina read as dull black |
 | Glossy non-metal | `{ roughness: 2, reflections: 0.6 }` / `{ roughness: 1.8, reflections: 0.7 }` | Ghosh / Matar |
-| Untouched | — | Pandit, Seated Bandsman, Tailor, Cat, Man from Moon |
+| Untouched | — | Seated Bandsman, Tailor, Cat, Man from Moon |
 
 ## Changing a work
 1. Dev server: `npx next dev --webpack -p 3000` (Turbopack crashes on this machine).

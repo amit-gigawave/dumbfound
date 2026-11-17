@@ -84,6 +84,11 @@ export interface ArtworkLook {
    * as 0, which leaves dark paint flat whatever the light; 1 is ordinary paint.
    */
   specular?: number;
+  /**
+   * Use another light rig instead of the shared one (components/three/lighting.ts):
+   * "previous" is the earlier filmic studio light.
+   */
+  rig?: "previous";
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -115,8 +120,8 @@ export const sculptures: Sculpture[] = [
     title: "Lord Krishna",
     description: "",
     modelUrl: "/sculptures/LordKrishna.glb",
-    look: { metalness: 0.5, roughness: 1.3 },
-    thumbnail: "/thumbnails/lord-krishna.webp?v=3",
+    look: { rig: "previous" },
+    thumbnail: "/thumbnails/lord-krishna.webp?v=4",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",
@@ -128,7 +133,8 @@ export const sculptures: Sculpture[] = [
     title: "Pandit",
     description: "",
     modelUrl: "/sculptures/Pandit.glb",
-    thumbnail: "/thumbnails/thota-pandit.webp?v=2",
+    look: { rig: "previous" },
+    thumbnail: "/thumbnails/thota-pandit.webp?v=3",
     artistSlug: "thota-vaikuntam",
     featured: false,
     material: "",
@@ -140,9 +146,9 @@ export const sculptures: Sculpture[] = [
     title: "Dancing Shiva",
     description: "A contemporary sculpture by Thota Vaikuntam.",
     modelUrl: "/sculptures/DancingShiva.glb",
-    look: { metalness: 0.5, roughness: 1.3 },
+    look: { rig: "previous" },
     facing: 290,
-    thumbnail: "/thumbnails/dancing-shiva.webp?v=3",
+    thumbnail: "/thumbnails/dancing-shiva.webp?v=4",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",

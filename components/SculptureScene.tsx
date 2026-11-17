@@ -24,7 +24,7 @@ import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 import { setupRenderer } from "./three/renderer";
 import type { ArtworkLook } from "@/lib/sculptures";
-import { rigFor } from "./three/lighting";
+import { rigFor, type LightRig } from "./three/lighting";
 
 // Neutral grey for the wireframe scaffold during the reveal.
 const WIRE_COLOR = "#5c5c5c";
@@ -429,6 +429,19 @@ const RevealModel: FC<{
 };
 
 /**
+ * Tone mapping and exposure belong to the renderer, and the grid's hover
+ * previews share one (TilePreview), so each scene sets its own before every
+ * frame; three recompiles a material's shader only when they change.
+ */
+const RendererLook: FC<{ rig: LightRig }> = ({ rig }) => {
+  useFrame(({ gl }) => {
+    gl.toneMapping = rig.toneMapping;
+    gl.toneMappingExposure = rig.exposure;
+  });
+  return null;
+};
+
+/**
  * Everything inside the canvas: camera, lights, studio reflections, the model
  * and controls. Shared by SculptureScene (its own canvas: viewer, thumbnails)
  * and TilePreview (the grid's shared renderer), so every view of a work is
@@ -461,10 +474,11 @@ export const SculptureContents: FC<
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
   const light = look?.light ?? 1;
-  const rig = rigFor(rigName);
+  const rig = rigFor(rigName ?? look?.rig);
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
+      <RendererLook rig={rig} />
 
       {/* Deterministic studio lighting (components/three/lighting.ts). */}
       {rig.hemisphere.intensity > 0 && (
@@ -592,7 +606,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
           preserveDrawingBuffer: isThumb,
           localClippingEnabled: true,
         }}
-        onCreated={({ gl }) => setupRenderer(gl, rigFor(props.rig))}
+        onCreated={({ gl }) => setupRenderer(gl, rigFor(props.rig ?? props.look?.rig))}
       >
         <SculptureContents
           {...props}
