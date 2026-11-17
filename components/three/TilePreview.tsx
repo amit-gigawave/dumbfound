@@ -121,6 +121,7 @@ export default function TilePreview({
         autoRotate={autoRotate}
         onReady={onReady}
         loader={false}
+        card
       />,
     );
   }, [url, fit, facing, look, autoRotate, onReady]);

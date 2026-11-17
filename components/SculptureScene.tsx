@@ -452,6 +452,8 @@ export const SculptureContents: FC<
     isThumb?: boolean;
     /** Show the spinner while the model loads (needs a DOM-attached canvas). */
     loader?: boolean;
+    /** A catalogue card's hover preview: lit like the thumbnail (look.cardLight). */
+    card?: boolean;
   }
 > = ({
   url,
@@ -471,9 +473,13 @@ export const SculptureContents: FC<
   facing = 0,
   look,
   rig: rigName,
+  card = false,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
-  const light = look?.light ?? 1;
+  // Thumbnails and card previews sit on a light plate, the viewer on its own
+  // backdrop, so a work can be lit differently on its card.
+  const cardLight = card || isThumb ? (look?.cardLight ?? 1) : 1;
+  const light = (look?.light ?? 1) * cardLight;
   const rig = rigFor(rigName ?? look?.rig);
   return (
     <>
@@ -513,7 +519,7 @@ export const SculptureContents: FC<
 
       {/* Reflections / specular for the bronze patina — procedural, no HDR download.
           Set per scene: three ignores a material's own envMapIntensity here. */}
-      <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1)} />
+      <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1) * cardLight} />
 
       <Suspense fallback={loader ? <Loader /> : null}>
         <RevealModel

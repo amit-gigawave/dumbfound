@@ -18,6 +18,7 @@ Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) we
   | `light` | multiplies every light |
   | `sideLights` | extra lights from left and right at face height (1 = key strength) |
   | `specular` | *sets* the paint's sheen 0–1 (fixes scans exported with 0) |
+  | `cardLight` | multiplies light and reflections on the catalogue card only (thumbnail + hover preview), not the artwork-page viewer |
   | `rig` | `"previous"` = use the old filmic light for this work (tone mapping set per scene, so it works in the shared hover renderer too) |
 
 - **Applied in** `components/SculptureScene.tsx`: `prepareMaterial` handles the material fixes for every work (transmission off, specular colour capped) plus `look`. `SculptureContents` builds the lights.
@@ -31,9 +32,10 @@ User's taste: **matte and natural, not shiny**. The user judges each work by eye
 | Painted heads | `{ metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 }` | Ruby Saree, Polka-Dot Collar, Nose Ring |
 | … dimmer | same, `light: 0.65` | Dark Green Saree, Yellow Saree |
 | … brighter | same, `light: 1.2` | Side Braid |
-| Painted figures | `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` | 9 Khanna bandsmen, Ganesha, Meri Patang |
+| Painted figures | `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` | 6 Khanna bandsmen, Ganesha, Meri Patang |
 | … dimmer | same, `reflections: 0.51, light: 0.7` | Couple |
 | … brighter | same, `reflections: 0.9, light: 1.4` | Trumpeter |
+| … dimmer on the card only | same, `cardLight: 0.72` | Ramesh Kumar Accordian, Rajinder Kaka Horn, Davinder Raj Tutu (white uniforms glared on the light card plate; viewer was fine) |
 | Seated Bandsman | `{ light: 1.4, reflections: 1.5 }` | dark grey, needed lifting |
 | … brighter | same, `light: 1.3` | Dotted Saree, Man with Mridangam |
 | Blue Saree | `{ metalness: 0.2, roughness: 1.6, reflections: 1.2, light: 1.6 }` | dark bronze skin needed lifting |

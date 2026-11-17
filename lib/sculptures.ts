@@ -89,6 +89,12 @@ export interface ArtworkLook {
    * "previous" is the earlier filmic studio light.
    */
   rig?: "previous";
+  /**
+   * Extra light multiplier on the catalogue card only (thumbnail and hover
+   * preview), not the artwork page's viewer, where a dark backdrop makes a
+   * light-coloured work look dimmer.
+   */
+  cardLight?: number;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -396,9 +402,9 @@ export const sculptures: Sculpture[] = [
     title: "Retd Captain Ramesh Kumar Accordian Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-retd-captain-ramesh-kumar-accordian-walae.webp?v=3",
+    thumbnail: "/thumbnails/khanna-retd-captain-ramesh-kumar-accordian-walae.webp?v=4",
     modelUrl: "/sculptures/khanna-retd-captain-ramesh-kumar-accordian-walae.glb",
-    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, cardLight: 0.72 },
     facing: 65,
     material: "Bronze",
     year: "",
@@ -413,9 +419,9 @@ export const sculptures: Sculpture[] = [
     title: "Rajinder Kaka Horn Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-rajinder-kaka-horn-walae.webp?v=3",
+    thumbnail: "/thumbnails/khanna-rajinder-kaka-horn-walae.webp?v=4",
     modelUrl: "/sculptures/khanna-rajinder-kaka-horn-walae.glb",
-    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, cardLight: 0.72 },
     facing: 250,
     material: "Bronze",
     year: "",
@@ -430,9 +436,9 @@ export const sculptures: Sculpture[] = [
     title: "Davinder Raj Tutu Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-davinder-raj-tutu-walae.webp?v=3",
+    thumbnail: "/thumbnails/khanna-davinder-raj-tutu-walae.webp?v=4",
     modelUrl: "/sculptures/khanna-davinder-raj-tutu-walae.glb",
-    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, cardLight: 0.72 },
     facing: 330,
     material: "Bronze",
     year: "",
