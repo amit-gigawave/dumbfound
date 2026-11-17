@@ -34,9 +34,11 @@ User's taste: **matte and natural, not shiny**. The user judges each work by eye
 | … brighter | same, `light: 1.3` | Dotted Saree, Man with Mridangam |
 | Blue Saree | `{ metalness: 0.2, roughness: 1.6, reflections: 1.2, light: 1.6 }` | dark bronze skin needed lifting |
 | Blue Turban | `{ metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3, specular: 0.6, sideLights: 1 }` | black face showed no form |
-| Bronze | `{ metalness: 0.5, roughness: 1.3 }` | Krishna, Dancing Shiva, both Shah heads, Tirthankar, Levitation, Parekh, Bronze Long-Hair head |
+| Bronze | `{ metalness: 0.5, roughness: 1.3 }` | Krishna, Dancing Shiva, both Shah heads, Tirthankar, Levitation, Parekh |
+| Bronze Long-Hair head | `{ metalness: 0.2, roughness: 1.8, reflections: 0.6 }` | the bronze setting still glared on its face |
+| Lady | `{ light: 1.8, reflections: 2.5, sideLights: 1 }` | dark patina read as dull black |
 | Glossy non-metal | `{ roughness: 2, reflections: 0.6 }` / `{ roughness: 1.8, reflections: 0.7 }` | Ghosh / Matar |
-| Untouched | — | Lady, Pandit, Seated Bandsman, Tailor, Cat, Man from Moon |
+| Untouched | — | Pandit, Seated Bandsman, Tailor, Cat, Man from Moon |
 
 ## Changing a work
 1. Dev server: `npx next dev --webpack -p 3000` (Turbopack crashes on this machine).
