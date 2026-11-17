@@ -100,6 +100,16 @@ export interface ArtworkLook {
    * itself, so it looks like its thumbnail (which has none).
    */
   selfShadow?: boolean;
+  /**
+   * Card framing (thumbnail and hover preview): `cardZoom` enlarges the work
+   * (1.2 = 20% bigger), `cardShift` moves it sideways by a fraction of the
+   * card's width (+ = right) and `cardLift` up by a fraction of its height.
+   * For works whose auto-framing leaves them small or off-centre, e.g. long
+   * parts sticking out.
+   */
+  cardZoom?: number;
+  cardShift?: number;
+  cardLift?: number;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -491,8 +501,9 @@ export const sculptures: Sculpture[] = [
     title: "The Tailor",
     description: "",
     artistSlug: "yusuf",
-    thumbnail: "/thumbnails/yusuf-the-tailor.webp?v=3",
+    thumbnail: "/thumbnails/yusuf-the-tailor.webp?v=4",
     modelUrl: "/sculptures/yusuf-untitled-sewing-machine.glb",
+    look: { cardZoom: 1.2, cardShift: 0.045, cardLift: 0.04 },
     facing: 150,
     material: "Bronze",
     year: "",

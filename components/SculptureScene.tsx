@@ -212,10 +212,12 @@ const RevealModel: FC<{
   fit?: number;
   facing: number;
   look?: ArtworkLook;
+  /** Card framing (look.cardZoom / cardShift); thumbnails and hover previews only. */
+  cardFrame?: { zoom: number; shift: number; lift: number };
   adaptiveBg: boolean;
   onBackground?: (hex: string) => void;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, fit, facing, look, adaptiveBg, onBackground, onReady }) => {
+}> = ({ url, offsetX, offsetY, reveal, fit, facing, look, cardFrame, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
   const lookKey = JSON.stringify(look ?? {});
   const get = useThree((state) => state.get);
@@ -322,6 +324,29 @@ const RevealModel: FC<{
   }, [normalized]);
 
   useFrame((_, delta) => {
+    // Card framing: zoom, and a sideways shift done in screen space (a view
+    // offset), so a turning preview still spins about the work's own centre.
+    // Re-applied when the canvas size changes.
+    if (cardFrame) {
+      const { camera, size } = get();
+      if (camera instanceof THREE.PerspectiveCamera) {
+        const v = camera.view;
+        const px = -cardFrame.shift * size.width;
+        const py = cardFrame.lift * size.height;
+        if (
+          camera.zoom !== cardFrame.zoom ||
+          !v ||
+          v.fullWidth !== size.width ||
+          v.fullHeight !== size.height ||
+          v.offsetX !== px ||
+          v.offsetY !== py
+        ) {
+          camera.zoom = cardFrame.zoom;
+          camera.setViewOffset(size.width, size.height, px, py, size.width, size.height);
+        }
+      }
+    }
+
     // Frame the camera once the model size and the default controls are known.
     if (!fittedRef.current) {
       const { camera, controls, size } = get();
@@ -478,7 +503,12 @@ export const SculptureContents: FC<
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
   // Thumbnails and card previews sit on a light plate, the viewer on its own
   // backdrop, so a work can be lit differently on its card.
-  const cardLight = card || isThumb ? (look?.cardLight ?? 1) : 1;
+  const onCard = card || isThumb;
+  const cardLight = onCard ? (look?.cardLight ?? 1) : 1;
+  const cardFrame =
+    onCard && (look?.cardZoom || look?.cardShift || look?.cardLift)
+      ? { zoom: look.cardZoom ?? 1, shift: look.cardShift ?? 0, lift: look.cardLift ?? 0 }
+      : undefined;
   const light = (look?.light ?? 1) * cardLight;
   const rig = rigFor(rigName ?? look?.rig);
   return (
@@ -531,6 +561,7 @@ export const SculptureContents: FC<
           fit={fit}
           facing={facing}
           look={look}
+          cardFrame={cardFrame}
           adaptiveBg={!isThumb && adaptiveBackground}
           onBackground={onBackground}
           onReady={onReady}
