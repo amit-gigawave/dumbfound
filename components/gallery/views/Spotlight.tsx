@@ -62,8 +62,12 @@ function Live({
 const WHITE: [number, number, number] = [255, 255, 255];
 const INK: [number, number, number] = [24, 22, 20];
 
-/** sessionStorage key: the work whose page was opened, so Back returns to it. */
-const RETURN_KEY = "spotlight:return";
+/**
+ * sessionStorage key: the work on screen. Kept up to date as the visitor moves,
+ * so coming back to Spotlight (from another view, or Back from a work's page)
+ * lands on the same work for the rest of the browser session.
+ */
+const PLACE_KEY = "spotlight:at";
 
 /**
  * A text line that trails the scroll by `px` and fades faster the further it
@@ -201,12 +205,12 @@ export default function Spotlight({
     };
   }, [works]);
 
-  // Coming back from "Open this work": land on that work again, not the first.
-  // The link leaves the slug behind; it is used once, so a fresh visit starts at the top.
+  // On arrival, go back to the work the visitor was last on (see PLACE_KEY).
+  const placed = useRef(false);
   useEffect(() => {
     let slug: string | null = null;
     try {
-      slug = sessionStorage.getItem(RETURN_KEY);
+      slug = sessionStorage.getItem(PLACE_KEY);
     } catch {}
     const i = slug ? works.findIndex((w) => w.slug === slug) : -1;
     const panel = i > 0 ? panels.current[i] : null;
@@ -214,16 +218,20 @@ export default function Spotlight({
       scroller.current.scrollTo({ top: panel.offsetTop, behavior: "instant" });
       setActive(i);
     }
-    // After the dev-mode double run of effects, so both see it.
-    const t = setTimeout(() => {
-      try {
-        sessionStorage.removeItem(RETURN_KEY);
-      } catch {}
-    }, 0);
-    return () => clearTimeout(t);
+    placed.current = true;
     // Once, on arrival: later filter changes restart at the top on their own.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Remember the work on screen as the visitor moves (only after the arrival
+  // above has read the old one).
+  const here = works[active]?.slug;
+  useEffect(() => {
+    if (!placed.current || !here) return;
+    try {
+      sessionStorage.setItem(PLACE_KEY, here);
+    } catch {}
+  }, [here]);
 
   const go = (i: number) =>
     panels.current[i]?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -476,11 +484,6 @@ export default function Spotlight({
                 )}
                 <Link
                   href={`/artworks/${w.slug}`}
-                  onClick={() => {
-                    try {
-                      sessionStorage.setItem(RETURN_KEY, w.slug);
-                    } catch {}
-                  }}
                   className="group mt-8 inline-flex items-center gap-3 rounded-full bg-[var(--deep)] py-1.5 pl-5 pr-1.5 text-[14px] text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)] transition-[gap,box-shadow] duration-300 hover:gap-4 hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--deep)]"
                   style={rise(150, 2, side)}
                 >
