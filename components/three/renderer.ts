@@ -1,9 +1,10 @@
 import * as THREE from "three";
+import { LIGHTING, type LightRig } from "./lighting";
 
-/** Renderer look shared by every canvas that shows a work. */
-export const setupRenderer = (gl: THREE.WebGLRenderer) => {
-  gl.toneMapping = THREE.ACESFilmicToneMapping;
-  gl.toneMappingExposure = 1.05;
+/** Renderer look shared by every canvas that shows a work (see lighting.ts). */
+export const setupRenderer = (gl: THREE.WebGLRenderer, rig: LightRig = LIGHTING) => {
+  gl.toneMapping = rig.toneMapping;
+  gl.toneMappingExposure = rig.exposure;
   gl.localClippingEnabled = true;
 };
 

@@ -24,6 +24,7 @@ import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 import { setupRenderer } from "./three/renderer";
 import type { ArtworkLook } from "@/lib/sculptures";
+import { rigFor } from "./three/lighting";
 
 // Neutral grey for the wireframe scaffold during the reveal.
 const WIRE_COLOR = "#5c5c5c";
@@ -174,6 +175,8 @@ interface SculptureSceneProps {
   facing?: number;
   /** Per-work surface and light tuning (see Sculpture.look). */
   look?: ArtworkLook;
+  /** A candidate light rig to preview (components/three/lighting.ts); default LIGHTING. */
+  rig?: string;
 }
 
 const Loader = () => {
@@ -453,28 +456,39 @@ export const SculptureContents: FC<
   autoRotate = true,
   facing = 0,
   look,
+  rig: rigName,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
   const light = look?.light ?? 1;
+  const rig = rigFor(rigName);
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
 
-      {/* Deterministic studio lighting — independent of model load order. */}
-      <ambientLight intensity={0.5 * light} />
+      {/* Deterministic studio lighting (components/three/lighting.ts). */}
+      {rig.hemisphere.intensity > 0 && (
+        <hemisphereLight
+          args={[rig.hemisphere.sky, rig.hemisphere.ground, rig.hemisphere.intensity * light]}
+        />
+      )}
+      {rig.ambient > 0 && <ambientLight intensity={rig.ambient * light} />}
       <directionalLight
-        position={[3, 5, 4]}
-        intensity={1.6 * light}
+        position={rig.key.position}
+        intensity={rig.key.intensity * light}
+        color={rig.key.color}
         castShadow={interactive}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         shadow-bias={-0.0002}
       />
-      <directionalLight position={[-4, 2, -3]} intensity={0.5 * light} />
+      {rig.fill.intensity > 0 && (
+        <directionalLight position={rig.fill.position} intensity={rig.fill.intensity * light} />
+      )}
+      <directionalLight position={rig.back.position} intensity={rig.back.intensity * light} />
 
       {/* Reflections / specular for the bronze patina — procedural, no HDR download.
           Set per scene: three ignores a material's own envMapIntensity here. */}
-      <StudioEnvironment intensity={0.9 * (look?.reflections ?? 1)} />
+      <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1)} />
 
       <Suspense fallback={loader ? <Loader /> : null}>
         <RevealModel
@@ -567,7 +581,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
           preserveDrawingBuffer: isThumb,
           localClippingEnabled: true,
         }}
-        onCreated={({ gl }) => setupRenderer(gl)}
+        onCreated={({ gl }) => setupRenderer(gl, rigFor(props.rig))}
       >
         <SculptureContents
           {...props}
