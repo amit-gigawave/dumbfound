@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import dynamic from "next/dynamic";
 import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import type { ConceptWork } from "./types";
@@ -23,33 +30,52 @@ function Live({
   work,
   onReady,
   onGone,
+  glider,
 }: {
   work: ConceptWork;
   onReady: () => void;
   onGone: () => void;
+  /** The gallery's glide state: the model waits until it is idle. */
+  glider: React.RefObject<Glider>;
 }) {
   const [ready, setReady] = useState(false);
   useEffect(() => onGone, [onGone]);
+  // Load the model only once the glide to this work has landed and the wheel
+  // has gone quiet. Loading it earlier would make the glide stutter, and the
+  // pause it causes could split one trackpad flick into two steps.
+  const [armed, setArmed] = useState(false);
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const check = () => {
+      const g = glider.current;
+      if (!g.raf && performance.now() > g.until) setArmed(true);
+      else t = setTimeout(check, 150);
+    };
+    t = setTimeout(check, 300);
+    return () => clearTimeout(t);
+  }, [glider]);
   return (
     <div
       className={`absolute inset-0 cursor-grab transition-opacity duration-500 active:cursor-grabbing ${
         ready ? "opacity-100" : "opacity-0"
       }`}
     >
-      <SculptureScene
-        url={work.modelUrl!}
-        interactive
-        rotateOnly
-        fit={FIT_CARD}
-        adaptiveBackground={false}
-        reveal={false}
-        facing={work.facing}
-        look={work.look}
-        onReady={() => {
-          setReady(true);
-          onReady();
-        }}
-      />
+      {armed && (
+        <SculptureScene
+          url={work.modelUrl!}
+          interactive
+          rotateOnly
+          fit={FIT_CARD}
+          adaptiveBackground={false}
+          reveal={false}
+          facing={work.facing}
+          look={work.look}
+          onReady={() => {
+            setReady(true);
+            onReady();
+          }}
+        />
+      )}
       {ready && (
         <p className="pointer-events-none absolute inset-x-0 bottom-0 text-center text-[12px] text-[var(--deep)] opacity-60">
           Drag to turn
@@ -68,6 +94,89 @@ const INK: [number, number, number] = [24, 22, 20];
  * lands on the same work for the rest of the browser session.
  */
 const PLACE_KEY = "spotlight:at";
+
+/** How long one step from work to work takes, and its easing. */
+const GLIDE_MS = 1200;
+/**
+ * Wheel events less than this far apart belong to one gesture (a trackpad's
+ * momentum can pause this long while the page is busy, e.g. loading a model).
+ */
+const GESTURE_GAP_MS = 400;
+const easeInOut = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+/** The easing of the text reveals: a quick start that settles slowly. */
+const EASE = "cubic-bezier(0.2, 0.7, 0.2, 1)";
+
+/** A glide in progress (its frame) and the time before which new steps wait. */
+type Glider = { raf: number; until: number };
+
+/** Phones and tablets: they keep native swiping, with CSS snapping. */
+const touchFirst = () => window.matchMedia("(hover: none)").matches;
+
+/**
+ * Glide the gallery to a work: an eased scroll over GLIDE_MS. On touch
+ * screens, and for visitors who prefer reduced motion, the browser's own
+ * scroll is used instead.
+ */
+function moveTo(root: HTMLElement, panel: HTMLElement, g: Glider) {
+  cancelAnimationFrame(g.raf);
+  if (touchFirst()) {
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const to = offsetIn(root, panel);
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    root.scrollTop = to;
+    g.until = performance.now() + 200;
+    return;
+  }
+  const from = root.scrollTop;
+  const t0 = performance.now();
+  g.until = t0 + GLIDE_MS + 200;
+  const tick = (now: number) => {
+    const k = Math.min(1, (now - t0) / GLIDE_MS);
+    root.scrollTop = from + (to - from) * easeInOut(k);
+    if (k < 1) {
+      g.raf = requestAnimationFrame(tick);
+    } else {
+      // Landed. A short pause still swallows the tail of a trackpad's momentum.
+      g.raf = 0;
+      g.until = Math.max(g.until, now + GESTURE_GAP_MS);
+    }
+  };
+  g.raf = requestAnimationFrame(tick);
+}
+
+/** Where a panel starts, in the gallery's own scroll coordinates. */
+const offsetIn = (root: HTMLElement, panel: HTMLElement) =>
+  root.scrollTop +
+  panel.getBoundingClientRect().top -
+  root.getBoundingClientRect().top;
+
+/**
+ * A line revealed when its slide arrives: it fades up from `y` px after
+ * `delay` ms. On the way out it hides at once, ready for the next visit.
+ * `more` adds other transitions the element needs (e.g. hover effects).
+ */
+const reveal = (
+  shown: boolean,
+  delay: number,
+  y = 22,
+  more = "",
+): React.CSSProperties => ({
+  opacity: shown ? 1 : 0,
+  transform: shown ? "translate3d(0,0,0)" : `translate3d(0,${y}px,0)`,
+  transition: `opacity 700ms ${EASE}, transform 900ms ${EASE}${more}`,
+  transitionDelay: shown ? `${delay}ms` : "0ms",
+});
+
+/** Like reveal(), but opacity only, for an element whose transform is the scroll's. */
+const revealOpacity = (shown: boolean, delay: number): React.CSSProperties => ({
+  // Shown: the scroll's own fade (from rise()) applies untouched.
+  ...(shown ? {} : { opacity: 0 }),
+  transition: `opacity 800ms ${EASE}`,
+  transitionDelay: shown ? `${delay}ms` : "0ms",
+});
 
 /**
  * A text line that trails the scroll by `px` and fades faster the further it
@@ -119,6 +228,8 @@ export default function Spotlight({
     setPreview({ i, y });
   };
   const scroller = useRef<HTMLDivElement>(null);
+  // The glide between works in progress, and until when to ignore new steps.
+  const glider = useRef<Glider>({ raf: 0, until: 0 });
   const panels = useRef<(HTMLElement | null)[]>([]);
 
   // Filters: the artist and 3D chips, then the search words (title or artist).
@@ -149,6 +260,8 @@ export default function Spotlight({
 
   // A new filter starts again from the first match.
   const restart = () => {
+    cancelAnimationFrame(glider.current.raf);
+    glider.current.until = 0;
     setActive(0);
     scroller.current?.scrollTo({ top: 0 });
   };
@@ -181,10 +294,10 @@ export default function Spotlight({
     const update = () => {
       raf = 0;
       const h = root.clientHeight || 1;
-      const top = root.scrollTop;
+      const top = root.getBoundingClientRect().top;
       panels.current.forEach((el) => {
         if (!el) return;
-        const p = still ? 0 : (el.offsetTop - top) / h;
+        const p = still ? 0 : (el.getBoundingClientRect().top - top) / h;
         el.style.setProperty(
           "--p",
           Math.max(-1.2, Math.min(1.2, p)).toFixed(4),
@@ -215,7 +328,10 @@ export default function Spotlight({
     const i = slug ? works.findIndex((w) => w.slug === slug) : -1;
     const panel = i > 0 ? panels.current[i] : null;
     if (panel && scroller.current) {
-      scroller.current.scrollTo({ top: panel.offsetTop, behavior: "instant" });
+      scroller.current.scrollTo({
+        top: offsetIn(scroller.current, panel),
+        behavior: "instant",
+      });
       setActive(i);
     }
     placed.current = true;
@@ -233,8 +349,50 @@ export default function Spotlight({
     } catch {}
   }, [here]);
 
-  const go = (i: number) =>
-    panels.current[i]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  // Moving between works: one slow, eased glide per step (see moveTo()).
+  const go = (i: number) => {
+    const root = scroller.current;
+    const panel = panels.current[i];
+    if (root && panel) moveTo(root, panel, glider.current);
+  };
+
+  // With a mouse or trackpad, one wheel gesture is one step to the next or
+  // previous work. While a glide runs, and while a trackpad's momentum is still
+  // arriving, further wheel events are swallowed, so a flick never skips works.
+  // At the first and last work the wheel is left to the page. Touch screens
+  // keep their own swipe, with CSS snapping.
+  useEffect(() => {
+    const root = scroller.current;
+    if (!root) return;
+    const g = glider.current;
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || touchFirst()) return;
+      if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+      const n = panels.current.length;
+      const cur = Math.round(root.scrollTop / (root.clientHeight || 1));
+      const next = cur + Math.sign(e.deltaY);
+      if (!e.deltaY || next < 0 || next >= n) return;
+      e.preventDefault();
+      const now = performance.now();
+      if (g.raf || now < g.until) {
+        g.until = Math.max(g.until, now + GESTURE_GAP_MS);
+        return;
+      }
+      const panel = panels.current[next];
+      if (panel) moveTo(root, panel, g);
+    };
+    root.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      root.removeEventListener("wheel", onWheel);
+      cancelAnimationFrame(g.raf);
+    };
+  }, [works.length]);
+
+  // Visitors who prefer reduced motion see every slide's text in place.
+  const [calm, setCalm] = useState(false);
+  useEffect(() => {
+    setCalm(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
 
   // Up / Down (and Page Up / Down) step between works from anywhere on the
   // page, except while typing in the search box.
@@ -242,7 +400,6 @@ export default function Spotlight({
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t?.closest("input, textarea, select, [contenteditable]")) return;
-      if (e.target === scroller.current) return; // the gallery scrolls itself
       const d =
         e.key === "ArrowDown" || e.key === "PageDown"
           ? 1
@@ -252,10 +409,12 @@ export default function Spotlight({
       const next = active + d;
       if (!d || next < 0 || next >= works.length) return;
       e.preventDefault();
-      panels.current[next]?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      // One step at a time.
+      if (glider.current.raf || performance.now() < glider.current.until)
+        return;
+      const root = scroller.current;
+      const panel = panels.current[next];
+      if (root && panel) moveTo(root, panel, glider.current);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -367,12 +526,14 @@ export default function Spotlight({
         ref={scroller}
         tabIndex={0}
         aria-label="Works, one at a time. Scroll or use the arrow keys."
-        className="h-[var(--room-h)] snap-y snap-mandatory overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[var(--deep)] [scrollbar-width:none]"
+        className="h-[var(--room-h)] overflow-y-auto overscroll-contain [@media(hover:none)]:snap-y [@media(hover:none)]:snap-mandatory focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-[var(--deep)] [scrollbar-width:none]"
       >
         {works.map((w, i) => {
           // Slides alternate: the model on the left and the text on the right, then the other way round.
           const flip = i % 2 === 1;
           const side = flip ? -1 : 1;
+          // The current slide's text is revealed; the rest wait, hidden, for their turn.
+          const shown = i === active || calm;
           return (
             <section
               key={w.slug}
@@ -425,6 +586,7 @@ export default function Spotlight({
                       work={w}
                       onReady={() => setLiveReady(w.slug)}
                       onGone={onGone}
+                      glider={glider}
                     />
                   )}
                 </div>
@@ -432,29 +594,74 @@ export default function Spotlight({
               <div
                 className={`max-w-[34rem] text-[var(--deep)] ${flip ? "md:order-1 md:justify-self-end" : ""}`}
               >
+                {/* Each line is placed by the scroll (rise) and, inside that, revealed in turn when the slide arrives (reveal). */}
                 <p
-                  className="text-[12px] tabular-nums tracking-[0.22em] opacity-60"
+                  className="text-[12px] tabular-nums tracking-[0.22em]"
                   style={rise(24, 1.6, side)}
                 >
-                  {String(i + 1).padStart(2, "0")} /{" "}
-                  {String(works.length).padStart(2, "0")}
+                  <span className="block opacity-60">
+                    <span className="block" style={reveal(shown, 60)}>
+                      {String(i + 1).padStart(2, "0")} /{" "}
+                      {String(works.length).padStart(2, "0")}
+                    </span>
+                  </span>
                 </p>
                 <p
                   className="font-text mt-3 text-[clamp(15px,1.5vw,19px)] italic"
                   style={rise(36, 1.6, side)}
                 >
-                  {w.artist}
+                  <span className="block" style={reveal(shown, 140)}>
+                    {w.artist}
+                  </span>
                 </p>
                 <h2
                   className="font-display mt-2 text-[clamp(34px,5.4vw,84px)] leading-[0.98] [text-wrap:balance]"
                   style={rise(70, 1.5, side)}
                 >
-                  {w.title}
+                  {/* The title rises word by word from behind a mask. */}
+                  {w.title.split(" ").map((word, k, all) => (
+                    <Fragment key={k}>
+                      <span className="-mb-[0.14em] inline-block overflow-hidden pb-[0.14em] align-bottom">
+                        <span
+                          className="inline-block"
+                          style={{
+                            transform: shown
+                              ? "translateY(0)"
+                              : "translateY(110%)",
+                            transition: `transform 1000ms ${EASE}`,
+                            transitionDelay: shown
+                              ? `${220 + k * 80}ms`
+                              : "0ms",
+                          }}
+                        >
+                          {word}
+                        </span>
+                      </span>
+                      {k < all.length - 1 ? " " : ""}
+                    </Fragment>
+                  ))}
                 </h2>
                 {(w.year || w.material || w.dimensions || w.heightCm) && (
+                  <div style={rise(100, 1.8, side)}>
+                    {/* A rule that draws itself across before the details. */}
+                    <span
+                      aria-hidden
+                      className="mt-6 block h-px origin-left bg-[var(--deep)]/20"
+                      style={{
+                        transform: shown ? "scaleX(1)" : "scaleX(0)",
+                        transition: `transform 900ms ${EASE}`,
+                        transitionDelay: shown ? "420ms" : "0ms",
+                      }}
+                    />
+                  </div>
+                )}
+                {(w.year || w.material || w.dimensions || w.heightCm) && (
                   <dl
-                    className="mt-6 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 border-t border-[var(--deep)]/15 pt-4 text-[14px]"
-                    style={rise(110, 1.8, side)}
+                    className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-[14px]"
+                    style={{
+                      ...rise(110, 1.8, side),
+                      ...revealOpacity(shown, 520),
+                    }}
                   >
                     {w.year && (
                       <>
@@ -482,16 +689,36 @@ export default function Spotlight({
                     )}
                   </dl>
                 )}
-                <Link
-                  href={`/artworks/${w.slug}`}
-                  className="group mt-8 inline-flex items-center gap-3 rounded-full bg-[var(--deep)] py-1.5 pl-5 pr-1.5 text-[14px] text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)] transition-[gap,box-shadow] duration-300 hover:gap-4 hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--deep)]"
-                  style={rise(150, 2, side)}
-                >
-                  Open this work
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:bg-white/25">
-                    <ArrowRight size={16} aria-hidden />
-                  </span>
-                </Link>
+                <div className="mt-8" style={rise(150, 2, side)}>
+                  <Link
+                    href={`/artworks/${w.slug}`}
+                    className="group inline-flex items-center gap-3 rounded-full bg-[var(--deep)] py-1.5 pl-5 pr-1.5 text-[14px] text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)] hover:gap-4 hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--deep)]"
+                    style={reveal(
+                      shown,
+                      640,
+                      16,
+                      ", gap 300ms ease, box-shadow 300ms ease",
+                    )}
+                  >
+                    Open this work
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-[transform,background-color] duration-300 group-hover:translate-x-0.5 group-hover:bg-white/25">
+                      {/* The arrow slides in last. */}
+                      <span
+                        className="grid"
+                        style={{
+                          opacity: shown ? 1 : 0,
+                          transform: shown
+                            ? "translateX(0)"
+                            : "translateX(-10px)",
+                          transition: `opacity 500ms ${EASE}, transform 700ms ${EASE}`,
+                          transitionDelay: shown ? "900ms" : "0ms",
+                        }}
+                      >
+                        <ArrowRight size={16} aria-hidden />
+                      </span>
+                    </span>
+                  </Link>
+                </div>
               </div>
             </section>
           );
