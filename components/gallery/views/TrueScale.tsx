@@ -23,6 +23,48 @@ const CAPTION_PX = 95;
 const GAP = "clamp(44px,6.5vw,96px)";
 
 /**
+ * A box that reports the pointer coming in and going out, using the native
+ * mouseenter/mouseleave. React's own onMouseLeave goes by the React tree, so
+ * it fires when the pointer moves onto the 3D view's loading spinner (a
+ * separate React root) even though that sits inside this box.
+ */
+function HoverZone({
+  onEnter,
+  onLeave,
+  children,
+  ...rest
+}: {
+  onEnter: () => void;
+  onLeave: () => void;
+} & Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onMouseEnter" | "onMouseLeave"
+>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const handlers = useRef({ onEnter, onLeave });
+  useEffect(() => {
+    handlers.current = { onEnter, onLeave };
+  });
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const inn = () => handlers.current.onEnter();
+    const out = () => handlers.current.onLeave();
+    el.addEventListener("mouseenter", inn);
+    el.addEventListener("mouseleave", out);
+    return () => {
+      el.removeEventListener("mouseenter", inn);
+      el.removeEventListener("mouseleave", out);
+    };
+  }, []);
+  return (
+    <div ref={ref} {...rest}>
+      {children}
+    </div>
+  );
+}
+
+/**
  * Every work with a recorded height, standing on one floor at its real size
  * relative to the others, beside a centimetre ruler. Each thumbnail is cropped
  * to the sculpture's own edges, so the drawn height is the real one.
@@ -53,6 +95,10 @@ export default function TrueScale({
   const row = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLLIElement | null)[]>([]);
   const [focus, setFocus] = useState(0);
+  // Whether the line is at its start or end (the arrow that can't go further hides).
+  const [edges, setEdges] = useState({ start: true, end: false });
+  // The "hover / drag" hint shows until the visitor first brings up a 3D model.
+  const [hinted, setHinted] = useState(false);
 
   // Hover: the work under the pointer, and the one whose 3D model has drawn.
   // A short delay keeps a fast sweep along the row from loading every model;
@@ -76,8 +122,11 @@ export default function TrueScale({
   const meCm = Number(me);
   const showMe = me !== "" && meCm >= 30 && meCm <= max * 1.2;
 
-  // Focus: each work gets --f, 1 at the centre of the stage fading to 0 half
-  // a screen away; the nearest one is named at the top.
+  // Focus: each work gets --f, 1 at the focus point fading to 0 half a screen
+  // away; the nearest one is named at the top. The focus point travels with
+  // the scroll, from the left of the stage at the start to its right at the
+  // end, so the first works are in focus as the page opens and the last ones
+  // can still reach it.
   useEffect(() => {
     const el = row.current;
     if (!el) return;
@@ -85,7 +134,14 @@ export default function TrueScale({
     const update = () => {
       raf = 0;
       const box = el.getBoundingClientRect();
-      const mid = box.left + box.width / 2;
+      const end = el.scrollWidth - el.clientWidth;
+      const progress = end > 0 ? el.scrollLeft / end : 0;
+      const mid = box.left + box.width * (0.22 + 0.56 * progress);
+      const start = el.scrollLeft <= 2;
+      const atEnd = el.scrollLeft >= end - 2;
+      setEdges((e) =>
+        e.start === start && e.end === atEnd ? e : { start, end: atEnd },
+      );
       let best = 0;
       let bestD = Infinity;
       items.current.forEach((li, i) => {
@@ -136,12 +192,17 @@ export default function TrueScale({
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
+  // Where a press on a 3D model began, to tell a click (open the work) from a turn.
+  const press = useRef<{ x: number; y: number } | null>(null);
+
   // Drag with the mouse to walk the line. A drag doesn't count as a click,
   // so letting go over a work doesn't open it.
   const drag = useRef<{ x: number; left: number; moved: boolean } | null>(null);
   const dragged = useRef(false);
   const onPointerDown = (e: React.PointerEvent) => {
     if (e.pointerType !== "mouse" || e.button !== 0 || !row.current) return;
+    // A press on a 3D model turns the model; it doesn't walk the line.
+    if ((e.target as Element).closest("canvas")) return;
     drag.current = { x: e.clientX, left: row.current.scrollLeft, moved: false };
     dragged.current = false;
   };
@@ -184,7 +245,7 @@ export default function TrueScale({
           </h2>
           <p className="mt-2 max-w-[60ch] text-[13px] text-stone">
             Tallest to smallest. Drag, scroll or use the arrows to walk the
-            line; hover a work to turn it in 3D.
+            line; hover a work to see it in 3D, and drag it to turn it.
             {unsized > 0 &&
               ` ${unsized} works without a recorded height aren't shown.`}
           </p>
@@ -272,6 +333,8 @@ export default function TrueScale({
             tabIndex={0}
             aria-label="Works at real size. Use the arrow keys to move along the line."
             onPointerDown={onPointerDown}
+            // Never pick up an image (or link) as a browser drag.
+            onDragStart={(e) => e.preventDefault()}
             onClickCapture={(e) => {
               if (dragged.current) {
                 e.preventDefault();
@@ -320,37 +383,63 @@ export default function TrueScale({
                     }}
                     className="flex w-max flex-col items-center"
                   >
-                    {/* Hover (or focus) turns the still image into the live 3D model, turning slowly. */}
-                    <div
+                    {/* Hover (or focus) turns the still image into the 3D model, which the visitor turns by dragging. */}
+                    <HoverZone
                       className="relative origin-bottom transition-transform duration-300"
                       style={{
                         transform: "scale(calc(0.96 + var(--f,1) * 0.04))",
                       }}
-                      onMouseEnter={() => enter(w.slug)}
-                      onMouseLeave={leave}
+                      onEnter={() => enter(w.slug)}
+                      onLeave={leave}
                       onFocus={() => enter(w.slug)}
                       onBlur={leave}
                     >
                       {hover === w.slug && w.modelUrl && (
                         <div
                           aria-hidden
-                          className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500 [&_*]:!pointer-events-none"
+                          className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500"
                           style={{
                             height: `${100 / FIT_CARD}%`,
                             minWidth: `${100 / FIT_CARD}%`,
                             aspectRatio: "4 / 5",
                             opacity: ready === w.slug ? 1 : 0,
                           }}
+                          // A press and release without moving still opens the work.
+                          onPointerDown={(e) => {
+                            press.current = { x: e.clientX, y: e.clientY };
+                          }}
+                          onPointerUp={(e) => {
+                            const p = press.current;
+                            press.current = null;
+                            if (
+                              p &&
+                              Math.hypot(e.clientX - p.x, e.clientY - p.y) < 5
+                            )
+                              // Through the work's own link, like any other click on it.
+                              e.currentTarget.parentElement
+                                ?.querySelector<HTMLAnchorElement>("a[href]")
+                                ?.click();
+                          }}
                         >
                           <SculptureScene
                             url={w.modelUrl}
+                            interactive
+                            rotateOnly
                             fit={FIT_CARD}
                             adaptiveBackground={false}
                             reveal={false}
                             facing={w.facing}
                             look={w.look}
-                            onReady={() => setReady(w.slug)}
+                            onReady={() => {
+                              setReady(w.slug);
+                              setHinted(true);
+                            }}
                           />
+                          {ready === w.slug && (
+                            <span className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/85 px-2.5 py-1 text-[11px] text-white">
+                              Drag to rotate
+                            </span>
+                          )}
                         </div>
                       )}
                       {/* A soft pool of shadow on the floor under each work. */}
@@ -387,7 +476,7 @@ export default function TrueScale({
                           }}
                         />
                       </Link>
-                    </div>
+                    </HoverZone>
                     {/* Floor and caption */}
                     <div
                       className="h-px bg-[#bdb7a9]"
@@ -413,23 +502,32 @@ export default function TrueScale({
             </ol>
           </div>
 
-          {/* Walk the line a screen at a time. */}
+          {/* A first-visit hint, until the visitor first brings up a 3D model. */}
+          {!hinted && (
+            <p className="pointer-events-none absolute left-1/2 top-0 z-30 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3.5 py-1.5 text-[12px] text-ink shadow-[0_6px_20px_-8px_rgba(0,0,0,0.3)]">
+              Hover a work to see it in 3D · drag to rotate
+            </p>
+          )}
+
+          {/* Walk the line a screen at a time. Only the arrow that can still go somewhere shows. */}
           {(
             [
-              [-1, "Earlier works", ChevronLeft, "left-2"],
-              [1, "Later works", ChevronRight, "right-2"],
+              [-1, "Earlier works", ChevronLeft, "left-2", edges.start],
+              [1, "Later works", ChevronRight, "right-2", edges.end],
             ] as const
-          ).map(([dir, label, Icon, side]) => (
-            <button
-              key={dir}
-              type="button"
-              aria-label={label}
-              onClick={() => step(dir)}
-              className={`absolute ${side} top-[40%] z-30 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-ink shadow-[0_6px_20px_-8px_rgba(0,0,0,0.35)] backdrop-blur transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 md:grid`}
-            >
-              <Icon size={20} />
-            </button>
-          ))}
+          ).map(([dir, label, Icon, side, atEdge]) =>
+            atEdge ? null : (
+              <button
+                key={dir}
+                type="button"
+                aria-label={label}
+                onClick={() => step(dir)}
+                className={`absolute ${side} top-[40%] z-30 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/85 text-ink shadow-[0_6px_20px_-8px_rgba(0,0,0,0.35)] backdrop-blur transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 md:grid`}
+              >
+                <Icon size={20} />
+              </button>
+            ),
+          )}
         </div>
       </div>
     </section>
