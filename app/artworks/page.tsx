@@ -3,9 +3,9 @@ import { sculptures } from "@/lib/sculptures";
 import { catalogueOrder } from "@/lib/catalogue-order";
 import { getArtist, initials, publishedArtists } from "@/lib/artists";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
-import ArtistFilter, {
-  type ArtistOption,
-} from "@/components/gallery/ArtistFilter";
+import type { ArtistOption } from "@/components/gallery/ArtistFilter";
+import ArtistPills from "@/components/gallery/ArtistPills";
+import ShuffleGrid from "@/components/gallery/ShuffleGrid";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import PageHeader from "@/components/PageHeader";
 import ViewSwitch, { parseView } from "@/components/gallery/ViewSwitch";
@@ -79,34 +79,29 @@ export default async function ArtworksPage({
           line="Each work is presented as in a catalogue. Open any piece to read about its maker, its material and its story."
         />
         <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(40px,6vw,72px)]">
+          {options.length > 1 && (
+            <nav aria-label="Filter by artist" className="mb-8">
+              <ArtistPills
+                options={options}
+                selected={selected?.slug}
+                total={sculptures.length}
+              />
+            </nav>
+          )}
           <SectionHeader
             title={selected ? `Works by ${selected.name}` : "All artworks"}
-            action={
-              options.length > 1 && (
-                <nav aria-label="Filter by artist" className="w-full sm:w-auto">
-                  <ArtistFilter
-                    options={options}
-                    selected={selected?.slug}
-                    total={sculptures.length}
-                  />
-                </nav>
-              )
-            }
           />
-          <div
+          {/* Choosing an artist shuffles the cards: the ones that stay glide to their new places. */}
+          <ShuffleGrid
             data-reveal-stagger
             className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3"
           >
             {works.map((work, i) => (
-              <ArtworkTile
-                key={work.slug}
-                work={work}
-                priority={i < 3}
-                showcase
-                ambient
-              />
+              <div key={work.slug} data-key={work.slug}>
+                <ArtworkTile work={work} priority={i < 3} showcase ambient />
+              </div>
             ))}
-          </div>
+          </ShuffleGrid>
         </div>
       </main>
       <ViewSwitch current={view} />
