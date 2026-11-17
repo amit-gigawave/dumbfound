@@ -21,8 +21,11 @@ declare global {
 /** Fixed-size, transparent render of one model for the thumbnail generator. */
 const ThumbnailStage = ({
   sculpture,
+  rig,
 }: {
   sculpture: Sculpture & { modelUrl: string };
+  /** Preview a candidate light rig (components/three/lighting.ts). */
+  rig?: string;
 }) => {
   const onReady = useCallback(() => {
     // Give the environment map and shadows a couple of frames to settle.
@@ -42,6 +45,8 @@ const ThumbnailStage = ({
         mode="thumbnail"
         fit={FIT_CARD}
         facing={sculpture.facing}
+        look={sculpture.look}
+        rig={rig}
         onReady={onReady}
       />
     </div>

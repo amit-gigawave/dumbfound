@@ -41,6 +41,12 @@ export interface Sculpture {
    * heights use AR_DEFAULT_CM. Re-run `npm run ar-models -- <slug>` after changing it.
    */
   heightCm?: number;
+  /**
+   * What the work shows, for grouping the artworks grid: "head" (a head or
+   * bust), "figure" (a whole body; the default when left out) or "other" (an
+   * animal or object). Read from the work itself; it is never shown as text.
+   */
+  form?: "head" | "figure" | "other";
   /** Prebuilt USDZ for iPhone AR. Without it, one is generated from the GLB in the browser. */
   usdzUrl?: string;
   /** A short line, e.g. "From the Nayika series". Searchable. */
@@ -56,6 +62,60 @@ export interface Sculpture {
   tags?: string[];
   /** Tint for the AR dialog; defaults to the site accent. */
   accent?: string;
+  /**
+   * Per-work surface and light tuning for the 3D views (viewer, thumbnail,
+   * hover preview). Scans often come out shinier than the real work; this
+   * tones them down. Re-run `npm run thumbnails -- <slug>` after changing it.
+   */
+  look?: ArtworkLook;
+}
+
+/** Every value multiplies the model's own setting; 1 (or leaving it out) keeps it. */
+export interface ArtworkLook {
+  /** How metallic the surface is: 0 turns metal into paint, 0.5 halves it. */
+  metalness?: number;
+  /** Roughness: above 1 makes the surface more matte (capped at fully matte). */
+  roughness?: number;
+  /** Strength of the studio reflections on the surface. */
+  reflections?: number;
+  /** Strength of the lights. */
+  light?: number;
+  /**
+   * Extra lights from the viewer's left and right at face height (0 = none,
+   * 1 = as strong as the key). For dark works whose form front light can't show.
+   */
+  sideLights?: number;
+  /**
+   * Sets (not multiplies) the paint's surface sheen, 0–1. Some scans export it
+   * as 0, which leaves dark paint flat whatever the light; 1 is ordinary paint.
+   */
+  specular?: number;
+  /**
+   * Use another light rig instead of the shared one (components/three/lighting.ts):
+   * "previous" is the earlier filmic studio light.
+   */
+  rig?: "previous";
+  /**
+   * Extra light multiplier on the catalogue card only (thumbnail and hover
+   * preview), not the artwork page's viewer, where a dark backdrop makes a
+   * light-coloured work look dimmer.
+   */
+  cardLight?: number;
+  /**
+   * false: the artwork page's viewer drops the shadows the work casts on
+   * itself, so it looks like its thumbnail (which has none).
+   */
+  selfShadow?: boolean;
+  /**
+   * Card framing (thumbnail and hover preview): `cardZoom` enlarges the work
+   * (1.2 = 20% bigger), `cardShift` moves it sideways by a fraction of the
+   * card's width (+ = right) and `cardLift` up by a fraction of its height.
+   * For works whose auto-framing leaves them small or off-centre, e.g. long
+   * parts sticking out.
+   */
+  cardZoom?: number;
+  cardShift?: number;
+  cardLift?: number;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -74,7 +134,8 @@ export const sculptures: Sculpture[] = [
     title: "Lady",
     description: "",
     modelUrl: "/sculptures/Lady.glb",
-    thumbnail: "/thumbnails/thota-lady.webp",
+    look: { light: 1.8, reflections: 2.5, sideLights: 1 },
+    thumbnail: "/thumbnails/thota-lady.webp?v=4",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",
@@ -86,7 +147,8 @@ export const sculptures: Sculpture[] = [
     title: "Lord Krishna",
     description: "",
     modelUrl: "/sculptures/LordKrishna.glb",
-    thumbnail: "/thumbnails/lord-krishna.webp",
+    look: { rig: "previous" },
+    thumbnail: "/thumbnails/lord-krishna.webp?v=5",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",
@@ -98,7 +160,8 @@ export const sculptures: Sculpture[] = [
     title: "Pandit",
     description: "",
     modelUrl: "/sculptures/Pandit.glb",
-    thumbnail: "/thumbnails/thota-pandit.webp",
+    look: { rig: "previous" },
+    thumbnail: "/thumbnails/thota-pandit.webp?v=4",
     artistSlug: "thota-vaikuntam",
     featured: false,
     material: "",
@@ -109,9 +172,10 @@ export const sculptures: Sculpture[] = [
     slug: "dancing-shiva",
     title: "Dancing Shiva",
     description: "A contemporary sculpture by Thota Vaikuntam.",
-    modelUrl: "/sculptures/DancingShiva.glb",
+    modelUrl: "/sculptures/DancingShivaHero.glb?v=2",
+    look: { rig: "previous" },
     facing: 290,
-    thumbnail: "/thumbnails/dancing-shiva.webp",
+    thumbnail: "/thumbnails/dancing-shiva.webp?v=5",
     artistSlug: "thota-vaikuntam",
     featured: true,
     material: "",
@@ -126,8 +190,9 @@ export const sculptures: Sculpture[] = [
     title: "Satwant Sher Singh Cymbal Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-satwant-sher-singh-cymbal-walae.webp?v=2",
+    thumbnail: "/thumbnails/khanna-satwant-sher-singh-cymbal-walae.webp?v=4",
     modelUrl: "/sculptures/Red_Cymbals_Guy_LPoly.glb?v=2",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     facing: 30,
     material: "Bronze",
     year: "",
@@ -143,8 +208,9 @@ export const sculptures: Sculpture[] = [
     title: "Gulratan Bhon Bhon Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-gulratan-bhon-bhon-walae.webp",
+    thumbnail: "/thumbnails/khanna-gulratan-bhon-bhon-walae.webp?v=3",
     modelUrl: "/sculptures/Trumpet_Musician_Orange_LPoly.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     facing: 190,
     material: "Bronze",
     year: "",
@@ -160,8 +226,9 @@ export const sculptures: Sculpture[] = [
     title: "Seated Bandsman with Horn",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp",
+    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp?v=4",
     modelUrl: "/sculptures/khanna-untitled-seated-man.glb?v=2",
+    look: { light: 1.4, reflections: 1.5 },
     material: "Bronze",
     year: "",
     dimensions: "30 × 30 × 32 inches",
@@ -173,11 +240,13 @@ export const sculptures: Sculpture[] = [
   // Model from the colour scan "ElephantKite.usdz" (2026-11-16); it replaced an untextured low-poly mesh.
   {
     slug: "sugandh-meri-patang",
+    form: "other",
     title: "Meri Patang",
     description: "",
     artistSlug: "yashika-sugandh",
-    thumbnail: "/thumbnails/sugandh-meri-patang.webp?v=2",
+    thumbnail: "/thumbnails/sugandh-meri-patang.webp?v=4",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb?v=2",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     facing: 270,
     material: "Acrylic on Nylon",
     year: "2026",
@@ -191,11 +260,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "shah-head-with-bared-teeth",
+    form: "head",
     title: "Head with Bared Teeth",
     description: "",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-head-with-bared-teeth.webp",
+    thumbnail: "/thumbnails/shah-head-with-bared-teeth.webp?v=3",
     modelUrl: "/sculptures/head-a.glb?v=2",
+    look: { metalness: 0.5, roughness: 1.3 },
     material: "Bronze",
     year: "",
     dimensions: "49 × 29 × 35 inches",
@@ -207,11 +278,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Head)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "shah-head-with-pinpoint-eyes",
+    form: "head",
     title: "Head with Pinpoint Eyes",
     description: "",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-head-with-pinpoint-eyes.webp",
+    thumbnail: "/thumbnails/shah-head-with-pinpoint-eyes.webp?v=3",
     modelUrl: "/sculptures/head-c.glb",
+    look: { metalness: 0.5, roughness: 1.3 },
     facing: 90,
     material: "Bronze",
     year: "",
@@ -224,11 +297,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "ghosh-head-in-fragments",
+    form: "head",
     title: "Head in Fragments",
     description: "",
     artistSlug: "subba-ghosh",
-    thumbnail: "/thumbnails/ghosh-head-in-fragments.webp",
+    thumbnail: "/thumbnails/ghosh-head-in-fragments.webp?v=3",
     modelUrl: "/sculptures/head-e.glb",
+    look: { roughness: 2, reflections: 0.6 },
     material: "Fibreglass, Resin, Paper Mache, Oil and Acrylic Paint",
     year: "",
     dimensions: "17 × 11 × 16 inches",
@@ -236,13 +311,16 @@ export const sculptures: Sculpture[] = [
   },
   // Scan "headG.usdz". Matched by the photo in row "13 - Thotta - Female Head - 04" of the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F.
   // That row is marked "[TO CONFIRM]": TV-0107, "3D scan shows no collar colour; alt. TVA-0015". It was listed as Himmat Shah until 2026-11-16.
+  // Title given by the user on 2026-11-17 (was "Dark Green Saree Lady"); the slug is kept.
   {
     slug: "thota-dark-green-saree-lady",
-    title: "Dark Green Saree Lady",
+    form: "head",
+    title: "Saree Lady Series (White)",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp",
+    thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp?v=4",
     modelUrl: "/sculptures/head-g.glb?v=2",
+    look: { metalness: 0, roughness: 2, reflections: 0.5, light: 0.65 },
     facing: 180,
     material: "Bronze",
     year: "2026",
@@ -256,8 +334,9 @@ export const sculptures: Sculpture[] = [
     title: "Blue Saree",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-blue-saree.webp",
+    thumbnail: "/thumbnails/thota-blue-saree.webp?v=5",
     modelUrl: "/sculptures/female-with-blue-saree.glb?v=4",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 1.2, light: 1.6 },
     material: "Bronze",
     year: "",
     dimensions: "23 × 9 × 7 inches",
@@ -269,11 +348,13 @@ export const sculptures: Sculpture[] = [
   // rows "5 - Thotta - Female Head - 02" and "37 - Thotta - Female Head - 09": TV-0106 (edition cast).
   {
     slug: "thota-yellow-saree-lady",
+    form: "head",
     title: "Yellow Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-yellow-saree-lady.webp",
+    thumbnail: "/thumbnails/thota-yellow-saree-lady.webp?v=4",
     modelUrl: "/sculptures/female-head.glb?v=3",
+    look: { metalness: 0, roughness: 2, reflections: 0.5, light: 0.65 },
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",
@@ -286,8 +367,9 @@ export const sculptures: Sculpture[] = [
     title: "Levitation",
     description: "",
     artistSlug: "meena-sansanwal",
-    thumbnail: "/thumbnails/sansanwal-levitation.webp",
+    thumbnail: "/thumbnails/sansanwal-levitation.webp?v=3",
     modelUrl: "/sculptures/meditating.glb?v=2",
+    look: { metalness: 0.5, roughness: 1.3 },
     facing: 180,
     material: "Papermache, Marble And Acrylic Paint",
     year: "",
@@ -301,8 +383,9 @@ export const sculptures: Sculpture[] = [
     title: "Female in Dotted Saree",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-in-dotted-saree.webp",
+    thumbnail: "/thumbnails/thota-female-in-dotted-saree.webp?v=5",
     modelUrl: "/sculptures/female-with-green-saree.glb?v=3",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.3 },
     material: "Bronze",
     year: "",
     dimensions: "23 × 7 × 6 inches",
@@ -315,8 +398,9 @@ export const sculptures: Sculpture[] = [
     title: "Trumpeter",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-trumpeter.webp",
+    thumbnail: "/thumbnails/khanna-trumpeter.webp?v=5",
     modelUrl: "/sculptures/khanna-untitled-horn-player.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.9, light: 1.4 },
     material: "Bronze",
     year: "",
     dimensions: "17 × 9 × 8 inches",
@@ -326,11 +410,13 @@ export const sculptures: Sculpture[] = [
   // HM-0406. Year not given there.
   {
     slug: "shah-tirthankar",
+    form: "head",
     title: "Tirthankar",
     description: "",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-tirthankar.webp",
+    thumbnail: "/thumbnails/shah-tirthankar.webp?v=3",
     modelUrl: "/sculptures/shah-tirthankar.glb",
+    look: { metalness: 0.5, roughness: 1.3 },
     facing: 150,
     material: "Bronze",
     year: "",
@@ -345,8 +431,9 @@ export const sculptures: Sculpture[] = [
     title: "Retd Captain Ramesh Kumar Accordian Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-retd-captain-ramesh-kumar-accordian-walae.webp",
+    thumbnail: "/thumbnails/khanna-retd-captain-ramesh-kumar-accordian-walae.webp?v=5",
     modelUrl: "/sculptures/khanna-retd-captain-ramesh-kumar-accordian-walae.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, cardLight: 0.72 },
     facing: 65,
     material: "Bronze",
     year: "",
@@ -361,8 +448,9 @@ export const sculptures: Sculpture[] = [
     title: "Rajinder Kaka Horn Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-rajinder-kaka-horn-walae.webp",
+    thumbnail: "/thumbnails/khanna-rajinder-kaka-horn-walae.webp?v=5",
     modelUrl: "/sculptures/khanna-rajinder-kaka-horn-walae.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, cardLight: 0.72 },
     facing: 250,
     material: "Bronze",
     year: "",
@@ -377,8 +465,9 @@ export const sculptures: Sculpture[] = [
     title: "Davinder Raj Tutu Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-davinder-raj-tutu-walae.webp",
+    thumbnail: "/thumbnails/khanna-davinder-raj-tutu-walae.webp?v=5",
     modelUrl: "/sculptures/khanna-davinder-raj-tutu-walae.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, cardLight: 0.72 },
     facing: 330,
     material: "Bronze",
     year: "",
@@ -393,8 +482,9 @@ export const sculptures: Sculpture[] = [
     title: "Adhikari Dada Drum Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-adhikari-dada-drum-walae.webp",
+    thumbnail: "/thumbnails/khanna-adhikari-dada-drum-walae.webp?v=3",
     modelUrl: "/sculptures/khanna-adhikari-dada-drum-walae.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     facing: 300,
     material: "Bronze",
     year: "",
@@ -406,11 +496,13 @@ export const sculptures: Sculpture[] = [
   // row "39 - Yashika Sugandh Matar, 2024": YS-0205. (The Artlogic view lists a 102 × 30 × 25 inch version, YS-0060.)
   {
     slug: "sugandh-matar",
+    form: "other",
     title: "Matar",
     description: "",
     artistSlug: "yashika-sugandh",
-    thumbnail: "/thumbnails/sugandh-matar.webp",
+    thumbnail: "/thumbnails/sugandh-matar.webp?v=4",
     modelUrl: "/sculptures/sugandh-matar.glb",
+    look: { roughness: 1.8, reflections: 0.7 },
     facing: 110,
     material: "Acrylic on Fiber Resin and Nylon",
     year: "2024",
@@ -421,11 +513,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "yusuf-the-tailor",
+    form: "head",
     title: "The Tailor",
     description: "",
     artistSlug: "yusuf",
-    thumbnail: "/thumbnails/yusuf-the-tailor.webp",
+    thumbnail: "/thumbnails/yusuf-the-tailor.webp?v=5",
     modelUrl: "/sculptures/yusuf-untitled-sewing-machine.glb",
+    look: { cardZoom: 1.1, cardShift: 0.075, cardLift: 0.04 },
     facing: 150,
     material: "Bronze",
     year: "",
@@ -436,10 +530,11 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "yusuf-polka-dot-cat",
+    form: "other",
     title: "Polka Dot Cat",
     description: "",
     artistSlug: "yusuf",
-    thumbnail: "/thumbnails/yusuf-polka-dot-cat.webp",
+    thumbnail: "/thumbnails/yusuf-polka-dot-cat.webp?v=3",
     modelUrl: "/sculptures/yusuf-untitled-cat.glb",
     facing: 280,
     material: "Bronze",
@@ -454,8 +549,9 @@ export const sculptures: Sculpture[] = [
     title: "Man with Mridangam",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-man-with-mridangam.webp",
+    thumbnail: "/thumbnails/thota-man-with-mridangam.webp?v=6",
     modelUrl: "/sculptures/thota-man-with-mridangam.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.3, sideLights: 0.5 },
     material: "Bronze",
     year: "",
     dimensions: "59 × 24 × 23 inches",
@@ -468,8 +564,9 @@ export const sculptures: Sculpture[] = [
     title: "Ganesha",
     description: "",
     artistSlug: "sujata-bajaj",
-    thumbnail: "/thumbnails/bajaj-ganesha.webp",
+    thumbnail: "/thumbnails/bajaj-ganesha.webp?v=3",
     modelUrl: "/sculptures/bajaj-ganesha.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     material: "Acrylic on fiberglass",
     year: "",
     dimensions: "72 × 38 × 38 inches",
@@ -483,8 +580,9 @@ export const sculptures: Sculpture[] = [
     title: "Patinder Rawat Trumpet Walae",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp?v=2",
+    thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp?v=4",
     modelUrl: "/sculptures/khanna-untitled-bandsman.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     facing: 310,
     material: "Bronze",
     year: "",
@@ -500,8 +598,9 @@ export const sculptures: Sculpture[] = [
     title: "Patinder Ji Haran Walla",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-patinder-ji-haran-walla.webp",
+    thumbnail: "/thumbnails/khanna-patinder-ji-haran-walla.webp?v=3",
     modelUrl: "/sculptures/khanna-untitled-trumpeter.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
     facing: 270,
     material: "Bronze",
     year: "2025",
@@ -514,10 +613,11 @@ export const sculptures: Sculpture[] = [
   // can't be identified from the photo. TODO: confirm the cast.
   {
     slug: "shah-man-from-moon",
+    form: "head",
     title: "Man from Moon",
     description: "",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-man-from-moon.webp",
+    thumbnail: "/thumbnails/shah-man-from-moon.webp?v=2",
     modelUrl: "/sculptures/untitled-figure-with-spear.glb?v=2",
     facing: 270,
     material: "Bronze",
@@ -529,11 +629,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, side braid, green collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-with-side-braid",
+    form: "head",
     title: "Female Head with Side Braid and Green Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-head-with-side-braid.webp",
+    thumbnail: "/thumbnails/thota-female-head-with-side-braid.webp?v=6",
     modelUrl: "/sculptures/thota-female-head-05.glb",
+    look: { metalness: 0, roughness: 2, reflections: 0.5, light: 1.2, sideLights: 0.5 },
     material: "Bronze",
     year: "2025",
     dimensions: "25 × 17 × 24 inches",
@@ -547,8 +649,9 @@ export const sculptures: Sculpture[] = [
     title: "Couple",
     description: "",
     artistSlug: "jogen-chowdhury",
-    thumbnail: "/thumbnails/chowdhury-couple.webp",
+    thumbnail: "/thumbnails/chowdhury-couple.webp?v=5",
     modelUrl: "/sculptures/chowdhury-couple.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.51, light: 0.7 },
     facing: 180,
     material: "Bronze",
     year: "",
@@ -563,8 +666,9 @@ export const sculptures: Sculpture[] = [
     title: "Bronze 2 - 1",
     description: "",
     artistSlug: "madhvi-parekh",
-    thumbnail: "/thumbnails/parekh-bronze-2-1.webp",
+    thumbnail: "/thumbnails/parekh-bronze-2-1.webp?v=3",
     modelUrl: "/sculptures/parekh-bronze-2-1.glb",
+    look: { metalness: 0.5, roughness: 1.3 },
     facing: 180,
     material: "Bronze",
     year: "2006",
@@ -579,8 +683,9 @@ export const sculptures: Sculpture[] = [
     title: "Bandwalla",
     description: "",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-bandwalla.webp",
+    thumbnail: "/thumbnails/khanna-bandwalla.webp?v=3",
     modelUrl: "/sculptures/untitled-bandsman-in-red.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.15, cardLight: 0.87, selfShadow: false },
     facing: 200,
     material: "Bronze",
     year: "",
@@ -591,11 +696,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, polka-dot collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-with-polka-dot-collar",
+    form: "head",
     title: "Female Head with Polka-dot Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-head-with-polka-dot-collar.webp",
+    thumbnail: "/thumbnails/thota-female-head-with-polka-dot-collar.webp?v=3",
     modelUrl: "/sculptures/thota-untitled-head-polka-dot.glb",
+    look: { metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 },
     facing: 180,
     material: "Resinated Fibre Glass with Automotive Paint",
     year: "",
@@ -606,11 +713,13 @@ export const sculptures: Sculpture[] = [
   // row "38 - Thotta - Female Head - 10": TV-0105 (edition cast).
   {
     slug: "thota-ruby-saree-lady",
+    form: "head",
     title: "Ruby Saree Lady",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-ruby-saree-lady.webp",
+    thumbnail: "/thumbnails/thota-ruby-saree-lady.webp?v=3",
     modelUrl: "/sculptures/thota-female-head-10.glb",
+    look: { metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 },
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",
@@ -621,11 +730,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Male Head, blue turban, moustache)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-male-head-with-blue-turban",
+    form: "head",
     title: "Male Head with Blue Turban and Moustache",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp",
+    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp?v=5",
     modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
+    look: { metalness: 0.15, roughness: 1.3, reflections: 1.2, light: 1.3, specular: 0.6, sideLights: 1 },
     material: "Fiberglass",
     year: "2025",
     dimensions: "97 × 50 × 72 inches",
@@ -637,11 +748,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, bronze with long hair)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-bronze-female-head-with-long-hair",
+    form: "head",
     title: "Bronze Female Head with Long Hair",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-bronze-female-head-with-long-hair.webp",
+    thumbnail: "/thumbnails/thota-bronze-female-head-with-long-hair.webp?v=4",
     modelUrl: "/sculptures/thota-untitled-head-with-nose-ring.glb",
+    look: { metalness: 0.2, roughness: 1.8, reflections: 0.6 },
     material: "Bronze",
     year: "",
     dimensions: "58 × 58 × 47 inches",
@@ -652,11 +765,13 @@ export const sculptures: Sculpture[] = [
   // Titled "Untitled (Female Head, nose ring, red collar)" in its source; descriptive name used on the site at the user's request (2026-11-16).
   {
     slug: "thota-female-head-with-nose-ring",
+    form: "head",
     title: "Female Head with Nose Ring and Red Collar",
     description: "",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-head-with-nose-ring.webp",
+    thumbnail: "/thumbnails/thota-female-head-with-nose-ring.webp?v=3",
     modelUrl: "/sculptures/thota-female-head-07.glb",
+    look: { metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 },
     facing: 260,
     material: "Bronze",
     year: "2025",

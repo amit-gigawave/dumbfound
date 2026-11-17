@@ -104,6 +104,7 @@ export default function ArtworkStage({
                 interactive
                 fit={FIT_VIEWER}
                 facing={work.facing}
+                look={work.look}
                 controlsRef={controlsRef}
                 onReady={onReady}
                 onBackground={setViewerBg}

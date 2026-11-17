@@ -23,6 +23,8 @@ import * as THREE from "three";
 import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 import { setupRenderer } from "./three/renderer";
+import type { ArtworkLook } from "@/lib/sculptures";
+import { rigFor, type LightRig } from "./three/lighting";
 
 // Neutral grey for the wireframe scaffold during the reveal.
 const WIRE_COLOR = "#5c5c5c";
@@ -106,6 +108,33 @@ const modelLuminance = (root: THREE.Object3D): number => {
 const pickBackground = (lum: number) =>
   lum >= 0.5 ? BG_FOR_LIGHT_MODEL : BG_FOR_DARK_MODEL;
 
+/**
+ * The surface a work is drawn with: a clone of its own material, cleaned of
+ * scan export faults and adjusted by the work's `look`.
+ */
+const prepareMaterial = (
+  m: THREE.Material,
+  look: ArtworkLook | undefined,
+  clip: THREE.Plane,
+) => {
+  const c = m.clone();
+  c.clippingPlanes = [clip];
+  if (c instanceof THREE.MeshPhysicalMaterial) {
+    // USD exports mark some scans as glass (transmission) or set specular
+    // above the physical maximum; on an opaque work both draw as glare.
+    c.transmission = 0;
+    const s = c.specularColor;
+    s.setRGB(Math.min(s.r, 1), Math.min(s.g, 1), Math.min(s.b, 1));
+    if (look?.specular !== undefined) c.specularIntensity = look.specular;
+  }
+  if (c instanceof THREE.MeshStandardMaterial && look) {
+    c.metalness *= look.metalness ?? 1;
+    // Scales the roughness texture too; the shader caps it at fully matte.
+    c.roughness *= look.roughness ?? 1;
+  }
+  return c;
+};
+
 interface SculptureSceneProps {
   url: string;
   offsetX?: number;
@@ -145,6 +174,15 @@ interface SculptureSceneProps {
   autoRotate?: boolean;
   /** Degrees to turn the model so it faces the camera (see Sculpture.facing). */
   facing?: number;
+  /** Per-work surface and light tuning (see Sculpture.look). */
+  look?: ArtworkLook;
+  /** A candidate light rig to preview (components/three/lighting.ts); default LIGHTING. */
+  rig?: string;
+  /**
+   * With `interactive`: drag to turn the work, but leave the mouse wheel and
+   * panning alone, so a page that scrolls past the canvas keeps scrolling.
+   */
+  rotateOnly?: boolean;
 }
 
 const Loader = () => {
@@ -178,11 +216,15 @@ const RevealModel: FC<{
   reveal: boolean;
   fit?: number;
   facing: number;
+  look?: ArtworkLook;
+  /** Card framing (look.cardZoom / cardShift); thumbnails and hover previews only. */
+  cardFrame?: { zoom: number; shift: number; lift: number };
   adaptiveBg: boolean;
   onBackground?: (hex: string) => void;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, fit, facing, adaptiveBg, onBackground, onReady }) => {
+}> = ({ url, offsetX, offsetY, reveal, fit, facing, look, cardFrame, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
+  const lookKey = JSON.stringify(look ?? {});
   const get = useThree((state) => state.get);
 
   // Choose a contrasting backdrop from the model's own base colour.
@@ -267,21 +309,15 @@ const RevealModel: FC<{
         child.castShadow = true;
         child.receiveShadow = true;
         const orig = child.material;
-        if (Array.isArray(orig)) {
-          child.material = orig.map((m) => {
-            const c = m.clone();
-            c.clippingPlanes = [texClip];
-            return c;
-          });
-        } else {
-          const c = orig.clone();
-          c.clippingPlanes = [texClip];
-          child.material = c;
-        }
+        child.material = Array.isArray(orig)
+          ? orig.map((m) => prepareMaterial(m, look, texClip))
+          : prepareMaterial(orig, look, texClip);
       }
     });
     return clone;
-  }, [scene, texClip]);
+    // The look is compared by value: callers may pass a fresh object each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scene, texClip, lookKey]);
 
   // Center + uniform-scale once, synchronously, before first paint.
   useLayoutEffect(() => {
@@ -293,6 +329,27 @@ const RevealModel: FC<{
   }, [normalized]);
 
   useFrame((_, delta) => {
+    // Card framing: zoom, and a lift done in screen space (a view offset);
+    // the sideways shift moves where the camera aims (below, when framing).
+    // Re-applied when the canvas size changes.
+    if (cardFrame) {
+      const { camera, size } = get();
+      if (camera instanceof THREE.PerspectiveCamera) {
+        const v = camera.view;
+        const py = cardFrame.lift * size.height;
+        if (
+          camera.zoom !== cardFrame.zoom ||
+          !v ||
+          v.fullWidth !== size.width ||
+          v.fullHeight !== size.height ||
+          v.offsetY !== py
+        ) {
+          camera.zoom = cardFrame.zoom;
+          camera.setViewOffset(size.width, size.height, 0, py, size.width, size.height);
+        }
+      }
+    }
+
     // Frame the camera once the model size and the default controls are known.
     if (!fittedRef.current) {
       const { camera, controls, size } = get();
@@ -306,10 +363,16 @@ const RevealModel: FC<{
       const dist =
         Math.max(extent.h / 2 / (tanV * fit!), half / (tanH * fit!)) +
         half * 0.5;
-      camera.position.set(0, 0, dist);
-      camera.lookAt(0, 0, 0);
+      // Card framing's sideways shift (look.cardShift, a fraction of the card's
+      // width): aim beside the work, so it sits off-axis by that much and a
+      // turning preview circles that point instead of sliding off the card.
+      const aimX = cardFrame?.shift
+        ? -(cardFrame.shift * 2 * dist * tanH) / cardFrame.zoom
+        : 0;
+      camera.position.set(aimX, 0, dist);
+      camera.lookAt(aimX, 0, 0);
       const orbit = controls as unknown as OrbitControlsImpl;
-      orbit.target.set(0, 0, 0);
+      orbit.target.set(aimX, 0, 0);
       orbit.minDistance = dist * 0.35;
       orbit.maxDistance = dist * 2.5;
       orbit.update();
@@ -400,6 +463,19 @@ const RevealModel: FC<{
 };
 
 /**
+ * Tone mapping and exposure belong to the renderer, and the grid's hover
+ * previews share one (TilePreview), so each scene sets its own before every
+ * frame; three recompiles a material's shader only when they change.
+ */
+const RendererLook: FC<{ rig: LightRig }> = ({ rig }) => {
+  useFrame(({ gl }) => {
+    gl.toneMapping = rig.toneMapping;
+    gl.toneMappingExposure = rig.exposure;
+  });
+  return null;
+};
+
+/**
  * Everything inside the canvas: camera, lights, studio reflections, the model
  * and controls. Shared by SculptureScene (its own canvas: viewer, thumbnails)
  * and TilePreview (the grid's shared renderer), so every view of a work is
@@ -410,6 +486,8 @@ export const SculptureContents: FC<
     isThumb?: boolean;
     /** Show the spinner while the model loads (needs a DOM-attached canvas). */
     loader?: boolean;
+    /** A catalogue card's hover preview: lit like the thumbnail (look.cardLight). */
+    card?: boolean;
   }
 > = ({
   url,
@@ -427,26 +505,62 @@ export const SculptureContents: FC<
   adaptiveBackground = true,
   autoRotate = true,
   facing = 0,
+  look,
+  rig: rigName,
+  rotateOnly = false,
+  card = false,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
+  // Thumbnails and card previews sit on a light plate, the viewer on its own
+  // backdrop, so a work can be lit differently on its card.
+  const onCard = card || isThumb;
+  const cardLight = onCard ? (look?.cardLight ?? 1) : 1;
+  const cardFrame =
+    onCard && (look?.cardZoom || look?.cardShift || look?.cardLift)
+      ? { zoom: look.cardZoom ?? 1, shift: look.cardShift ?? 0, lift: look.cardLift ?? 0 }
+      : undefined;
+  const light = (look?.light ?? 1) * cardLight;
+  const rig = rigFor(rigName ?? look?.rig);
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 0, camZ]} fov={35} />
+      <RendererLook rig={rig} />
 
-      {/* Deterministic studio lighting — independent of model load order. */}
-      <ambientLight intensity={0.5} />
+      {/* Deterministic studio lighting (components/three/lighting.ts). */}
+      {rig.hemisphere.intensity > 0 && (
+        <hemisphereLight
+          args={[rig.hemisphere.sky, rig.hemisphere.ground, rig.hemisphere.intensity * light]}
+        />
+      )}
+      {rig.ambient > 0 && <ambientLight intensity={rig.ambient * light} />}
       <directionalLight
-        position={[3, 5, 4]}
-        intensity={1.6}
-        castShadow={interactive}
+        position={rig.key.position}
+        intensity={rig.key.intensity * light}
+        color={rig.key.color}
+        // Shadows the work casts on itself, viewer only (thumbnails have none).
+        castShadow={interactive && look?.selfShadow !== false}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         shadow-bias={-0.0002}
       />
-      <directionalLight position={[-4, 2, -3]} intensity={0.5} />
+      {rig.fill.intensity > 0 && (
+        <directionalLight position={rig.fill.position} intensity={rig.fill.intensity * light} />
+      )}
+      <directionalLight position={rig.back.position} intensity={rig.back.intensity * light} />
+      {/* Optional side lights (look.sideLights): graze dark surfaces so their form shows. */}
+      {!!look?.sideLights &&
+        ([-1, 1] as const).map((side) => (
+          <directionalLight
+            key={side}
+            position={[side * 5, 1, 1.5]}
+            intensity={rig.key.intensity * look.sideLights! * light}
+            color={rig.key.color}
+          />
+        ))}
 
-      {/* Reflections / specular for the bronze patina — procedural, no HDR download. */}
-      <StudioEnvironment intensity={0.9} />
+      {/* Reflections / specular for the bronze patina — procedural, no HDR download.
+          Set per scene: three ignores a material's own envMapIntensity here. */}
+      <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1) * cardLight} />
 
       <Suspense fallback={loader ? <Loader /> : null}>
         <RevealModel
@@ -456,6 +570,8 @@ export const SculptureContents: FC<
           reveal={reveal && !isThumb}
           fit={fit}
           facing={facing}
+          look={look}
+          cardFrame={cardFrame}
           adaptiveBg={!isThumb && adaptiveBackground}
           onBackground={onBackground}
           onReady={onReady}
@@ -477,9 +593,9 @@ export const SculptureContents: FC<
       <OrbitControls
         ref={controlsRef}
         makeDefault
-        enableZoom={interactive}
+        enableZoom={interactive && !rotateOnly}
         {...(!fit && { minDistance: camZ * 0.4, maxDistance: camZ * 2 })}
-        enablePan={interactive}
+        enablePan={interactive && !rotateOnly}
         autoRotate={autoRotate && !interactive && !isThumb}
         autoRotateSpeed={1.4}
         enableDamping
@@ -538,7 +654,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
           preserveDrawingBuffer: isThumb,
           localClippingEnabled: true,
         }}
-        onCreated={({ gl }) => setupRenderer(gl)}
+        onCreated={({ gl }) => setupRenderer(gl, rigFor(props.rig ?? props.look?.rig))}
       >
         <SculptureContents
           {...props}
