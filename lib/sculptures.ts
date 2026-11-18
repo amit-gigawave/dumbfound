@@ -813,6 +813,21 @@ export const sculptures: Sculpture[] = [
     edition: "3 of 9",
     heightCm: 30,
   },
+  // Scan "GauravDas-MotherWDaughter.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "16 - Gaurav Das": GD-0012, matched by the photo in that row. Year and edition not given there.
+  {
+    slug: "gaurab-das-mother-and-child-2",
+    title: "Mother and Child 2",
+    description: "",
+    artistSlug: "gaurab-das",
+    thumbnail: "/thumbnails/gaurab-das-mother-and-child-2.webp",
+    modelUrl: "/sculptures/gaurab-das-mother-and-child-2.glb",
+    look: { metalness: 0.5, roughness: 1.3 },
+    material: "Bronze",
+    year: "",
+    dimensions: "16 × 14 × 14 inches",
+    heightCm: 41,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
