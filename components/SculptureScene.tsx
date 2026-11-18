@@ -29,7 +29,7 @@ import {
 import StudioEnvironment from "./three/StudioEnvironment";
 import { setupRenderer } from "./three/renderer";
 import type { ArtworkLook } from "@/lib/sculptures";
-import { rigFor, type LightRig } from "./three/lighting";
+import { rigFor, SHINE, type LightRig } from "./three/lighting";
 
 // Neutral grey for the wireframe scaffold during the reveal.
 const WIRE_COLOR = "#5c5c5c";
@@ -132,10 +132,10 @@ const prepareMaterial = (
     s.setRGB(Math.min(s.r, 1), Math.min(s.g, 1), Math.min(s.b, 1));
     if (look?.specular !== undefined) c.specularIntensity = look.specular;
   }
-  if (c instanceof THREE.MeshStandardMaterial && look) {
-    c.metalness *= look.metalness ?? 1;
+  if (c instanceof THREE.MeshStandardMaterial) {
+    c.metalness *= look?.metalness ?? 1;
     // Scales the roughness texture too; the shader caps it at fully matte.
-    c.roughness *= look.roughness ?? 1;
+    c.roughness *= (look?.roughness ?? 1) * SHINE.roughness;
   }
   return c;
 };
@@ -567,7 +567,7 @@ export const SculptureContents: FC<
 
       {/* Reflections / specular for the bronze patina — procedural, no HDR download.
           Set per scene: three ignores a material's own envMapIntensity here. */}
-      <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1) * cardLight} />
+      <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1) * SHINE.reflections * cardLight} />
 
       <Suspense fallback={loader ? <Loader /> : null}>
         <RevealModel

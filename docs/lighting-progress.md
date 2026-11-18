@@ -43,6 +43,9 @@ The user found seven works still off on their artwork pages. Picked from variant
 - Five Khanna bandsmen (Rajinder Kaka Horn, Davinder Raj Tutu, Patinder Rawat Trumpet, Patinder Ji Haran, Bandwalla) looked flat: `light` × 1.25, `reflections: 0.9`, `specular: 1`. `cardLight` kept.
 - Levitation and Ganesha: the user preferred them as before the house look, so they are back on `{ metalness: 0.5, roughness: 1.3 }` and `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` with their earlier thumbnails.
 
+### Global shine (2026-11-18, night)
+The user then found every work dull ("make every art a bit shiny"). Instead of editing 42 looks, `SHINE` in `components/three/lighting.ts` sits on top of every work's `look` (both rigs): roughness × 0.75 and studio reflections × 1.6. Chosen from renders of "now / a bit (0.75, 1.6) / more (0.6, 2.2)" on the Long-Hair head, Blue Saree, Bandwalla, Tirthankar and Yellow Saree. To tune all works at once, change `SHINE`; set both to 1 to go back to the house look. All thumbnails were remade.
+
 Lesson: the house surface fixes the shine, but works with light paint need less light and scans with sheen 0 need `specular: 1`, or they look milky or flat.
 
 ## Settings before the house look

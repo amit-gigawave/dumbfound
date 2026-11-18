@@ -38,6 +38,14 @@ export const LIGHTING: LightRig = {
   reflections: 0.48,
 };
 
+/**
+ * Shine on top of every work's own `look` (both rigs): roughness × `roughness`
+ * (lower = glossier) and studio reflections × `reflections`. Added 2026-11-18
+ * when the user found the house look dull everywhere ("make every art a bit
+ * shiny"); 1 and 1 turn it off.
+ */
+export const SHINE = { roughness: 0.75, reflections: 1.6 };
+
 /** The earlier filmic studio light, kept to compare against. */
 const previous: LightRig = {
   toneMapping: THREE.ACESFilmicToneMapping,
