@@ -167,10 +167,7 @@ Scans from a phone or scanning app come as USD files. Turn them into a `.glb` wi
 
 4. **Check which way it faces.** Look at the thumbnail. Scans are often saved facing sideways or backwards. If so, set `facing` (for example `180`) and make the thumbnail again. Then make the AR model.
 
-5. **Check the shine.** Turn the work in the viewer. Scans often come out more metallic and glossy than the real piece, so paint shows hot white streaks. Set `look` to tone it down, then make the thumbnail again (and bump its `?v=`). What we use:
-   - painted heads: `{ metalness: 0, roughness: 2, reflections: 0.5, light: 0.9 }`
-   - painted figures: `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }`
-   - bronze: `{ metalness: 0.5, roughness: 1.3 }`
+5. **Check the shine.** Every work gets the house surface: how Bronze Female Head with Long Hair looks, with no glare and not dull (metalness 0.15, roughness 0.6, reflections 0.6 after its `look`). `npm run add-model` works out the `look` for a new model automatically (`scripts/lib/house-look.mjs`). Done by hand, use `houseLook` from that file. Then turn the work in the viewer. If it reads too dark or too bright, add `light` (and on dark bronze `reflections`), then make the thumbnail again (and bump its `?v=`). More in [lighting-progress.md](lighting-progress.md).
 
    `/artworks/thumb/<slug>?look={"metalness":0.2}` previews a setting without editing the catalogue.
 

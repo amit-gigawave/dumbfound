@@ -23,13 +23,20 @@ export const slugify = (text) =>
 
 /** Order fields are written in, matching the hand-written entries. */
 const ORDER = [
-  "slug", "title", "description", "artistSlug", "thumbnail", "modelUrl",
+  "slug", "title", "description", "artistSlug", "thumbnail", "modelUrl", "look",
   "facing", "material", "year", "dimensions", "edition", "heightCm", "featured",
 ];
 /** Always written, even when empty (the Sculpture type requires them). */
 const REQUIRED = new Set(["slug", "title", "description", "artistSlug", "thumbnail", "material", "year"]);
 
-const literal = (v) => (typeof v === "string" ? JSON.stringify(v) : String(v));
+const literal = (v) => {
+  if (typeof v === "string") return JSON.stringify(v);
+  // Small objects such as `look`, written the way the hand-made entries are.
+  if (v && typeof v === "object") {
+    return `{ ${Object.entries(v).map(([k, x]) => `${k}: ${literal(x)}`).join(", ")} }`;
+  }
+  return String(v);
+};
 const keep = (key, v) => REQUIRED.has(key) || (v !== undefined && v !== "" && v !== false && v !== 0);
 
 /** Applies `edit` to the file text, then checks the result with `verify(works)`. */

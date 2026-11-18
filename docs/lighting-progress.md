@@ -26,7 +26,16 @@ Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) we
 - **Applied in** `components/SculptureScene.tsx`: `prepareMaterial` handles the material fixes for every work (transmission off, specular colour capped) plus `look`. `SculptureContents` builds the lights.
 - **Preview** without editing: `/artworks/thumb/<slug>?look={"light":1.2}&rig=previous&facing=90`.
 
-## Settings so far
+## House look (since 2026-11-18)
+The founder picked **Bronze Female Head with Long Hair** as the surface every work should have: no glare, not dull. Its material ends up at **metalness 0.15, roughness 0.6, reflections 0.6** (texture average × factor × `look`).
+
+Copying its `look` numbers would not give the same result, because `look` multiplies each scan's own maps and the scans differ a lot (painted works often arrive as polished metal, others with no metal at all). So each work's `metalness` and `roughness` multipliers are worked out from its model to land on those values (`scripts/lib/house-look.mjs`, `houseLook`). `npm run add-model` does this for every new work. Brightness settings (`light`, `sideLights`, `cardLight`, framing) are separate and still tuned by eye.
+
+Applied to every work in commit `ee3008d`, except: the Lady (washes out grey; keeps her own look), Lord Krishna, Pandit and Dancing Shiva (old light by choice), and Seated Bandsman with Horn (its scan has sheen 0, so roughness changes nothing). A model with no metal map and metalness 0 stays paint. `scripts/.tmp-matstats.mjs` (untracked) prints each work's resulting values.
+
+## Settings before the house look
+The table below is the history up to 2026-11-17. The metalness/roughness/reflections in it were replaced by the house look; the brightness settings still apply.
+
 User's taste: **matte and natural, not shiny**. The user judges each work by eye. One setting does not fit all.
 
 | Group | look | Works |
