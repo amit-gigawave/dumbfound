@@ -15,18 +15,21 @@ import { imageStats } from "./views/imageStats";
  * box, so the image is 0.88W × 1.1W, centred: its top is 0.075W down. As a
  * fraction of the plate's 1.25W height it starts at 6% and spans 88%.
  */
-const IMAGE_TOP = 0.06;
-const IMAGE_SPAN = 0.88;
+export const IMAGE_TOP = 0.06;
+export const IMAGE_SPAN = 0.88;
 
 const ScaleMark = ({
   src,
   heightCm,
   hidden = false,
+  labelBg,
 }: {
   src: string;
   heightCm: number;
   /** Fades out, e.g. while the 3D preview (framed differently) is showing. */
   hidden?: boolean;
+  /** Background behind the height text, for plates that aren't the usual grey. */
+  labelBg?: string;
 }) => {
   const [span, setSpan] = useState<[number, number] | null>(null);
 
@@ -58,7 +61,12 @@ const ScaleMark = ({
       <span className="absolute left-0 top-0 h-px w-full bg-stone/60" />
       <span className="absolute bottom-0 left-0 h-px w-full bg-stone/60" />
       {/* Height, written along the line on a gap in it. */}
-      <span className="relative self-center bg-plate py-1.5 text-[11px] leading-none tracking-[0.02em] text-ink/70 tabular-nums [writing-mode:vertical-rl] rotate-180 transition-colors duration-500 group-hover:bg-[#e8e8e8]">
+      <span
+        className={`relative self-center py-1.5 text-[11px] leading-none tracking-[0.02em] text-ink/70 tabular-nums [writing-mode:vertical-rl] rotate-180 transition-colors duration-500 ${
+          labelBg ? "" : "bg-plate group-hover:bg-[#e8e8e8]"
+        }`}
+        style={labelBg ? { background: labelBg } : undefined}
+      >
         {label}
       </span>
     </span>

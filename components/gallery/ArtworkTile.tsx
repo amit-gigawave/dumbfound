@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import { Rotate3d } from "lucide-react";
@@ -57,6 +57,9 @@ const ArtworkTile = ({
   quiet = false,
   sizes = "(min-width: 1024px) 33vw, 50vw",
   variant = "catalogue",
+  plateExtra,
+  caption,
+  badge = false,
 }: {
   work: Sculpture;
   showArtist?: boolean;
@@ -69,6 +72,12 @@ const ArtworkTile = ({
   quiet?: boolean;
   sizes?: string;
   variant?: "catalogue" | "label";
+  /** Lab: extra layer drawn on the plate (z-10 above the photo, -z-10 below). */
+  plateExtra?: (state: { active: boolean; ready: boolean }) => ReactNode;
+  /** Lab: replaces the caption under the plate. */
+  caption?: ReactNode;
+  /** Shows the always-visible 3D badge without the label variant. */
+  badge?: boolean;
 }) => {
   const label = variant === "label";
   const artist = getArtist(work.artistSlug);
@@ -227,7 +236,8 @@ const ArtworkTile = ({
             />
           </div>
         ) : null}
-        {label && work.modelUrl && (
+        {plateExtra?.({ active, ready })}
+        {(label || badge) && work.modelUrl && (
           <span className="absolute left-3 top-3 z-10 grid size-7 place-items-center rounded-full bg-white/85 text-ink shadow-[0_2px_8px_-4px_rgba(0,0,0,.35)] backdrop-blur-sm">
             <Rotate3d size={14} strokeWidth={1.7} aria-hidden />
             <span className="sr-only">Can be turned in 3D</span>
@@ -286,7 +296,9 @@ const ArtworkTile = ({
           </span>
         )}
       </div>
-      {label ? (
+      {caption !== undefined ? (
+        caption
+      ) : label ? (
         <WallLabel work={work} artist={showArtist ? artist : undefined} />
       ) : (
       <div className="grid gap-0.5">
@@ -318,7 +330,7 @@ const editionText = (e: string) =>
  * The caption as a museum wall label, one fact per line, all from the
  * catalogue: artist and birth year; title and year; medium and edition; size.
  */
-const WallLabel = ({
+export const WallLabel = ({
   work,
   artist,
 }: {
