@@ -40,6 +40,9 @@ The user found seven works still off on their artwork pages. Picked from variant
 - Man with Mridangam: tried the same, but the user preferred its earlier setting, `{ metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.3, sideLights: 0.5 }`, so it is back on that (not the house surface), then asked for it brighter: now `light: 1.6, reflections: 0.9` (1.8 bleached the white dhoti).
 - Dancing Shiva: moved off the old light onto the house surface, `{ metalness: 0.15, roughness: 0.6, reflections: 1, light: 1.6, sideLights: 0.7, specular: 1 }`. Its hair is near-black in the scan's own colours.
 
+- Five Khanna bandsmen (Rajinder Kaka Horn, Davinder Raj Tutu, Patinder Rawat Trumpet, Patinder Ji Haran, Bandwalla) looked flat: `light` × 1.25, `reflections: 0.9`, `specular: 1`. `cardLight` kept.
+- Levitation and Ganesha: the user preferred them as before the house look, so they are back on `{ metalness: 0.5, roughness: 1.3 }` and `{ metalness: 0.2, roughness: 1.6, reflections: 0.6 }` with their earlier thumbnails.
+
 Lesson: the house surface fixes the shine, but works with light paint need less light and scans with sheen 0 need `specular: 1`, or they look milky or flat.
 
 ## Settings before the house look
