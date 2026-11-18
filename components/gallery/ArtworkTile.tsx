@@ -15,6 +15,7 @@ import {
 } from "../three/modelLoader";
 import { registerAmbient } from "./ambientTurn";
 import { tilt, untilt } from "./tilt";
+import ScaleMark from "./ScaleMark";
 
 const TilePreview = dynamic(() => import("../three/TilePreview"), {
   ssr: false,
@@ -40,6 +41,11 @@ const TURN_AFTER = 0;
  * once the bar completes. `ambient` (the artworks grid) also lets a random one
  * or two visible works start turning on their own for a few seconds.
  * `quiet` (home page) keeps the turning but drops the lean and the hint pill.
+ *
+ * `variant="label"` (being tried at /lab/cards) captions the work like a
+ * museum wall label (artist and birth year; title, year; medium, edition;
+ * size), draws a height line on the plate, and marks 3D works with a badge
+ * that is always visible, since phones never hover.
  */
 const ArtworkTile = ({
   work,
@@ -50,6 +56,7 @@ const ArtworkTile = ({
   backdrop = false,
   quiet = false,
   sizes = "(min-width: 1024px) 33vw, 50vw",
+  variant = "catalogue",
 }: {
   work: Sculpture;
   showArtist?: boolean;
@@ -61,7 +68,9 @@ const ArtworkTile = ({
   /** No lean toward the cursor and no hint pill; works still turn. */
   quiet?: boolean;
   sizes?: string;
+  variant?: "catalogue" | "label";
 }) => {
+  const label = variant === "label";
   const artist = getArtist(work.artistSlug);
   const modelUrl = showcase ? work.modelUrl : undefined;
   const plateRef = useRef<HTMLDivElement>(null);
@@ -208,6 +217,22 @@ const ArtworkTile = ({
             />
           </div>
         )}
+        {label && work.heightCm ? (
+          // Scales with the photo on hover, so the line stays on the work.
+          <div className="pointer-events-none absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.035]">
+            <ScaleMark
+              src={work.thumbnail}
+              heightCm={work.heightCm}
+              hidden={active && ready}
+            />
+          </div>
+        ) : null}
+        {label && work.modelUrl && (
+          <span className="absolute left-3 top-3 z-10 grid size-7 place-items-center rounded-full bg-white/85 text-ink shadow-[0_2px_8px_-4px_rgba(0,0,0,.35)] backdrop-blur-sm">
+            <Rotate3d size={14} strokeWidth={1.7} aria-hidden />
+            <span className="sr-only">Can be turned in 3D</span>
+          </span>
+        )}
         {modelUrl && (
           // Hover progress: fills over the hover delay, creeps while the model
           // loads, completes when it starts turning, then fades out.
@@ -244,13 +269,15 @@ const ArtworkTile = ({
           // Hint that slides up on hover; tracks the 3D preview as it loads.
           <span
             aria-hidden
-            className="pointer-events-none absolute bottom-3.5 left-3.5 z-10 inline-flex translate-y-3 items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-ink opacity-0 shadow-[0_4px_14px_-6px_rgba(0,0,0,.3)] backdrop-blur-sm transition-[transform,opacity] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] group-hover:translate-y-0 group-hover:opacity-100"
+            className={`pointer-events-none absolute bottom-3.5 left-3.5 z-10 inline-flex translate-y-3 items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 ${label ? "text-[12px]" : "text-[10px] uppercase tracking-[0.16em]"} text-ink opacity-0 shadow-[0_4px_14px_-6px_rgba(0,0,0,.3)] backdrop-blur-sm transition-[transform,opacity] duration-500 ease-[cubic-bezier(.3,.7,.3,1)] group-hover:translate-y-0 group-hover:opacity-100`}
           >
             {modelUrl ? (
               <>
                 <Rotate3d size={12} strokeWidth={1.8} className="text-accent" />
                 {spinning ? "Turning in 3D" : "Loading 3D…"}
               </>
+            ) : label ? (
+              "Open work"
             ) : (
               <>
                 View work <span className="text-accent">→</span>
@@ -259,6 +286,9 @@ const ArtworkTile = ({
           </span>
         )}
       </div>
+      {label ? (
+        <WallLabel work={work} artist={showArtist ? artist : undefined} />
+      ) : (
       <div className="grid gap-0.5">
         {showArtist && artist && <span className="label">{artist.name}</span>}
         <span className="font-display text-[17px] leading-snug sm:text-[21px] tracking-[0.03em] transition-colors group-hover:text-accent">
@@ -272,7 +302,55 @@ const ArtworkTile = ({
           className="mt-2 block h-px w-0 bg-accent transition-[width] duration-500 ease-out group-hover:w-12"
         />
       </div>
+      )}
     </Link>
+  );
+};
+
+/** "14 × 5 × 6 inches" → "14 × 5 × 6 in". */
+const shortSize = (d: string) => d.replace(/\binches\b/g, "in");
+
+/** "3 of 9" → "edition 3 of 9"; "Edition of 9", "AP 1/1" and the like as given. */
+const editionText = (e: string) =>
+  /^\d/.test(e) ? `edition ${e}` : e.replace(/^Edition\b/, "edition");
+
+/**
+ * The caption as a museum wall label, one fact per line, all from the
+ * catalogue: artist and birth year; title and year; medium and edition; size.
+ */
+const WallLabel = ({
+  work,
+  artist,
+}: {
+  work: Sculpture;
+  artist?: ReturnType<typeof getArtist>;
+}) => {
+  const medium = [work.material, work.edition && editionText(work.edition)]
+    .filter(Boolean)
+    .join(", ");
+  return (
+    <div className="grid gap-1 text-[13px] leading-snug text-stone">
+      {artist && (
+        <span className="text-ink">
+          {artist.name}
+          {artist.born && (
+            <span className="ml-1.5 text-stone">{artist.born}</span>
+          )}
+        </span>
+      )}
+      <span className="line-clamp-2 font-display text-[17px] leading-snug tracking-[0.02em] text-ink transition-colors group-hover:text-accent sm:text-[20px]">
+        {work.title}
+        {work.year && (
+          <span className="font-sans text-[13px] tracking-normal text-stone">
+            , {work.year}
+          </span>
+        )}
+      </span>
+      {medium && <span className="line-clamp-1 sm:line-clamp-2">{medium}</span>}
+      {work.dimensions && (
+        <span className="tabular-nums">{shortSize(work.dimensions)}</span>
+      )}
+    </div>
   );
 };
 
