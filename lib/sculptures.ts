@@ -796,6 +796,23 @@ export const sculptures: Sculpture[] = [
     edition: "3 of 9",
     heightCm: 33,
   },
+  // Scan "SITMUSICIAN_RED.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "40 - Krishan Khanna - 06", matched by the photo in that row. Year not given there.
+  {
+    slug: "khanna-shyam-pratap-bhompu-walae",
+    title: "Shyam Pratap Bhompu Walae",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-shyam-pratap-bhompu-walae.webp",
+    modelUrl: "/sculptures/khanna-shyam-pratap-bhompu-walae.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
+    facing: 260,
+    material: "Bronze",
+    year: "",
+    dimensions: "12 × 8 × 8 inches",
+    edition: "3 of 9",
+    heightCm: 30,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
