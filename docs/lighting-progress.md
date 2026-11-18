@@ -33,6 +33,14 @@ Copying its `look` numbers would not give the same result, because `look` multip
 
 Applied to every work in commit `ee3008d`, except: the Lady (washes out grey; keeps her own look), Lord Krishna, Pandit and Dancing Shiva (old light by choice), and Seated Bandsman with Horn (its scan has sheen 0, so roughness changes nothing). A model with no metal map and metalness 0 stays paint. `scripts/.tmp-matstats.mjs` (untracked) prints each work's resulting values.
 
+### Tuned after the house look (2026-11-18)
+The user found seven works still off on their artwork pages. Picked from variant renders against the reference head:
+- Side Braid, Nose Ring, Man with Mridangam: a milky grey veil (their paint is about twice as light as the reference, so the shared light bleached it in the tone mapping). `light` × 0.8, and `specular: 1` where the scan had sheen 0.
+- Head with Bared Teeth, Blue Saree, Trumpeter: flat, dark faces. `light` × 1.25 and `reflections` × 1.5, plus `specular: 1` (Blue Saree, Trumpeter).
+- Dancing Shiva: moved off the old light onto the house surface, `{ metalness: 0.15, roughness: 0.6, reflections: 1, light: 1.6, sideLights: 0.7, specular: 1 }`. Its hair is near-black in the scan's own colours.
+
+Lesson: the house surface fixes the shine, but works with light paint need less light and scans with sheen 0 need `specular: 1`, or they look milky or flat.
+
 ## Settings before the house look
 The table below is the history up to 2026-11-17. The metalness/roughness/reflections in it were replaced by the house look; the brightness settings still apply.
 
