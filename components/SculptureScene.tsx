@@ -20,7 +20,12 @@ import {
 } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import * as THREE from "three";
-import { DRACO_PATH, hasRevealed, markRevealed } from "./three/modelLoader";
+import {
+  DRACO_PATH,
+  hasRevealed,
+  markRevealed,
+  retainModel,
+} from "./three/modelLoader";
 import StudioEnvironment from "./three/StudioEnvironment";
 import { setupRenderer } from "./three/renderer";
 import type { ArtworkLook } from "@/lib/sculptures";
@@ -224,6 +229,8 @@ const RevealModel: FC<{
   onReady?: () => void;
 }> = ({ url, offsetX, offsetY, reveal, fit, facing, look, cardFrame, adaptiveBg, onBackground, onReady }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
+  // Keep the model cached while it's on screen; afterwards it may be evicted.
+  useEffect(() => retainModel(url, scene), [url, scene]);
   const lookKey = JSON.stringify(look ?? {});
   const get = useThree((state) => state.get);
 
