@@ -1,7 +1,7 @@
 # Lighting the 3D works: progress notes
 
 Handoff for continuing the per-work lighting. State as of 2026-11-17.
-Branch `site-redesign-oct-2026`, last commit `e277956`. **Nothing is pushed**, so dumbfound.vercel.app still shows the old, shiny look.
+Branch `site-redesign-oct-2026`. **Live since 2026-11-17** (merged into `origin/main` `153768f` and `ayan/main`), so dumbfound.vercel.app shows the new light. Next steps: [session-2026-11-17.md](session-2026-11-17.md), to-do 2.
 
 ## The problem
 Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) were exported as polished metal (metalness 0.6–1, roughness ~0.3), so the paint showed moving chrome streaks. Some USD scans also carried faults: glass transmission (Lord Krishna, Pandit), specular colour above 1 (Gulratan), and specular strength 0 (black paint then reflects nothing).
@@ -26,7 +26,25 @@ Many scans looked "flashy". Painted works (Thota heads, Khanna bandsmen, …) we
 - **Applied in** `components/SculptureScene.tsx`: `prepareMaterial` handles the material fixes for every work (transmission off, specular colour capped) plus `look`. `SculptureContents` builds the lights.
 - **Preview** without editing: `/artworks/thumb/<slug>?look={"light":1.2}&rig=previous&facing=90`.
 
-## Settings so far
+## House look (since 2026-11-18)
+The founder picked **Bronze Female Head with Long Hair** as the surface every work should have: no glare, not dull. Its material ends up at **metalness 0.15, roughness 0.6, reflections 0.6** (texture average × factor × `look`).
+
+Copying its `look` numbers would not give the same result, because `look` multiplies each scan's own maps and the scans differ a lot (painted works often arrive as polished metal, others with no metal at all). So each work's `metalness` and `roughness` multipliers are worked out from its model to land on those values (`scripts/lib/house-look.mjs`, `houseLook`). `npm run add-model` does this for every new work. Brightness settings (`light`, `sideLights`, `cardLight`, framing) are separate and still tuned by eye.
+
+Applied to every work in commit `ee3008d`, except: the Lady (washes out grey; keeps her own look), Lord Krishna, Pandit and Dancing Shiva (old light by choice), and Seated Bandsman with Horn (its scan has sheen 0, so roughness changes nothing). A model with no metal map and metalness 0 stays paint. `scripts/.tmp-matstats.mjs` (untracked) prints each work's resulting values.
+
+### Tuned after the house look (2026-11-18)
+The user found seven works still off on their artwork pages. Picked from variant renders against the reference head:
+- Side Braid, Nose Ring: a milky grey veil (their paint is about twice as light as the reference, so the shared light bleached it in the tone mapping). `light` × 0.8, and `specular: 1` where the scan had sheen 0. The user then asked for them brighter: `light` × 1.5 and `reflections: 0.9` (Side Braid light 1.44, Nose Ring 1.08). Raising reflections with the light keeps the paint from going milky.
+- Head with Bared Teeth, Blue Saree, Trumpeter: flat, dark faces. `light` × 1.25 and `reflections` × 1.5, plus `specular: 1` (Blue Saree, Trumpeter).
+- Man with Mridangam: tried the same, but the user preferred its earlier setting, `{ metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.3, sideLights: 0.5 }`, so it is back on that (not the house surface), then asked for it brighter: now `light: 1.6, reflections: 0.9` (1.8 bleached the white dhoti).
+- Dancing Shiva: moved off the old light onto the house surface, `{ metalness: 0.15, roughness: 0.6, reflections: 1, light: 1.6, sideLights: 0.7, specular: 1 }`. Its hair is near-black in the scan's own colours.
+
+Lesson: the house surface fixes the shine, but works with light paint need less light and scans with sheen 0 need `specular: 1`, or they look milky or flat.
+
+## Settings before the house look
+The table below is the history up to 2026-11-17. The metalness/roughness/reflections in it were replaced by the house look; the brightness settings still apply.
+
 User's taste: **matte and natural, not shiny**. The user judges each work by eye. One setting does not fit all.
 
 | Group | look | Works |
@@ -77,4 +95,4 @@ The artwork-page viewer differs from the card in three ways: the key light casts
 - AR copies (`public/ar/`) don't get `look`, so works can still look shiny in AR. Bake it into `scripts/make-ar-models.mjs` if wanted.
 - Lord Krishna has a see-through sheet under its base. That's part of the scan's shape, not the lighting.
 - The home hero (`components/HeroScene.tsx`) has its own, much brighter light and was not changed.
-- To go live: push the branch to `origin` and `ayan`, then merge it into each `main` (no force). Only when the user asks.
+- To publish later changes: push the branch to `origin` and `ayan`, then merge it into each `main` (no force). Only when the user asks.

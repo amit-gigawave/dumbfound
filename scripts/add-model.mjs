@@ -15,6 +15,7 @@ import { createInterface } from "node:readline";
 import { spawn, spawnSync } from "node:child_process";
 import { addWork, bumpVersion, load, loadWorks, slugify, updateWork } from "./lib/catalogue.mjs";
 import { convertUsd } from "./lib/blender.mjs";
+import { houseLook } from "./lib/house-look.mjs";
 import { fix, inspect, makeIO, printReport } from "./lib/model-checks.mjs";
 
 // ---------- arguments ----------
@@ -139,6 +140,7 @@ if (isNew) {
 
 const summary = [];
 let modelUrl = existing?.modelUrl;
+let look;
 // A replaced model overwrites the work's current file (whatever its name).
 const out = `public${(replace && existing.modelUrl ? existing.modelUrl : `/sculptures/${slug}.glb`).split("?")[0]}`;
 
@@ -192,6 +194,11 @@ if (source) {
     size = compress(2048);
   }
   rmSync(fixedFile, { force: true });
+  // New works get the house surface (no glare, not dull); see scripts/lib/house-look.mjs.
+  if (isNew) {
+    look = await houseLook(await io.read(out));
+    summary.push(`Look ${JSON.stringify(look)} (house surface)`);
+  }
   summary.push(`Model ${out} (${size} KB)`);
   if (size > 6000) console.warn(`  Warning: ${size} KB is heavy for phones. Consider asking for a lighter mesh.`);
 
@@ -204,7 +211,7 @@ const facing = facingArg !== undefined ? parseFacing(facingArg) : existing?.faci
 try {
   if (isNew) {
     await addWork(
-      { slug, ...details, thumbnail: `/thumbnails/${slug}.webp`, modelUrl, facing },
+      { slug, ...details, thumbnail: `/thumbnails/${slug}.webp`, modelUrl, look, facing },
       `Added with npm run add-model from ${basename(source)}.`,
     );
     summary.push(`Entry added to lib/sculptures.ts`);
