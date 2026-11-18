@@ -779,6 +779,23 @@ export const sculptures: Sculpture[] = [
     edition: "Edition of 9 + AP",
     heightCm: 66,
   },
+  // Scan "F_REDDRUMMER.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "42 - Krishan Khanna - 08", matched by the photo in that row. Year not given there.
+  {
+    slug: "khanna-kc-the-bandmaster",
+    title: "KC The Bandmaster",
+    description: "",
+    artistSlug: "krishen-khanna",
+    thumbnail: "/thumbnails/khanna-kc-the-bandmaster.webp",
+    modelUrl: "/sculptures/khanna-kc-the-bandmaster.glb",
+    look: { metalness: 0.2, roughness: 1.6, reflections: 0.6 },
+    facing: 180,
+    material: "Bronze",
+    year: "",
+    dimensions: "13 × 12 × 8 inches",
+    edition: "3 of 9",
+    heightCm: 33,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
