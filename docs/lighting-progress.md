@@ -35,8 +35,9 @@ Applied to every work in commit `ee3008d`, except: the Lady (washes out grey; ke
 
 ### Tuned after the house look (2026-11-18)
 The user found seven works still off on their artwork pages. Picked from variant renders against the reference head:
-- Side Braid, Nose Ring, Man with Mridangam: a milky grey veil (their paint is about twice as light as the reference, so the shared light bleached it in the tone mapping). `light` × 0.8, and `specular: 1` where the scan had sheen 0.
+- Side Braid, Nose Ring: a milky grey veil (their paint is about twice as light as the reference, so the shared light bleached it in the tone mapping). `light` × 0.8, and `specular: 1` where the scan had sheen 0.
 - Head with Bared Teeth, Blue Saree, Trumpeter: flat, dark faces. `light` × 1.25 and `reflections` × 1.5, plus `specular: 1` (Blue Saree, Trumpeter).
+- Man with Mridangam: tried the same, but the user preferred its earlier setting, `{ metalness: 0.2, roughness: 1.6, reflections: 0.6, light: 1.3, sideLights: 0.5 }`, so it is back on that (not the house surface).
 - Dancing Shiva: moved off the old light onto the house surface, `{ metalness: 0.15, roughness: 0.6, reflections: 1, light: 1.6, sideLights: 0.7, specular: 1 }`. Its hair is near-black in the scan's own colours.
 
 Lesson: the house surface fixes the shine, but works with light paint need less light and scans with sheen 0 need `specular: 1`, or they look milky or flat.
