@@ -73,9 +73,12 @@ export default function ShareButton({
         onClick={share}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="btn"
+        // The hollow style the site uses for a second action beside a solid
+        // button; !gap restores the icon's spacing, which .btn sets to 0.
+        className="btn btn-hollow !gap-2"
       >
-        <Share2 size={14} aria-hidden /> Share
+        <Share2 size={15} strokeWidth={1.75} aria-hidden />
+        Share
       </button>
       {open && (
         <div
