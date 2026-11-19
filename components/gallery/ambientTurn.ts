@@ -2,7 +2,7 @@
  * Ambient turns for the artworks grid: every few seconds a random visible
  * tile with a 3D model starts turning in the round on its own (as it does on
  * hover), then settles back to its photo. A few at most at once; paused while
- * the tab is hidden or the window is in the background, and while scrolling;
+ * the tab is hidden and while scrolling;
  * at most MAX_NEW different models per visit; desktops with power to spare
  * only (see deviceTier).
  */
@@ -59,9 +59,10 @@ const end = (t: AmbientTile) => {
 };
 
 const tick = () => {
-  // Not while the tab is hidden, the window is in the background, or the
-  // visitor is scrolling (the work would load for a card already leaving).
-  if (document.hidden || !document.hasFocus() || running.size >= maxAtOnce()) return;
+  // Not while the tab is hidden or the visitor is scrolling (the work would
+  // load for a card already leaving). A page that is on screen but not the
+  // focused window (DevTools, another app beside it) still turns.
+  if (document.hidden || running.size >= maxAtOnce()) return;
   if (performance.now() - lastScroll < SCROLL_QUIET) return;
   const pool = [...tiles].filter(
     (t) =>

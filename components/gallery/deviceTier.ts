@@ -8,7 +8,18 @@
  * Browser only: call it after mount (an effect), never during render, so the
  * server's HTML is the same for every device.
  */
-import { lightConnection } from "../three/modelLoader";
+
+/**
+ * Data Saver, or a really slow connection. Chrome's 3G/4G label is an estimate
+ * from recent latency (a VPN alone can make fast Wi-Fi read as "3g"), so only
+ * 2G and slower count.
+ */
+const slowConnection = () => {
+  const c = (navigator as Navigator & {
+    connection?: { saveData?: boolean; effectiveType?: string };
+  }).connection;
+  return !!c && (!!c.saveData || /(^|-)2g$/.test(c.effectiveType ?? ""));
+};
 
 let cached: boolean | undefined;
 
@@ -21,8 +32,7 @@ export function cardsIn3D(): boolean {
     // ambient turn, which costs data and battery for little.
     matchMedia("(hover: hover)").matches &&
     !matchMedia("(prefers-reduced-motion: reduce)").matches &&
-    // Data Saver, or a 2G/3G connection.
-    !lightConnection() &&
+    !slowConnection() &&
     // Weak hardware (both are absent on some browsers: then assume it's fine).
     (nav.hardwareConcurrency ?? 8) > 4 &&
     (nav.deviceMemory ?? 8) > 4;
