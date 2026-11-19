@@ -257,6 +257,8 @@ export default function ViewingRoom({
               look={work.look}
               adaptiveBackground={false}
               controlsRef={controlsRef}
+              // It turns the work itself (the arrival turn, Front / Side / Back).
+              alwaysRender
               onReady={onReady}
             />
           </div>

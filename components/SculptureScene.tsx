@@ -188,7 +188,35 @@ interface SculptureSceneProps {
    * panning alone, so a page that scrolls past the canvas keeps scrolling.
    */
   rotateOnly?: boolean;
+  /**
+   * Redraw every frame while on screen. Off by default: a still work is drawn
+   * only when something changes (a drag, the reveal, a resize), so an open
+   * page doesn't keep the GPU busy. Turn it on for a parent that moves the
+   * camera itself through `controlsRef` (e.g. its own slow auto-turn).
+   */
+  alwaysRender?: boolean;
 }
+
+/**
+ * The canvas draws on demand, so anything that animates by itself must ask
+ * for frames. This asks for one every frame for `ms` after it mounts: long
+ * enough for the reveal (~1.4 s), the camera framing and the first frames of
+ * the environment to settle. Remount it (a new `key`) to run it again.
+ */
+const WarmFrames: FC<{ ms?: number }> = ({ ms = 2500 }) => {
+  const invalidate = useThree((s) => s.invalidate);
+  useEffect(() => {
+    const end = performance.now() + ms;
+    let raf = 0;
+    const tick = () => {
+      invalidate();
+      if (performance.now() < end) raf = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => cancelAnimationFrame(raf);
+  }, [invalidate, ms]);
+  return null;
+};
 
 const Loader = () => {
   const { progress } = useProgress();
@@ -569,6 +597,10 @@ export const SculptureContents: FC<
           Set per scene: three ignores a material's own envMapIntensity here. */}
       <StudioEnvironment intensity={rig.reflections * (look?.reflections ?? 1) * SHINE.reflections * cardLight} />
 
+      {/* Frames on demand: a burst while the canvas starts, again once the
+          model has loaded (it mounts with it, inside Suspense), and again when
+          the work's look or turn changes. */}
+      <WarmFrames />
       <Suspense fallback={loader ? <Loader /> : null}>
         <RevealModel
           url={url}
@@ -583,6 +615,7 @@ export const SculptureContents: FC<
           onBackground={onBackground}
           onReady={onReady}
         />
+        <WarmFrames key={`${url}|${facing}|${fit}|${JSON.stringify(look ?? {})}`} />
       </Suspense>
 
       {/* Auto-framed models render their own shadow at their base. */}
@@ -619,9 +652,18 @@ export const SculptureContents: FC<
 const SculptureScene: FC<SculptureSceneProps> = ({
   mode = "viewer",
   interactive = false,
+  alwaysRender = false,
   ...props
 }) => {
   const isThumb = mode === "thumbnail";
+  // Draw every frame only when something moves by itself: the thumbnail
+  // generator, a showcase that auto-rotates, or a parent that drives the camera.
+  // A work the visitor turns by hand redraws on demand: OrbitControls asks for
+  // frames while it's dragged and while its damping settles, then it stops.
+  const continuous =
+    isThumb ||
+    alwaysRender ||
+    (!interactive && props.autoRotate !== false);
   const wrapRef = useRef<HTMLDivElement>(null);
   // Pause the render loop while the canvas is scrolled out of view so multiple
   // gallery canvases don't all burn GPU/CPU at once.
@@ -649,7 +691,7 @@ const SculptureScene: FC<SculptureSceneProps> = ({
     >
       <Canvas
         shadows={interactive}
-        frameloop={onScreen ? "always" : "never"}
+        frameloop={!onScreen ? "never" : continuous ? "always" : "demand"}
         dpr={[1, 1.5]}
         gl={{
           antialias: true,

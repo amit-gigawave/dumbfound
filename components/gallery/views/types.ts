@@ -6,6 +6,8 @@ export interface ConceptWork {
   title: string;
   artist: string;
   artistSlug: string;
+  /** The artist's portrait under /public, if there is one. */
+  artistPortrait?: string;
   /** Has a 3D model (opens in 3D and AR). */
   hasModel: boolean;
   /** The 3D model, its turn to face front, and its light tuning (see lib/sculptures.ts). */

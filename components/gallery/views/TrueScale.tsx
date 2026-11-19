@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ConceptWork } from "./types";
+import ArtistDial, { type DialOption, type DialVariant } from "./ArtistDial";
 import { useImageStats } from "./imageStats";
 import { FIT_CARD } from "../../three/modelLoader";
 
@@ -70,21 +71,63 @@ function HoverZone({
  * to the sculpture's own edges, so the drawn height is the real one.
  *
  * The stage fills the screen. The work nearest the centre is in focus (the
- * rest dim back) and named at the top; drag, the wheel, the arrow keys or the
+ * rest dim back); drag, the wheel, the arrow keys or the
  * side buttons walk the line. Hovering a work turns it into its 3D model. A
- * visitor can add their own height as a line across the whole stage.
+ * dial in the top-right corner shows one artist's works at a time.
  */
 export default function TrueScale({
   works,
-  unsized,
+  initialArtist,
+  dial = "rotary",
 }: {
   works: ConceptWork[];
-  unsized: number;
+  /** Artist slug to start on (the page's ?artist=). */
+  initialArtist?: string;
+  /** Which artist dial to show (see ArtistDial; compared on /lab/dials). */
+  dial?: DialVariant;
 }) {
-  const sized = [...works]
-    .filter((w) => w.heightCm)
-    .sort((a, b) => b.heightCm! - a.heightCm!);
-  const stats = useImageStats(sized.map((w) => w.thumbnail));
+  const allSized = useMemo(
+    () =>
+      [...works]
+        .filter((w) => w.heightCm)
+        .sort((a, b) => b.heightCm! - a.heightCm!),
+    [works],
+  );
+  const stats = useImageStats(allSized.map((w) => w.thumbnail));
+
+  // The dial: all artists first, then each artist with a work on the stage,
+  // in catalogue order.
+  const options = useMemo<DialOption[]>(() => {
+    const m = new Map<string, DialOption>();
+    for (const w of works)
+      if (w.heightCm) {
+        const o = m.get(w.artistSlug) ?? {
+          slug: w.artistSlug,
+          name: w.artist,
+          portrait: w.artistPortrait,
+          n: 0,
+        };
+        o.n++;
+        m.set(w.artistSlug, o);
+      }
+    return [
+      { slug: null, name: "All artists", n: allSized.length },
+      ...m.values(),
+    ];
+  }, [works, allSized]);
+  const [pick, setPick] = useState(() =>
+    Math.max(
+      0,
+      options.findIndex((o) => o.slug && o.slug === initialArtist),
+    ),
+  );
+  const artist = options[pick]?.slug ?? null;
+  const sized = artist
+    ? allSized.filter((w) => w.artistSlug === artist)
+    : allSized;
+  const unsized = works.filter(
+    (w) => !w.heightCm && (!artist || w.artistSlug === artist),
+  ).length;
   const max = Math.max(...sized.map((w) => w.heightCm!));
   const cm = (h: number) => `calc(${h} * ${STAGE} / ${max})`;
   const ticks = Array.from(
@@ -94,7 +137,6 @@ export default function TrueScale({
 
   const row = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLLIElement | null)[]>([]);
-  const [focus, setFocus] = useState(0);
   // Whether the line is at its start or end (the arrow that can't go further hides).
   const [edges, setEdges] = useState({ start: true, end: false });
   // The "hover / drag" hint shows until the visitor first brings up a 3D model.
@@ -117,13 +159,22 @@ export default function TrueScale({
   };
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  // The visitor's own height, typed in (cm). Shown as a line across the stage.
-  const [me, setMe] = useState("");
-  const meCm = Number(me);
-  const showMe = me !== "" && meCm >= 30 && meCm <= max * 1.2;
+  // A new artist starts the line again from its tallest work, and the address
+  // keeps the choice (so Back, a reload or a shared link return to it).
+  const choose = (i: number) => {
+    if (i === pick) return;
+    setPick(i);
+    leave();
+    if (row.current) row.current.scrollLeft = 0;
+    const url = new URL(window.location.href);
+    const slug = options[i]?.slug;
+    if (slug) url.searchParams.set("artist", slug);
+    else url.searchParams.delete("artist");
+    window.history.replaceState(window.history.state, "", url);
+  };
 
   // Focus: each work gets --f, 1 at the focus point fading to 0 half a screen
-  // away; the nearest one is named at the top. The focus point travels with
+  // away (the rest dim back). The focus point travels with
   // the scroll, from the left of the stage at the start to its right at the
   // end, so the first works are in focus as the page opens and the last ones
   // can still reach it.
@@ -131,6 +182,7 @@ export default function TrueScale({
     const el = row.current;
     if (!el) return;
     let raf = 0;
+    items.current = items.current.slice(0, sized.length);
     const update = () => {
       raf = 0;
       const box = el.getBoundingClientRect();
@@ -142,20 +194,13 @@ export default function TrueScale({
       setEdges((e) =>
         e.start === start && e.end === atEnd ? e : { start, end: atEnd },
       );
-      let best = 0;
-      let bestD = Infinity;
-      items.current.forEach((li, i) => {
+      items.current.forEach((li) => {
         if (!li) return;
         const r = li.getBoundingClientRect();
         const d = Math.abs(r.left + r.width / 2 - mid);
         const f = Math.max(0, 1 - d / (box.width * 0.55));
         li.style.setProperty("--f", f.toFixed(3));
-        if (d < bestD) {
-          bestD = d;
-          best = i;
-        }
       });
-      setFocus(best);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -168,7 +213,8 @@ export default function TrueScale({
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [stats]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stats, pick]);
 
   // The mouse wheel walks the row sideways. At either end it lets go, so the
   // page can keep scrolling. (A native listener: React's wheel handler can't cancel.)
@@ -233,11 +279,9 @@ export default function TrueScale({
       behavior: "smooth",
     });
 
-  const current = sized[focus];
-
   return (
     <section className="flex min-h-[calc(100svh-85px)] flex-col bg-[#f3f2ee] pb-24 pt-[clamp(20px,3.5vh,40px)]">
-      {/* Title on the left; the work in focus, and "your height", on the right. */}
+      {/* Title on the left; the artist dial on the right. */}
       <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4 px-[clamp(16px,4vw,48px)]">
         <div>
           <h2 className="font-display text-[clamp(28px,3.6vw,48px)] leading-none">
@@ -247,48 +291,51 @@ export default function TrueScale({
             Tallest to smallest. Drag, scroll or use the arrows to walk the
             line; hover a work to see it in 3D, and drag it to turn it.
             {unsized > 0 &&
-              ` ${unsized} works without a recorded height aren't shown.`}
+              (unsized === 1
+                ? " 1 work without a recorded height isn't shown."
+                : ` ${unsized} works without a recorded height aren't shown.`)}
           </p>
         </div>
-        <div className="flex items-end gap-8">
-          {current && (
-            <div aria-live="polite" className="min-w-0 text-right">
-              <p className="text-[12px] text-stone">{current.artist}</p>
-              <p className="font-display max-w-[22ch] truncate text-[clamp(18px,1.8vw,24px)] leading-tight">
-                {current.title}
-              </p>
-              <p className="mt-0.5 text-[13px] tabular-nums text-ink">
-                {current.heightCm} cm
-                <Link
-                  href={`/artworks/${current.slug}`}
-                  className="ml-3 border-b border-current text-[12px] hover:opacity-70"
-                >
-                  Open
-                </Link>
-              </p>
-            </div>
+        <div
+          className={`ml-auto flex items-center gap-8 ${
+            // The floating dial starts in this corner: keep it clear for it.
+            dial === "float" ? "pr-[84px]" : ""
+          }`}
+        >
+          {options.length > 2 && dial !== "rotary-inline" && (
+            <ArtistDial
+              variant={dial}
+              options={options}
+              value={pick}
+              onChange={choose}
+            />
           )}
-          <label className="flex flex-col text-[12px] text-stone">
-            Your height
-            <span className="mt-1 flex items-center gap-1">
-              <input
-                type="number"
-                inputMode="numeric"
-                min={30}
-                max={Math.round(max * 1.2)}
-                value={me}
-                onChange={(e) => setMe(e.target.value)}
-                placeholder="cm"
-                className="w-[72px] rounded-full border border-[#bdb7a9] bg-white/70 px-3 py-1 text-[13px] text-ink outline-none focus-visible:border-ink"
-              />
-              <span>cm</span>
-            </span>
-          </label>
         </div>
+        {/* The dial set into the page: here on phones, beside the stage on wider screens. */}
+        {options.length > 2 && dial === "rotary-inline" && (
+          <div className="mx-auto md:hidden">
+            <ArtistDial
+              variant={dial}
+              options={options}
+              value={pick}
+              onChange={choose}
+            />
+          </div>
+        )}
       </div>
 
       {/* The stage: pushed to the bottom of the screen, so the works stand on its floor. */}
       <div className="mt-auto flex items-start pt-[clamp(16px,3vh,32px)]">
+        {options.length > 2 && dial === "rotary-inline" && (
+          <div className="hidden shrink-0 self-center pl-[clamp(16px,3vw,40px)] md:block">
+            <ArtistDial
+              variant={dial}
+              options={options}
+              value={pick}
+              onChange={choose}
+            />
+          </div>
+        )}
         {/* Ruler: its own column to the left of every model. It stays put while the works scroll, and shares their floor. */}
         <div
           aria-hidden
@@ -311,12 +358,6 @@ export default function TrueScale({
                 )}
               </div>
             ))}
-            {showMe && (
-              <span
-                className="absolute -left-1 h-[2px] w-6 bg-accent"
-                style={{ bottom: cm(meCm) }}
-              />
-            )}
           </div>
           <div className="h-px bg-[#bdb7a9]" />
           <div
@@ -357,18 +398,6 @@ export default function TrueScale({
               className="relative flex w-max items-end pl-[clamp(8px,1.5vw,20px)] pr-[clamp(16px,4vw,48px)]"
               style={{ gap: GAP }}
             >
-              {/* The visitor's height, across the whole line; its label rides along the left edge. */}
-              {showMe && (
-                <li
-                  aria-hidden
-                  className="pointer-events-none absolute inset-x-0 z-20 flex border-t-2 border-dashed border-accent/70"
-                  style={{ bottom: `calc(${CAPTION_PX + 1}px + ${cm(meCm)})` }}
-                >
-                  <span className="sticky left-2 -mt-6 rounded-full bg-accent px-2 py-0.5 text-[11px] tabular-nums text-white">
-                    You, {meCm} cm
-                  </span>
-                </li>
-              )}
               {sized.map((w, i) => {
                 const s = stats[w.thumbnail];
                 const [l, t, r, b] = s?.box ?? [0.2, 0.08, 0.8, 0.92];

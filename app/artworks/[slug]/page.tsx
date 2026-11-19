@@ -89,13 +89,16 @@ export default async function ArtworkPage({
           should show at once, not wait for scripts to load. */}
       <div className="grid items-start gap-[clamp(32px,5vw,72px)] pb-[72px] pt-7 min-[820px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]"
       >
-        <ArtworkStage
-          key={work.slug}
-          work={work}
-          alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
-        />
-
+        {/* The work stays in view while the visitor reads down the column beside it. */}
         <div className="min-[820px]:sticky min-[820px]:top-[100px]">
+          <ArtworkStage
+            key={work.slug}
+            work={work}
+            alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
+          />
+        </div>
+
+        <div>
           {artist &&
             (artist.placeholder ? (
               <span className="label">{artist.name}</span>
@@ -116,15 +119,26 @@ export default async function ArtworkPage({
             </p>
           )}
 
-          {hasValue(work.description) && (
-            <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
-              {work.description}
-            </p>
-          )}
-          {hasValue(work.longDescription) && (
-            <p className="font-text mt-4 text-[17px] leading-[1.75] text-[#333333]">
-              {work.longDescription}
-            </p>
+          {/* The text about the work: its longer text when there is one (in
+              paragraphs, split on blank lines), else the one-line description
+              (which search, link previews and the home page keep using). */}
+          {hasValue(work.longDescription) ? (
+            <div className="mt-6 space-y-4">
+              {work.longDescription!.split(/\n\s*\n/).map((para, i) => (
+                <p
+                  key={i}
+                  className="font-text text-[17px] leading-[1.75] text-[#333333]"
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
+          ) : (
+            hasValue(work.description) && (
+              <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
+                {work.description}
+              </p>
+            )
           )}
 
           {/* Works with no known details get no empty table (and no stray rule). */}
@@ -146,39 +160,65 @@ export default async function ArtworkPage({
             Interested in this artwork <span className="nudge">→</span>
           </Link>
 
+          {/* About the artist: their sourced summary (lib/artists.ts, where each
+              fact keeps its source) and a link to their page for the rest. */}
           {artist && !artist.placeholder && (
-            <Link
-              href={`/artists/${artist.slug}`}
-              className="group mt-10 flex items-center gap-4 rounded-[14px] border border-rule bg-white p-4 transition-colors duration-300 hover:border-accent"
+            <section
+              aria-labelledby="about-artist"
+              className="mt-12 border-t border-rule pt-8"
             >
-              <span className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plate">
-                {artist.portrait ? (
-                  <Image
-                    src={artist.portrait}
-                    alt=""
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <span aria-hidden className="font-display text-xl text-[#bdbdbd]">
-                    {initials(artist.name)}
+              <Link
+                href={`/artists/${artist.slug}`}
+                className="group flex items-center gap-4"
+              >
+                <span className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plate">
+                  {artist.portrait ? (
+                    <Image
+                      src={artist.portrait}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="font-display text-xl text-[#bdbdbd]"
+                    >
+                      {initials(artist.name)}
+                    </span>
+                  )}
+                </span>
+                <span className="grid min-w-0 gap-0.5">
+                  <span className="label">About the artist</span>
+                  <span
+                    id="about-artist"
+                    className="font-display text-[22px] tracking-[0.03em] transition-colors group-hover:text-accent"
+                  >
+                    {artist.name}
                   </span>
-                )}
-              </span>
-              <span className="grid min-w-0 gap-0.5">
-                <span className="label">About the artist</span>
-                <span className="font-display text-xl tracking-[0.03em] transition-colors group-hover:text-accent">
-                  {artist.name}
+                  <span className="text-[13px] text-stone">
+                    {[artist.born, artist.place].filter(Boolean).join(", ")}
+                  </span>
                 </span>
-                <span className="text-[13px] text-stone">
-                  {[artist.born, artist.medium].filter(Boolean).join(" · ")}
+              </Link>
+
+              {hasValue(artist.summary) && (
+                <p className="font-text mt-5 text-[16px] leading-[1.75] text-[#333333]">
+                  {artist.summary}
+                </p>
+              )}
+
+              <Link
+                href={`/artists/${artist.slug}`}
+                className="mt-7 inline-flex items-center gap-2 text-sm text-ink underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-accent"
+              >
+                More about {artist.name}{" "}
+                <span aria-hidden className="nudge">
+                  →
                 </span>
-              </span>
-              <span aria-hidden className="nudge ml-auto pr-1 text-accent">
-                →
-              </span>
-            </Link>
+              </Link>
+            </section>
           )}
         </div>
       </div>
