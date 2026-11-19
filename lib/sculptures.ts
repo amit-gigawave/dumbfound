@@ -942,6 +942,23 @@ export const sculptures: Sculpture[] = [
     dimensions: "14 × 11 × 6 inches",
     heightCm: 36,
   },
+  // Scan "13 - Thotta Head 04.glb" (2026-11-19). Artist from the file name; the user confirmed it is a new
+  // work, not the Saree Lady Series (White). The photo in row "13" of the Sheet "Sculpted India (Digital)"
+  // shows this head, but that row's details are marked [TO CONFIRM] and belong to another work, so none
+  // are used. No Artlogic match. Title is a description of the work; medium, year and size unknown.
+  {
+    slug: "thota-head-with-nose-ring-and-hair-ornaments",
+    title: "Head with Nose Ring and Hair Ornaments",
+    description: "A head by Thota Vaikuntam, with a nose ring, earrings and ornaments in its hair.",
+    longDescription:
+      "A woman's head faces straight ahead on a long, columnar neck. A broad yellow band runs across the forehead, and a large round orange bindi sits at its centre. Below it the brows sweep out in a single line, and the eyes are long and almond-shaped, each outlined with a raised rim and a small round pupil.\n\nThe face is a deep brown, smooth and full at the cheeks. A crescent-shaped ring hangs from one side of the nose, with a small drop beside it, and a narrow yellow stripe runs from beneath the lower lip down to the chin. The ears are long and flat, each with a round earring at the lobe. Dark hair is drawn back from the face, held at the sides by banded clips, and at the back of the head large round ornaments, ringed with fine patterned bands, are set into the hair.\n\nA raised ring circles the base of the neck, which rests on a pale grey collar. A short vertical groove marks the front of the throat. The large vermilion bindi and almond eyes recur in the women of Thota Vaikuntam's paintings.",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-head-with-nose-ring-and-hair-ornaments.webp",
+    modelUrl: "/sculptures/thota-head-with-nose-ring-and-hair-ornaments.glb",
+    look: { metalness: 0.28, roughness: 1.58, reflections: 0.6 },
+    material: "",
+    year: "",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
