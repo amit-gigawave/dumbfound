@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getArtist } from "@/lib/artists";
-import { previewModelUrl, sculptures } from "@/lib/sculptures";
+import { arModelUrl, previewModelUrl, sculptures } from "@/lib/sculptures";
 import ImageAR, { type ARWork } from "./ImageAR";
 
 // Prototype: point the phone at a printed AR card and the work stands on it,
@@ -32,6 +32,8 @@ export default function ImageARPage() {
       facing: w.facing ?? 0,
       heightCm: w.heightCm ?? 50,
       card: `/lab/image-ar/${slug}.png`,
+      arUrl: arModelUrl(w),
+      sculpture: { ...w, modelUrl: w.modelUrl! },
     };
   });
   return <ImageAR works={works} targets="/lab/image-ar/targets.mind" />;
