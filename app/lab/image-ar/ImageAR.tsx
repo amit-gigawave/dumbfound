@@ -39,47 +39,14 @@ type Place = "upright" | "flat";
 /** The cards' height / width. */
 const CARD_RATIO = 1.3;
 
-/**
- * A height ruler, `cm` tall (base at 0): a slim post with a mark every 10 cm
- * (every 50 cm on tall works) and the height written at the top.
- */
-function heightRuler(cm: number) {
-  const g = new THREE.Group();
-  const mat = new THREE.MeshBasicMaterial({ color: "#ffffff" });
-  const w = Math.max(0.6, cm * 0.012);
-  const post = new THREE.Mesh(new THREE.BoxGeometry(w, cm, w), mat);
-  post.position.y = cm / 2;
-  g.add(post);
-  const step = cm > 150 ? 50 : 10;
-  for (let y = 0; y <= cm + 0.01; y += step) {
-    const tick = new THREE.Mesh(new THREE.BoxGeometry(w * 4, w * 0.8, w), mat);
-    tick.position.y = Math.min(y, cm);
-    g.add(tick);
-  }
-  // The label, drawn on a canvas.
-  const c = document.createElement("canvas");
-  c.width = 256;
-  c.height = 96;
-  const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "rgba(20,20,18,0.78)";
-  ctx.beginPath();
-  ctx.roundRect(4, 8, 248, 80, 40);
-  ctx.fill();
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "600 46px system-ui, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(`${Math.round(cm)} cm`, 128, 50);
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  const label = new THREE.Sprite(
-    new THREE.SpriteMaterial({ map: tex, depthTest: false }),
-  );
-  const lw = Math.max(12, cm * 0.32);
-  label.scale.set(lw, lw * 0.375, 1);
-  label.position.y = cm + lw * 0.3;
-  g.add(label);
-  return g;
+/** How big the work is shown, in plain words: "Shown at 1/3 of real size". */
+function sizeText(ratio: number) {
+  const n = (v: number) =>
+    v < 10 ? v.toFixed(1).replace(/\.0$/, "") : String(Math.round(v));
+  if (Math.abs(ratio - 1) < 0.03) return "Shown at real size";
+  return ratio > 1
+    ? `Shown at 1/${n(ratio)} of real size`
+    : `Shown ${n(1 / ratio)}× real size`;
 }
 
 /* A simple standing figure, `cm` tall, built from primitives (feet at 0). */
@@ -125,10 +92,12 @@ export default function ImageAR({
   // Upright by default: the tracker holds a card best seen straight on.
   const [place, setPlace] = useState<Place>("upright");
   // Live settings for the render loop (it reads these, not React state).
-  const live = useRef({ mode, zoom, cardCm, person, place });
+  // The visitor's turn of the work (degrees), from a one-finger drag.
+  const [turn, setTurn] = useState(0);
+  const live = useRef({ mode, zoom, cardCm, person, place, turn });
   useEffect(() => {
-    live.current = { mode, zoom, cardCm, person, place };
-  }, [mode, zoom, cardCm, person, place]);
+    live.current = { mode, zoom, cardCm, person, place, turn };
+  }, [mode, zoom, cardCm, person, place, turn]);
   const stopRef = useRef<() => void>(() => {});
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- the portal needs the browser
@@ -163,8 +132,11 @@ export default function ImageAR({
   };
   useEffect(() => () => stopRef.current(), []);
 
-  // Pinch to resize (two fingers on the camera view).
+  // Gestures on the camera view: one finger drags the work round, two
+  // fingers pinch to resize, a double tap puts both back.
   const pinch = useRef<{ d: number; z: number } | null>(null);
+  const drag = useRef<{ x: number; turn: number } | null>(null);
+  const lastTap = useRef(0);
   const touches = (e: React.TouchEvent) =>
     Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
@@ -185,12 +157,12 @@ export default function ImageAR({
       <p className="mt-3 max-w-[64ch] text-[15px] leading-relaxed text-stone">
         Print one of the cards below, or open it on another screen. Hold or prop
         the card upright, tap <b>Start camera</b> on your phone and point it at
-        the card, straight on: the sculpture stands in front of it, with a ruler
-        marking its real height. Pinch or use the slider to resize, choose{" "}
-        <b>Real size</b> and the printed width of your card, or add a 1.7 m
-        person at the same scale. A card lying flat on a table works too (
-        <b>Card flat on table</b>), but only seen from fairly high above: the
-        tracker loses a card tilted much more than about 35&deg;.
+        the card, straight on: the sculpture stands in front of it. Pinch or use
+        the slider to resize, choose <b>Real size</b> and the printed width of
+        your card, or add a 1.7 m person at the same scale. A card lying flat on
+        a table works too (<b>Card flat on table</b>), but only seen from fairly
+        high above: the tracker loses a card tilted much more than about
+        35&deg;.
       </p>
 
       <button
@@ -208,8 +180,19 @@ export default function ImageAR({
           <div
             ref={stage}
             onTouchStart={(e) => {
-              if (e.touches.length === 2)
+              if ((e.target as HTMLElement).closest("button, input")) return;
+              if (e.touches.length === 2) {
+                drag.current = null;
                 pinch.current = { d: touches(e), z: zoom };
+              } else if (e.touches.length === 1) {
+                const now = performance.now();
+                if (now - lastTap.current < 300) {
+                  setTurn(0);
+                  setZoom(1);
+                }
+                lastTap.current = now;
+                drag.current = { x: e.touches[0].clientX, turn };
+              }
             }}
             onTouchMove={(e) => {
               if (e.touches.length === 2 && pinch.current)
@@ -222,8 +205,19 @@ export default function ImageAR({
                     ),
                   ),
                 );
+              else if (e.touches.length === 1 && drag.current)
+                // A full drag across the screen turns the work once round.
+                setTurn(
+                  drag.current.turn +
+                    ((e.touches[0].clientX - drag.current.x) /
+                      window.innerWidth) *
+                      360,
+                );
             }}
-            onTouchEnd={() => (pinch.current = null)}
+            onTouchEnd={() => {
+              pinch.current = null;
+              drag.current = null;
+            }}
             className={
               running
                 ? "fixed inset-0 z-[80] touch-none overflow-hidden bg-black"
@@ -239,11 +233,14 @@ export default function ImageAR({
                       <p className="font-display text-[20px] leading-tight">
                         {work.title}
                       </p>
-                      <p className="mt-0.5 text-[13px] tabular-nums opacity-90">
-                        {work.heightCm} cm tall ·{" "}
-                        {Math.abs(ratio - 1) < 0.03
-                          ? "real size"
-                          : `shown at 1 : ${ratio < 10 ? ratio.toFixed(1) : Math.round(ratio)}`}
+                      <p className="mt-1 inline-flex rounded-full bg-[#f3b23a] px-2.5 py-0.5 text-[13px] font-medium tabular-nums text-[#1c1a17]">
+                        Real height {work.heightCm} cm
+                      </p>
+                      <p className="mt-1 text-[13px] tabular-nums opacity-90">
+                        {sizeText(ratio)}
+                      </p>
+                      <p className="mt-1 text-[12px] opacity-75">
+                        Drag to turn · pinch to resize · double-tap to reset
                       </p>
                     </>
                   ) : (
@@ -372,6 +369,7 @@ async function startAR(
     cardCm: number;
     person: boolean;
     place: Place;
+    turn: number;
   }>,
   onFound: (i: number | null) => void,
   onStatus: (s: string | null) => void,
@@ -441,13 +439,25 @@ async function startAR(
     return g;
   });
   let post: THREE.Matrix4[] = [];
+  // The latest pose from the tracker, per card. Each anchor eases towards it
+  // every frame (in the render loop), which steadies the work far more than
+  // the tracker's own filter alone, most of all a big work reaching far out
+  // from the card, where any wobble is magnified.
+  const targetPose: (THREE.Matrix4 | null)[] = works.map(() => null);
+  const shownPos = works.map(() => new THREE.Vector3());
+  const shownRot = works.map(() => new THREE.Quaternion());
+  const shownScale = works.map(() => new THREE.Vector3(1, 1, 1));
+  const fresh = works.map(() => true);
   let current: number | null = null;
   const controller = new Controller({
     inputWidth: video.videoWidth,
     inputHeight: video.videoHeight,
     maxTrack: 1,
-    filterMinCF: 0.001,
-    filterBeta: 10,
+    // MindAR's own smoothing at its strongest (its docs' "less jitter"
+    // setting), and a work isn't dropped for a few missed frames.
+    filterMinCF: 0.0001,
+    filterBeta: 0.001,
+    missTolerance: 8,
     onUpdate: (d: {
       type: string;
       targetIndex: number;
@@ -459,7 +469,7 @@ async function startAR(
       if (d.worldMatrix) {
         const m = new THREE.Matrix4();
         m.fromArray(d.worldMatrix);
-        g.matrix = m.multiply(post[d.targetIndex]);
+        targetPose[d.targetIndex] = m.multiply(post[d.targetIndex]);
         g.visible = true;
         if (current !== d.targetIndex) {
           current = d.targetIndex;
@@ -468,6 +478,8 @@ async function startAR(
         }
       } else {
         g.visible = false;
+        targetPose[d.targetIndex] = null;
+        fresh[d.targetIndex] = true;
         if (current === d.targetIndex) {
           current = null;
           onFound(null);
@@ -497,6 +509,7 @@ async function startAR(
   const holders: (THREE.Group | null)[] = works.map(() => null);
   const people: THREE.Group[] = [];
   const depths: number[] = []; // each work's depth (cm)
+  const pivots: (THREE.Group | null)[] = works.map(() => null);
   const load = (i: number) => {
     if (holders[i]) return;
     const w = works[i];
@@ -515,11 +528,12 @@ async function startAR(
       model.position.set(-centre.x, -box.min.y, -centre.z);
       fitted.add(model);
       fitted.scale.setScalar(toCm); // now in cm, base at 0
-      holder.add(fitted);
-      // The height ruler just left of the work; the person to its right.
-      const ruler = heightRuler(w.heightCm);
-      ruler.position.x = -(size.x * toCm) / 2 - Math.max(4, w.heightCm * 0.08);
-      holder.add(ruler);
+      // The visitor turns the work (not the person) on this pivot.
+      const pivot = new THREE.Group();
+      pivot.add(fitted);
+      pivots[i] = pivot;
+      holder.add(pivot);
+      // The optional person stands to the work's right.
       const fig = personFigure(PERSON_CM);
       fig.position.x = (size.x * toCm) / 2 + 30; // beside the work, 30 cm away
       people[i] = fig;
@@ -562,9 +576,29 @@ async function startAR(
   controller.processVideo(frameCanvas);
   onStatus(null);
 
+  const tmpPos = new THREE.Vector3();
+  const tmpRot = new THREE.Quaternion();
+  const tmpScale = new THREE.Vector3();
   let raf = requestAnimationFrame(function frame() {
     raf = requestAnimationFrame(frame);
     copyFrame();
+    // Ease each visible card's anchor towards the tracker's latest pose.
+    anchors.forEach((g, i) => {
+      const target = targetPose[i];
+      if (!target) return;
+      target.decompose(tmpPos, tmpRot, tmpScale);
+      if (fresh[i]) {
+        shownPos[i].copy(tmpPos);
+        shownRot[i].copy(tmpRot);
+        shownScale[i].copy(tmpScale);
+        fresh[i] = false;
+      } else {
+        shownPos[i].lerp(tmpPos, 0.25);
+        shownRot[i].slerp(tmpRot, 0.25);
+        shownScale[i].lerp(tmpScale, 0.25);
+      }
+      g.matrix.compose(shownPos[i], shownRot[i], shownScale[i]);
+    });
     const s = live.current!;
     holders.forEach((h, i) => {
       if (!h) return;
@@ -582,6 +616,7 @@ async function startAR(
         h.position.set(0, -CARD_RATIO / 2, ((depths[i] ?? 0) / 2) * perCm);
       }
       if (people[i]) people[i].visible = s.person;
+      if (pivots[i]) pivots[i]!.rotation.y = (s.turn * Math.PI) / 180;
     });
     renderer.render(scene, camera);
   });
