@@ -77,8 +77,13 @@ const WebXRStage = forwardRef<
     /** AR began (e.g. close the "Place it in my room" prompt). */
     onStart: () => void;
     onFail: () => void;
+    /**
+     * "fixed" (default): the work stays at its real size. "auto": the
+     * visitor can pinch to resize it in AR.
+     */
+    scale?: "fixed" | "auto";
   }
->(function WebXRStage({ src, title, onStart, onFail }, ref) {
+>(function WebXRStage({ src, title, onStart, onFail, scale = "fixed" }, ref) {
   const [el, setEl] = useState<ModelViewer | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [lost, setLost] = useState(false);
@@ -106,7 +111,7 @@ const WebXRStage = forwardRef<
         mv.setAttribute("ar-modes", "webxr");
         mv.setAttribute("ar-placement", "floor");
         // AR copies are already at the work's real size (see make-ar-models).
-        mv.setAttribute("ar-scale", "fixed");
+        mv.setAttribute("ar-scale", scale);
         mv.setAttribute("loading", "eager");
         mv.className = "webxr-stage";
         document.body.appendChild(mv);
@@ -117,7 +122,7 @@ const WebXRStage = forwardRef<
       cancelled = true;
       mv?.remove();
     };
-  }, [src, title]);
+  }, [src, title, scale]);
 
   // Follow the session: searching → placed, tracking lost, ended, failed.
   useEffect(() => {

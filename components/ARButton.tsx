@@ -8,9 +8,9 @@ import { arModelUrl, type Sculpture } from "@/lib/sculptures";
 import { DRACO_PATH } from "./three/modelLoader";
 import WebXRStage, { webXRSupported, type WebXRStageHandle } from "./WebXRStage";
 
-type Platform = "android" | "ios" | "desktop";
+export type Platform = "android" | "ios" | "desktop";
 
-const detectPlatform = (): Platform => {
+export const detectPlatform = (): Platform => {
   if (typeof navigator === "undefined") return "desktop";
   const ua = navigator.userAgent;
   if (/android/i.test(ua)) return "android";
@@ -22,13 +22,13 @@ const detectPlatform = (): Platform => {
   return "desktop";
 };
 
-const toAbs = (path: string) =>
+export const toAbs = (path: string) =>
   typeof window === "undefined"
     ? path
     : new URL(path, window.location.origin).href;
 
 /** Launch Android Scene Viewer with the GLB. */
-const launchSceneViewer = (
+export const launchSceneViewer = (
   glbAbsUrl: string,
   title: string,
   fallback: string,
@@ -46,7 +46,7 @@ const launchSceneViewer = (
 };
 
 /** Open an href in iOS AR Quick Look (must contain an <img> child). */
-const openQuickLook = (usdzUrl: string) => {
+export const openQuickLook = (usdzUrl: string) => {
   const anchor = document.createElement("a");
   anchor.setAttribute("rel", "ar");
   anchor.setAttribute("href", usdzUrl);
@@ -62,9 +62,9 @@ const openQuickLook = (usdzUrl: string) => {
  * otherwise converts the work's AR model (already in metres, facing front and
  * standing on the floor; see scripts/make-ar-models.mjs) in the browser.
  */
-type WithModel = Sculpture & { modelUrl: string };
+export type WithModel = Sculpture & { modelUrl: string };
 
-const resolveUsdz = async (sculpture: WithModel): Promise<string> => {
+export const resolveUsdz = async (sculpture: WithModel): Promise<string> => {
   if (sculpture.usdzUrl) return toAbs(sculpture.usdzUrl);
 
   const [{ GLTFLoader }, { DRACOLoader }, { USDZExporter }] = await Promise.all(
