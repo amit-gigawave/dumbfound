@@ -102,7 +102,9 @@ export default async function ArtworksPage({
               <div key={work.slug} data-key={work.slug}>
                 <ArtworkTile
                   work={work}
-                  priority={i < 3}
+                  // Only the first card is on screen at once on a phone; the
+                  // others load lazily as the grid scrolls into view.
+                  priority={i < 1}
                   showcase
                   ambient
                   // Full width on phones, so ask for an image that wide.
