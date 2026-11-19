@@ -119,15 +119,26 @@ export default async function ArtworkPage({
             </p>
           )}
 
-          {hasValue(work.description) && (
-            <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
-              {work.description}
-            </p>
-          )}
-          {hasValue(work.longDescription) && (
-            <p className="font-text mt-4 text-[17px] leading-[1.75] text-[#333333]">
-              {work.longDescription}
-            </p>
+          {/* The text about the work: its longer text when there is one (in
+              paragraphs, split on blank lines), else the one-line description
+              (which search, link previews and the home page keep using). */}
+          {hasValue(work.longDescription) ? (
+            <div className="mt-6 space-y-4">
+              {work.longDescription!.split(/\n\s*\n/).map((para, i) => (
+                <p
+                  key={i}
+                  className="font-text text-[17px] leading-[1.75] text-[#333333]"
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
+          ) : (
+            hasValue(work.description) && (
+              <p className="font-text mt-6 text-[17px] leading-[1.75] text-[#333333]">
+                {work.description}
+              </p>
+            )
           )}
 
           {/* Works with no known details get no empty table (and no stray rule). */}
@@ -149,9 +160,8 @@ export default async function ArtworkPage({
             Interested in this artwork <span className="nudge">→</span>
           </Link>
 
-          {/* About the artist: their sourced summary, biography, a quote and
-              some honours and collections (all from lib/artists.ts, where each
-              fact keeps its source), so the column carries real reading. */}
+          {/* About the artist: their sourced summary (lib/artists.ts, where each
+              fact keeps its source) and a link to their page for the rest. */}
           {artist && !artist.placeholder && (
             <section
               aria-labelledby="about-artist"
@@ -193,60 +203,11 @@ export default async function ArtworkPage({
                 </span>
               </Link>
 
-              {[artist.summary, ...artist.bio].filter(hasValue).map((para, i) => (
-                <p
-                  key={i}
-                  className="font-text mt-5 text-[16px] leading-[1.75] text-[#333333]"
-                >
-                  {para}
+              {hasValue(artist.summary) && (
+                <p className="font-text mt-5 text-[16px] leading-[1.75] text-[#333333]">
+                  {artist.summary}
                 </p>
-              ))}
-
-              {artist.quotes[0] && (
-                <figure className="mt-7 border-l-2 border-accent pl-5">
-                  <blockquote className="font-display text-[19px] leading-[1.45] text-ink">
-                    “{artist.quotes[0].text}”
-                  </blockquote>
-                  <figcaption className="mt-2 text-[13px] text-stone">
-                    <a
-                      href={artist.quotes[0].url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-accent hover:underline"
-                    >
-                      {artist.quotes[0].source}
-                    </a>
-                  </figcaption>
-                </figure>
               )}
-
-              {(
-                [
-                  ["Honours", artist.honours],
-                  ["In collections", artist.collections],
-                ] as const
-              )
-                .filter(([, facts]) => facts.length > 0)
-                .map(([label, facts]) => (
-                  <div key={label} className="mt-7">
-                    <h2 className="label">{label}</h2>
-                    <ul className="mt-2 border-t border-rule">
-                      {facts.slice(0, 3).map((f, i) => (
-                        <li
-                          key={i}
-                          className="flex gap-4 border-b border-rule py-2.5 text-sm"
-                        >
-                          {f.when && (
-                            <span className="w-[4.5rem] shrink-0 tabular-nums text-stone">
-                              {f.when}
-                            </span>
-                          )}
-                          <span>{f.what}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
 
               <Link
                 href={`/artists/${artist.slug}`}
