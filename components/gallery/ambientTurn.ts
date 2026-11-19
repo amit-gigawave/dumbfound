@@ -2,7 +2,9 @@
  * Ambient turns for the artworks grid: every few seconds a random visible
  * tile with a 3D model starts turning in the round on its own (as it does on
  * hover), then settles back to its photo. A few at most at once; paused while
- * the tab is hidden; off for visitors who prefer reduced motion.
+ * the tab is hidden or the window is in the background, and while scrolling;
+ * at most MAX_NEW different models per visit; desktops with power to spare
+ * only (see deviceTier).
  */
 
 import { cardsIn3D } from "./deviceTier";
@@ -14,9 +16,19 @@ const EVERY = 3500;
 /** How long a picked tile keeps turning (plus up to HOLD_JITTER), in ms. */
 const HOLD = 7000;
 const HOLD_JITTER = 2000;
+/**
+ * Most different models the ambient turns download in one visit. After that
+ * they only replay works already loaded, so a visitor who leaves the page open
+ * doesn't keep downloading the collection.
+ */
+const MAX_NEW = 6;
+/** No new turn starts within this long of the last scroll (ms). */
+const SCROLL_QUIET = 1200;
 
 export interface AmbientTile {
   el: HTMLElement;
+  /** The model it turns (for counting how many different ones were loaded). */
+  url: string;
   /** True while the visitor is hovering it — hover takes precedence. */
   busy: () => boolean;
   start: () => void;
@@ -26,6 +38,12 @@ export interface AmbientTile {
 const tiles = new Set<AmbientTile>();
 const running = new Map<AmbientTile, ReturnType<typeof setTimeout>>();
 let interval: ReturnType<typeof setInterval> | undefined;
+/** Models the ambient turns have loaded this visit. */
+const loaded = new Set<string>();
+let lastScroll = 0;
+const onScroll = () => {
+  lastScroll = performance.now();
+};
 
 /** At least 60% of the tile is on screen. */
 const visible = (el: HTMLElement) => {
@@ -41,12 +59,20 @@ const end = (t: AmbientTile) => {
 };
 
 const tick = () => {
-  if (document.hidden || running.size >= maxAtOnce()) return;
+  // Not while the tab is hidden, the window is in the background, or the
+  // visitor is scrolling (the work would load for a card already leaving).
+  if (document.hidden || !document.hasFocus() || running.size >= maxAtOnce()) return;
+  if (performance.now() - lastScroll < SCROLL_QUIET) return;
   const pool = [...tiles].filter(
-    (t) => !running.has(t) && !t.busy() && visible(t.el),
+    (t) =>
+      !running.has(t) &&
+      !t.busy() &&
+      visible(t.el) &&
+      (loaded.has(t.url) || loaded.size < MAX_NEW),
   );
   const t = pool[Math.floor(Math.random() * pool.length)];
   if (!t) return;
+  loaded.add(t.url);
   t.start();
   running.set(
     t,
@@ -59,13 +85,17 @@ export function registerAmbient(tile: AmbientTile) {
   // Desktops with power to spare only (this also covers reduced motion).
   if (!cardsIn3D()) return () => {};
   tiles.add(tile);
-  interval ??= setInterval(tick, EVERY);
+  if (!interval) {
+    interval = setInterval(tick, EVERY);
+    addEventListener("scroll", onScroll, { passive: true });
+  }
   return () => {
     if (running.has(tile)) end(tile);
     tiles.delete(tile);
     if (!tiles.size && interval) {
       clearInterval(interval);
       interval = undefined;
+      removeEventListener("scroll", onScroll);
     }
   };
 }
