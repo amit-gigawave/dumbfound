@@ -38,10 +38,7 @@ export default async function ArtworksCreativeLab({
       {current === "spotlight" && <Spotlight works={works} />}
       {current === "procession" && <Procession works={works} />}
       {current === "scale" && (
-        <TrueScale
-          works={works}
-          unsized={works.filter((w) => !w.heightCm).length}
-        />
+        <TrueScale works={works} />
       )}
       {current === "spectrum" && <Spectrum works={works} />}
 

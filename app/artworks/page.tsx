@@ -42,10 +42,7 @@ export default async function ArtworksPage({
           {view === "spotlight" ? (
             <Spotlight works={all} offset={HEADER_PX} />
           ) : (
-            <TrueScale
-              works={all}
-              unsized={all.filter((w) => !w.heightCm).length}
-            />
+            <TrueScale works={all} initialArtist={artistSlug} />
           )}
         </main>
         <ViewSwitch current={view} />
