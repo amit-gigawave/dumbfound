@@ -10,10 +10,11 @@ import {
 } from "@/lib/sculptures";
 import { getArtist, initials } from "@/lib/artists";
 import { catalogueOrder } from "@/lib/catalogue-order";
-import { openGraphDefaults } from "@/lib/site";
+import { openGraphDefaults, siteUrl } from "@/lib/site";
 import ArtworkStage from "@/components/gallery/ArtworkStage";
 import ArtworkTile from "@/components/gallery/ArtworkTile";
 import SectionHeader from "@/components/gallery/SectionHeader";
+import ShareButton from "@/components/gallery/ShareButton";
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
 
@@ -43,8 +44,10 @@ export async function generateMetadata({
       ...openGraphDefaults,
       title,
       description,
-      images: [{ url: work.thumbnail, width: 800, height: 1000 }],
+      url: `/artworks/${work.slug}`,
+      // The image comes from ./opengraph-image.tsx (a JPEG chat apps can show).
     },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
@@ -156,9 +159,16 @@ export default async function ArtworkPage({
             </dl>
           )}
 
-          <Link href={`/contact?work=${work.slug}`} className="btn mt-8">
-            Interested in this artwork <span className="nudge">→</span>
-          </Link>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link href={`/contact?work=${work.slug}`} className="btn">
+              Interested in this artwork <span className="nudge">→</span>
+            </Link>
+            <ShareButton
+              url={`${siteUrl}/artworks/${work.slug}`}
+              title={artist ? `${work.title}, ${artist.name}` : work.title}
+              text={artist ? `${work.title} by ${artist.name}` : work.title}
+            />
+          </div>
 
           {/* About the artist: their sourced summary (lib/artists.ts, where each
               fact keeps its source) and a link to their page for the rest. */}
