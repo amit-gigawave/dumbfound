@@ -124,6 +124,16 @@ export const AR_DEFAULT_CM = 50;
 /** The AR copy of a work's model, built by `npm run ar-models`. */
 export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
 
+/**
+ * The light copy the artwork cards turn in 3D (1024 px textures), built by
+ * `npm run preview-models`. It carries the full model's ?v=, so replacing a
+ * model (which bumps that) also refreshes the card's copy.
+ */
+export const previewModelUrl = (work: Sculpture) =>
+  work.modelUrl
+    ? `/previews/${work.slug}.glb${work.modelUrl.match(/\?v=\d+/)?.[0] ?? ""}`
+    : undefined;
+
 export const sculptures: Sculpture[] = [
   // Descriptions (2026-11-19, at the user's request) are written only from each
   // work's sourced details below: title, artist, medium, size, year, edition, and

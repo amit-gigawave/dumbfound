@@ -11,7 +11,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import type { Sculpture } from "@/lib/sculptures";
+import { previewModelUrl, type Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import { Rotate3d } from "lucide-react";
 import { FIT_CARD, preloadModel, warm3D } from "../three/modelLoader";
@@ -93,7 +93,8 @@ const ArtworkTile = ({
   // device can afford it (see deviceTier); elsewhere the card is its photo.
   // Read after hydration, so server and browser render the same HTML.
   const can3D = useSyncExternalStore(noSubscribe, cardsIn3D, no3D);
-  const modelUrl = showcase && can3D ? work.modelUrl : undefined;
+  // The card turns a light copy of the model (same shape, smaller textures).
+  const modelUrl = showcase && can3D ? previewModelUrl(work) : undefined;
   const plateRef = useRef<HTMLDivElement>(null);
 
   const [hovering, setHovering] = useState(false);
@@ -127,6 +128,7 @@ const ArtworkTile = ({
     if (!ambient || !modelUrl || !el) return;
     return registerAmbient({
       el,
+      url: modelUrl,
       busy: () => hoverRef.current,
       start: () => {
         preloadModel(modelUrl);
