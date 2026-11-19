@@ -125,6 +125,10 @@ export const AR_DEFAULT_CM = 50;
 export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
 
 export const sculptures: Sculpture[] = [
+  // Descriptions (2026-11-19, at the user's request) are written only from each
+  // work's sourced details below: title, artist, medium, size, year, edition, and
+  // the source's own title where it is "Untitled". Plain readings of a title (an
+  // instrument, a Hindi word) are the only additions; nothing about meaning or history.
   // Thota Vaikuntam's works. Their earlier titles, years, materials and
   // descriptions had no source and were removed (2026-10-15). Titles are named
   // after the model files until the real ones are known. TODO: confirm details.
@@ -132,7 +136,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "thota-lady",
     title: "Lady",
-    description: "",
+    description: "A work by Thota Vaikuntam, listed in its source as Untitled (Lady).",
     modelUrl: "/sculptures/Lady.glb",
     look: { light: 1.8, reflections: 2.5, sideLights: 1 },
     thumbnail: "/thumbnails/thota-lady.webp?v=5",
@@ -145,7 +149,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "lord-krishna",
     title: "Lord Krishna",
-    description: "",
+    description: "A work by Thota Vaikuntam, listed in its source as Untitled (Lord Krishna).",
     modelUrl: "/sculptures/LordKrishna.glb",
     look: { rig: "previous" },
     thumbnail: "/thumbnails/lord-krishna.webp?v=6",
@@ -158,7 +162,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "thota-pandit",
     title: "Pandit",
-    description: "",
+    description: "A work by Thota Vaikuntam, listed in its source as Untitled (Pandit).",
     modelUrl: "/sculptures/Pandit.glb",
     look: { rig: "previous" },
     thumbnail: "/thumbnails/thota-pandit.webp?v=5",
@@ -188,7 +192,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-satwant-sher-singh-cymbal-walae",
     title: "Satwant Sher Singh Cymbal Walae",
-    description: "",
+    description: "Satwant Sher Singh, the cymbal player of the title, in bronze by Krishen Khanna, 14 × 5 × 6 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-satwant-sher-singh-cymbal-walae.webp?v=6",
     modelUrl: "/sculptures/Red_Cymbals_Guy_LPoly.glb?v=2",
@@ -206,7 +210,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-gulratan-bhon-bhon-walae",
     title: "Gulratan Bhon Bhon Walae",
-    description: "",
+    description: "Gulratan Bhon Bhon Walae, a bronze by Krishen Khanna, 12 × 6 × 4 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-gulratan-bhon-bhon-walae.webp?v=5",
     modelUrl: "/sculptures/Trumpet_Musician_Orange_LPoly.glb",
@@ -224,7 +228,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-seated-bandsman-with-horn",
     title: "Seated Bandsman with Horn",
-    description: "",
+    description: "A seated bandsman with a horn, in bronze, by Krishen Khanna; listed in its source as Untitled (Seated Bandsman with Horn). 30 × 30 × 32 inches, cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp?v=5",
     modelUrl: "/sculptures/khanna-untitled-seated-man.glb?v=2",
@@ -242,7 +246,7 @@ export const sculptures: Sculpture[] = [
     slug: "sugandh-meri-patang",
     form: "other",
     title: "Meri Patang",
-    description: "",
+    description: "Meri Patang (2026) by Yashika Sugandh, in acrylic on nylon, 12 × 9 × 5 inches. Its title means “My Kite”.",
     artistSlug: "yashika-sugandh",
     thumbnail: "/thumbnails/sugandh-meri-patang.webp?v=6",
     modelUrl: "/sculptures/ElephantKite_LOWPOLY.glb?v=2",
@@ -262,7 +266,7 @@ export const sculptures: Sculpture[] = [
     slug: "shah-head-with-bared-teeth",
     form: "head",
     title: "Head with Bared Teeth",
-    description: "",
+    description: "A bronze head by Himmat Shah, 49 × 29 × 35 inches, from an edition of 5 plus an artist's proof. Listed in its source as Untitled (Head).",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/shah-head-with-bared-teeth.webp?v=5",
     modelUrl: "/sculptures/head-a.glb?v=2",
@@ -280,7 +284,7 @@ export const sculptures: Sculpture[] = [
     slug: "shah-head-with-pinpoint-eyes",
     form: "head",
     title: "Head with Pinpoint Eyes",
-    description: "",
+    description: "A bronze head by Himmat Shah, 42 × 27 × 37 inches, from an edition of 5 plus an artist's proof. Listed in its source as Untitled (Head).",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/shah-head-with-pinpoint-eyes.webp?v=5",
     modelUrl: "/sculptures/head-c.glb",
@@ -299,7 +303,7 @@ export const sculptures: Sculpture[] = [
     slug: "ghosh-head-in-fragments",
     form: "head",
     title: "Head in Fragments",
-    description: "",
+    description: "A head by Subba Ghosh in fibreglass, resin, paper mache, oil and acrylic paint, 17 × 11 × 16 inches. Listed in its source as Untitled.",
     artistSlug: "subba-ghosh",
     thumbnail: "/thumbnails/ghosh-head-in-fragments.webp?v=4",
     modelUrl: "/sculptures/head-e.glb",
@@ -316,7 +320,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-dark-green-saree-lady",
     form: "head",
     title: "Saree Lady Series (White)",
-    description: "",
+    description: "A bronze head from Thota Vaikuntam's Saree Lady series (2026), 24 × 16 × 24 inches.",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp?v=6",
     modelUrl: "/sculptures/head-g.glb?v=2",
@@ -332,7 +336,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "thota-blue-saree",
     title: "Blue Saree",
-    description: "",
+    description: "Blue Saree, a bronze by Thota Vaikuntam, 23 × 9 × 7 inches.",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-blue-saree.webp?v=7",
     modelUrl: "/sculptures/female-with-blue-saree.glb?v=4",
@@ -350,7 +354,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-yellow-saree-lady",
     form: "head",
     title: "Yellow Saree Lady",
-    description: "",
+    description: "Yellow Saree Lady (2026), a bronze head by Thota Vaikuntam, 24 × 16 × 24 inches.",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-yellow-saree-lady.webp?v=6",
     modelUrl: "/sculptures/female-head.glb?v=3",
@@ -365,7 +369,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "sansanwal-levitation",
     title: "Levitation",
-    description: "",
+    description: "Levitation by Meena Sansanwal, in papermache, marble and acrylic paint, 24 × 22 × 14 inches.",
     artistSlug: "meena-sansanwal",
     thumbnail: "/thumbnails/sansanwal-levitation.webp?v=5",
     modelUrl: "/sculptures/meditating.glb?v=2",
@@ -381,7 +385,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "thota-female-in-dotted-saree",
     title: "Female in Dotted Saree",
-    description: "",
+    description: "Female in Dotted Saree, a bronze by Thota Vaikuntam, 23 × 7 × 6 inches.",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-in-dotted-saree.webp?v=7",
     modelUrl: "/sculptures/female-with-green-saree.glb?v=3",
@@ -396,7 +400,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-trumpeter",
     title: "Trumpeter",
-    description: "",
+    description: "Trumpeter, a bronze by Krishen Khanna, 17 × 9 × 8 inches.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-trumpeter.webp?v=7",
     modelUrl: "/sculptures/khanna-untitled-horn-player.glb",
@@ -412,7 +416,7 @@ export const sculptures: Sculpture[] = [
     slug: "shah-tirthankar",
     form: "head",
     title: "Tirthankar",
-    description: "",
+    description: "Tirthankar, a bronze by Himmat Shah, 48 × 26 × 20 inches. This cast is the artist's proof (AP 1/1).",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/shah-tirthankar.webp?v=5",
     modelUrl: "/sculptures/shah-tirthankar.glb",
@@ -429,7 +433,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-retd-captain-ramesh-kumar-accordian-walae",
     title: "Retd Captain Ramesh Kumar Accordian Walae",
-    description: "",
+    description: "Retd Captain Ramesh Kumar, the accordion player of the title, in bronze by Krishen Khanna, 12 × 8 × 12 inches. Cast 2 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-retd-captain-ramesh-kumar-accordian-walae.webp?v=7",
     modelUrl: "/sculptures/khanna-retd-captain-ramesh-kumar-accordian-walae.glb",
@@ -446,7 +450,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-rajinder-kaka-horn-walae",
     title: "Rajinder Kaka Horn Walae",
-    description: "",
+    description: "Rajinder Kaka, the horn player of the title, in bronze by Krishen Khanna, 12 × 7 × 6 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-rajinder-kaka-horn-walae.webp?v=7",
     modelUrl: "/sculptures/khanna-rajinder-kaka-horn-walae.glb",
@@ -463,7 +467,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-davinder-raj-tutu-walae",
     title: "Davinder Raj Tutu Walae",
-    description: "",
+    description: "Davinder Raj Tutu Walae, a bronze by Krishen Khanna, 10 × 6 × 10 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-davinder-raj-tutu-walae.webp?v=7",
     modelUrl: "/sculptures/khanna-davinder-raj-tutu-walae.glb",
@@ -480,7 +484,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-adhikari-dada-drum-walae",
     title: "Adhikari Dada Drum Walae",
-    description: "",
+    description: "Adhikari Dada, the drummer of the title, in bronze by Krishen Khanna, 12 × 5 × 5 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-adhikari-dada-drum-walae.webp?v=5",
     modelUrl: "/sculptures/khanna-adhikari-dada-drum-walae.glb",
@@ -498,7 +502,7 @@ export const sculptures: Sculpture[] = [
     slug: "sugandh-matar",
     form: "other",
     title: "Matar",
-    description: "",
+    description: "Matar (2024) by Yashika Sugandh, in acrylic on fibre resin and nylon, 11 × 2 × 2 inches. Its title is the Hindi word for peas.",
     artistSlug: "yashika-sugandh",
     thumbnail: "/thumbnails/sugandh-matar.webp?v=5",
     modelUrl: "/sculptures/sugandh-matar.glb",
@@ -515,7 +519,7 @@ export const sculptures: Sculpture[] = [
     slug: "yusuf-the-tailor",
     form: "head",
     title: "The Tailor",
-    description: "",
+    description: "A bronze by Yusuf, 18 × 28 × 18 inches. Listed in its source as Untitled.",
     artistSlug: "yusuf",
     thumbnail: "/thumbnails/yusuf-the-tailor.webp?v=7",
     modelUrl: "/sculptures/yusuf-untitled-sewing-machine.glb",
@@ -532,7 +536,7 @@ export const sculptures: Sculpture[] = [
     slug: "yusuf-polka-dot-cat",
     form: "other",
     title: "Polka Dot Cat",
-    description: "",
+    description: "A bronze by Yusuf, 20 × 10 × 11 inches. Listed in its source as Untitled.",
     artistSlug: "yusuf",
     thumbnail: "/thumbnails/yusuf-polka-dot-cat.webp?v=5",
     modelUrl: "/sculptures/yusuf-untitled-cat.glb",
@@ -548,7 +552,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "thota-man-with-mridangam",
     title: "Man with Mridangam",
-    description: "",
+    description: "Man with Mridangam, a bronze by Thota Vaikuntam, 59 × 24 × 23 inches. The mridangam of the title is a South Indian barrel drum.",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-man-with-mridangam.webp?v=9",
     modelUrl: "/sculptures/thota-man-with-mridangam.glb",
@@ -563,7 +567,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "bajaj-ganesha",
     title: "Ganesha",
-    description: "",
+    description: "Ganesha by Sujata Bajaj, in acrylic on fiberglass, 72 × 38 × 38 inches.",
     artistSlug: "sujata-bajaj",
     thumbnail: "/thumbnails/bajaj-ganesha.webp?v=4",
     modelUrl: "/sculptures/bajaj-ganesha.glb",
@@ -579,7 +583,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-patinder-rawat-trumpet-walae",
     title: "Patinder Rawat Trumpet Walae",
-    description: "",
+    description: "Patinder Rawat, the trumpeter of the title, in bronze by Krishen Khanna, 12 × 5 × 5 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-patinder-rawat-trumpet-walae.webp?v=5",
     modelUrl: "/sculptures/khanna-untitled-bandsman.glb",
@@ -597,7 +601,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-patinder-ji-haran-walla",
     title: "Patinder Ji Haran Walla",
-    description: "",
+    description: "Patinder Ji Haran Walla (2025), a bronze by Krishen Khanna, 56 × 32 × 18 inches, from an edition of 9 plus an artist's proof.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-patinder-ji-haran-walla.webp?v=4",
     modelUrl: "/sculptures/khanna-untitled-trumpeter.glb",
@@ -616,7 +620,7 @@ export const sculptures: Sculpture[] = [
     slug: "shah-man-from-moon",
     form: "head",
     title: "Man from Moon",
-    description: "",
+    description: "Man from Moon, a small bronze by Himmat Shah, 7 × 9 × 4 inches.",
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/shah-man-from-moon.webp?v=3",
     modelUrl: "/sculptures/untitled-figure-with-spear.glb?v=2",
@@ -633,7 +637,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-female-head-with-side-braid",
     form: "head",
     title: "Female Head with Side Braid and Green Collar",
-    description: "",
+    description: "A bronze head by Thota Vaikuntam (2025), 25 × 17 × 24 inches, from an edition of 9 plus an artist's proof. Listed in its source as Untitled (Female Head, side braid, green collar).",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-with-side-braid.webp?v=8",
     modelUrl: "/sculptures/thota-female-head-05.glb",
@@ -649,7 +653,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "chowdhury-couple",
     title: "Couple",
-    description: "",
+    description: "Couple, a bronze by Jogen Chowdhury, 11 × 13 × 9 inches. Cast 5 of an edition of 9.",
     artistSlug: "jogen-chowdhury",
     thumbnail: "/thumbnails/chowdhury-couple.webp?v=6",
     modelUrl: "/sculptures/chowdhury-couple.glb",
@@ -666,7 +670,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "parekh-bronze-2-1",
     title: "Bronze 2 - 1",
-    description: "",
+    description: "Bronze 2 - 1 (2006) by Madhvi Parekh, 31 × 26 × 16 inches. Cast 2 of an edition of 7.",
     artistSlug: "madhvi-parekh",
     thumbnail: "/thumbnails/parekh-bronze-2-1.webp?v=4",
     modelUrl: "/sculptures/parekh-bronze-2-1.glb",
@@ -683,7 +687,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-bandwalla",
     title: "Bandwalla",
-    description: "",
+    description: "Bandwalla, a bronze by Krishen Khanna, from an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-bandwalla.webp?v=4",
     modelUrl: "/sculptures/untitled-bandsman-in-red.glb",
@@ -700,7 +704,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-female-head-with-polka-dot-collar",
     form: "head",
     title: "Female Head with Polka-dot Collar",
-    description: "",
+    description: "A head by Thota Vaikuntam in resinated fibreglass with automotive paint, 99 × 85 × 53 inches: about two and a half metres tall. Listed in its source as Untitled (Female Head, polka-dot collar).",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-with-polka-dot-collar.webp?v=4",
     modelUrl: "/sculptures/thota-untitled-head-polka-dot.glb",
@@ -717,7 +721,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-ruby-saree-lady",
     form: "head",
     title: "Ruby Saree Lady",
-    description: "",
+    description: "Ruby Saree Lady (2026), a bronze head by Thota Vaikuntam, 24 × 16 × 24 inches.",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-ruby-saree-lady.webp?v=4",
     modelUrl: "/sculptures/thota-female-head-10.glb",
@@ -734,7 +738,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-male-head-with-blue-turban",
     form: "head",
     title: "Male Head with Blue Turban and Moustache",
-    description: "",
+    description: "A head by Thota Vaikuntam (2025) in fiberglass, 97 × 50 × 72 inches: about two and a half metres tall. Listed in its source as Untitled (Male Head, blue turban, moustache).",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp?v=6",
     modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
@@ -752,7 +756,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-bronze-female-head-with-long-hair",
     form: "head",
     title: "Bronze Female Head with Long Hair",
-    description: "",
+    description: "A bronze head by Thota Vaikuntam, 58 × 58 × 47 inches: almost one and a half metres tall. Listed in its source as Untitled (Female Head, bronze with long hair).",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-bronze-female-head-with-long-hair.webp?v=4",
     modelUrl: "/sculptures/thota-untitled-head-with-nose-ring.glb",
@@ -769,7 +773,7 @@ export const sculptures: Sculpture[] = [
     slug: "thota-female-head-with-nose-ring",
     form: "head",
     title: "Female Head with Nose Ring and Red Collar",
-    description: "",
+    description: "A bronze head by Thota Vaikuntam (2025), 26 × 17 × 24 inches, from an edition of 9 plus an artist's proof. Listed in its source as Untitled (Female Head, nose ring, red collar).",
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-female-head-with-nose-ring.webp?v=5",
     modelUrl: "/sculptures/thota-female-head-07.glb",
@@ -786,7 +790,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-kc-the-bandmaster",
     title: "KC The Bandmaster",
-    description: "",
+    description: "KC The Bandmaster, a bronze by Krishen Khanna, 13 × 12 × 8 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-kc-the-bandmaster.webp",
     modelUrl: "/sculptures/khanna-kc-the-bandmaster.glb",
@@ -803,7 +807,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "khanna-shyam-pratap-bhompu-walae",
     title: "Shyam Pratap Bhompu Walae",
-    description: "",
+    description: "Shyam Pratap Bhompu Walae, a bronze by Krishen Khanna, 12 × 8 × 8 inches. Cast 3 of an edition of 9.",
     artistSlug: "krishen-khanna",
     thumbnail: "/thumbnails/khanna-shyam-pratap-bhompu-walae.webp",
     modelUrl: "/sculptures/khanna-shyam-pratap-bhompu-walae.glb",
@@ -820,7 +824,7 @@ export const sculptures: Sculpture[] = [
   {
     slug: "gaurab-das-mother-and-child-2",
     title: "Mother and Child 2",
-    description: "",
+    description: "Mother and Child 2, a bronze by Gaurab Das, 16 × 14 × 14 inches.",
     artistSlug: "gaurab-das",
     thumbnail: "/thumbnails/gaurab-das-mother-and-child-2.webp",
     modelUrl: "/sculptures/gaurab-das-mother-and-child-2.glb",
