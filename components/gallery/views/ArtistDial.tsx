@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 /**
@@ -904,6 +904,8 @@ function RotaryDial({
   const count = wheel.length;
   const seg = 360 / count;
   const [hoverI, setHoverI] = useState<number | null>(null);
+  // Unique ids for the curved name paths (several dials can share a page).
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
 
   // The turn: face i sits at i·seg + rot degrees (0 = the top). Kept
   // continuous, so going from the last artist to the first turns one step on
@@ -1125,6 +1127,35 @@ function RotaryDial({
                 }}
               >
                 <Face o={o} mono={skin === "disc" && !(on || hot)} />
+                {/* The orbit's faces carry their artist's name round the top of
+                    the frame, like lettering round a medal; it scales and fades
+                    with the face. */}
+                {skin === "orbit" && (
+                  <svg
+                    aria-hidden
+                    viewBox="-56 -56 112 112"
+                    className="pointer-events-none absolute overflow-visible"
+                    style={{ left: "-30%", top: "-30%", width: "160%", height: "160%" }}
+                  >
+                    <path id={`${uid}-n${i}`} d="M -41 0 A 41 41 0 0 1 41 0" fill="none" />
+                    <text
+                      className="font-display"
+                      style={{
+                        fontSize: 12.5,
+                        letterSpacing: "0.02em",
+                        fill: "#22201c",
+                        paintOrder: "stroke",
+                        stroke: "#fbfaf7",
+                        strokeWidth: 3,
+                        strokeLinejoin: "round",
+                      }}
+                    >
+                      <textPath href={`#${uid}-n${i}`} startOffset="50%" textAnchor="middle">
+                        {o.name}
+                      </textPath>
+                    </text>
+                  </svg>
+                )}
               </button>
               {g.label !== "none" && (
                 <span
