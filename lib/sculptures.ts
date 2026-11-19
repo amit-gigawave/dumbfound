@@ -924,6 +924,24 @@ export const sculptures: Sculpture[] = [
     dimensions: "16 × 14 × 14 inches",
     heightCm: 41,
   },
+  // Scan "39.glb" (2026-11-19). Details from the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), GD-0038, matched by photo (the file name's 39 is
+  // not the sheet's #39, which is Matar). Year and edition not given there. Height from the dimensions.
+  {
+    slug: "gaurab-das-couple-1",
+    title: "Couple 1",
+    description: "Couple 1, a bronze by Gaurab Das, 14 × 11 × 6 inches.",
+    longDescription:
+      "Two figures stand side by side, pressed together along one edge so that they read as a single block on four long legs. Each rises to a small rounded head on a narrow neck, the head tipped slightly forward to a blunt point.\n\nThe figure on the left opens out into a broad, flat shoulder that juts sideways like a shelf, with two small round forms set on its upper surface. Beneath it the body swells into a deep, rounded bowl with a raised rim. The figure on the right is narrower and straighter, and from its side a curved, hollow flap sweeps out and up like a folded wing. The legs are long, flat-sided and slightly splayed, each ending in a squared foot.\n\nCouple 1 is a semi-abstract bronze by Gaurab Das, measuring 14 × 11 × 6 inches, about 36 centimetres tall. Its surface is a mottled blue-green, broken by patches of warm brown that show most clearly on the two heads and along the edges of the flat planes.",
+    artistSlug: "gaurab-das",
+    thumbnail: "/thumbnails/gaurab-das-couple-1.webp",
+    modelUrl: "/sculptures/gaurab-das-couple-1.glb",
+    look: { metalness: 0.42, roughness: 1.59, reflections: 0.6 },
+    material: "Bronze",
+    year: "",
+    dimensions: "14 × 11 × 6 inches",
+    heightCm: 36,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
