@@ -47,7 +47,7 @@ export async function generateMetadata({
       url: `/artworks/${work.slug}`,
       // The image comes from ./opengraph-image.tsx (a JPEG chat apps can show).
     },
-    twitter: { card: "summary_large_image", title, description },
+    twitter: { card: "summary", title, description },
   };
 }
 
