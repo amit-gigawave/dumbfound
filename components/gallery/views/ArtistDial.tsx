@@ -857,7 +857,7 @@ const GEO: Record<RotarySkin, Geo> = {
   disc: { W: 524, H: 412, cx: 262, cy: 206, RING: 124, PIC: 54, TOP: 1.3, DISC: 168, HUB: 74, label: "outside" },
   bronze: { W: 524, H: 412, cx: 262, cy: 206, RING: 124, PIC: 54, TOP: 1.3, DISC: 168, HUB: 74, label: "outside" },
   gallery: { W: 500, H: 470, cx: 250, cy: 232, RING: 168, PIC: 62, TOP: 1.45, DISC: 0, HUB: 0, label: "below" },
-  orbit: { W: 620, H: 268, cx: 310, cy: 330, RING: 250, PIC: 70, TOP: 1.4, DISC: 0, HUB: 0, label: "none" },
+  orbit: { W: 620, H: 300, cx: 310, cy: 330, RING: 250, PIC: 70, TOP: 1.4, DISC: 0, HUB: 0, label: "none" },
 };
 /** Skins drawn on a light card (the others float over a dark veil). */
 const ON_CARD: Record<RotarySkin, boolean> = { disc: false, bronze: false, gallery: true, orbit: true };
@@ -879,6 +879,7 @@ function RotaryDial({
   onChoose,
   active = true,
   skin = "disc",
+  centerAll = false,
 }: {
   options: DialOption[];
   value: number;
@@ -886,21 +887,33 @@ function RotaryDial({
   /** Whether it can take keyboard focus (false while a popup is shut). */
   active?: boolean;
   skin?: RotarySkin;
+  /**
+   * The first option ("All artists") becomes a button in the middle instead
+   * of a face on the wheel, which then carries only the artists. While it's
+   * chosen, no face is at the top.
+   */
+  centerAll?: boolean;
 }) {
   const g = GEO[skin];
   const dark = !ON_CARD[skin]; // text colours: light over the dark veil
-  const count = options.length;
+  const total = options.length;
+  // The faces on the wheel, and the wheel position of the choice (null: All, in the middle).
+  const off = centerAll ? 1 : 0;
+  const wheel = centerAll ? options.slice(1) : options;
+  const wv = centerAll ? (value === 0 ? null : value - 1) : value;
+  const count = wheel.length;
   const seg = 360 / count;
   const [hoverI, setHoverI] = useState<number | null>(null);
 
   // The turn: face i sits at i·seg + rot degrees (0 = the top). Kept
   // continuous, so going from the last artist to the first turns one step on
-  // rather than all the way back round.
-  const [rot, setRot] = useState(-value * seg);
-  const [seen, setSeen] = useState(value);
-  if (seen !== value) {
-    setSeen(value);
-    setRot((cur) => cur + ((((-value * seg - cur) % 360) + 540) % 360) - 180);
+  // rather than all the way back round. Choosing All leaves the wheel where it is.
+  const [rot, setRot] = useState(-(wv ?? 0) * seg);
+  const [seen, setSeen] = useState(wv);
+  if (seen !== wv) {
+    setSeen(wv);
+    if (wv !== null)
+      setRot((cur) => cur + ((((-wv * seg - cur) % 360) + 540) % 360) - 180);
   }
   const [dragRot, setDragRot] = useState<number | null>(null);
   const drag = useRef<{
@@ -919,23 +932,34 @@ function RotaryDial({
     const k = r.width / g.W; // the dial may be drawn scaled
     return (Math.atan2(x - (r.left + g.cx * k), -(y - (r.top + g.cy * k))) * 180) / Math.PI;
   };
-  useWheelStep(area, (d) => onChoose(wrap(value + d, count)));
+  useWheelStep(area, (d) => onChoose(wrap(value + d, total)));
 
   const turn = dragRot ?? rot;
-  const top = dragRot !== null ? atTop(dragRot) : value;
-  const shown = options[hoverI ?? top];
+  // The face at the top (none while All, in the middle, is the choice).
+  const top = dragRot !== null ? atTop(dragRot) : wv;
+  const shown =
+    hoverI !== null ? wheel[hoverI] : top !== null ? wheel[top] : options[0];
   const ease = dragRot === null ? TURN : "none";
   const big = g.PIC * g.TOP;
 
-  // The name and count of the chosen (or pointed-at) artist.
-  const caption = (nameCls: string, countCls: string) => (
-    <>
-      <p className={`font-display leading-[1.12] [text-wrap:balance] ${nameCls}`}>{shown?.name}</p>
-      <p className={`mt-1 tabular-nums ${countCls}`}>
-        {shown?.n} {shown?.n === 1 ? "work" : "works"}
-      </p>
-    </>
-  );
+  // The name and count of the chosen (or pointed-at) artist. With All in the
+  // middle, its button names it, so the caption gives the totals instead.
+  const caption = (nameCls: string, countCls: string) =>
+    centerAll && shown?.slug === null ? (
+      <>
+        <p className={`font-display leading-[1.12] tabular-nums ${nameCls}`}>
+          {shown.n} works
+        </p>
+        <p className={`mt-1 ${countCls}`}>by {count} artists</p>
+      </>
+    ) : (
+      <>
+        <p className={`font-display leading-[1.12] [text-wrap:balance] ${nameCls}`}>{shown?.name}</p>
+        <p className={`mt-1 tabular-nums ${countCls}`}>
+          {shown?.n} {shown?.n === 1 ? "work" : "works"}
+        </p>
+      </>
+    );
 
   return (
     <div
@@ -944,12 +968,14 @@ function RotaryDial({
       tabIndex={active ? 0 : -1}
       aria-label="Choose an artist: turn the dial, or pick a face"
       aria-valuemin={0}
-      aria-valuemax={count - 1}
+      aria-valuemax={total - 1}
       aria-valuenow={value}
       aria-valuetext={`${options[value]?.name}, ${options[value]?.n} works`}
-      onKeyDown={keyStep((d) => onChoose(wrap(value + d, count)), onChoose, count - 1)}
+      onKeyDown={keyStep((d) => onChoose(wrap(value + d, total)), onChoose, total - 1)}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
+        // The All button in the middle is an ordinary button, not part of the turn.
+        if ((e.target as HTMLElement).closest("[data-all]")) return;
         e.currentTarget.setPointerCapture(e.pointerId);
         const hit = (e.target as HTMLElement).closest<HTMLElement>("[data-i]");
         drag.current = {
@@ -978,8 +1004,8 @@ function RotaryDial({
           const snapped = Math.round(d.rot / seg) * seg;
           setRot(snapped);
           setDragRot(null);
-          onChoose(atTop(snapped));
-        } else if (d.target !== null) onChoose(d.target);
+          onChoose(atTop(snapped) + off);
+        } else if (d.target !== null) onChoose(d.target + off);
       }}
       onPointerCancel={() => {
         drag.current = null;
@@ -1037,10 +1063,10 @@ function RotaryDial({
           }),
         }}
       >
-        {options.map((o, i) => {
+        {wheel.map((o, i) => {
           const R0 = g.DISC || g.RING;
           const p = onCircle(R0, R0, g.RING, i * seg);
-          const on = i === top;
+          const on = top !== null && i === top;
           const hot = i === hoverI;
           // Where this face is on screen now (0 = top), for names and the orbit's fade.
           const now = i * seg + turn;
@@ -1072,10 +1098,10 @@ function RotaryDial({
                 data-i={i}
                 tabIndex={active && orbitFade > 0 ? 0 : -1}
                 aria-label={`${o.name}, ${o.n} works`}
-                aria-pressed={i === value}
+                aria-pressed={i + off === value}
                 // Pointer picks are handled by the dial (it holds the pointer);
                 // this is Enter / Space.
-                onClick={(e) => e.detail === 0 && onChoose(i)}
+                onClick={(e) => e.detail === 0 && onChoose(i + off)}
                 onMouseEnter={() => setHoverI(i)}
                 onMouseLeave={() => setHoverI(null)}
                 onFocus={() => setHoverI(i)}
@@ -1189,10 +1215,39 @@ function RotaryDial({
       {skin === "orbit" && (
         <div
           className="pointer-events-none absolute text-center"
-          style={{ left: g.cx - 160, top: g.cy - g.RING + big / 2 + 18, width: 320 }}
+          style={{ left: g.cx - 160, top: g.cy - g.RING + big / 2 + 26, width: 320 }}
         >
           {caption("text-[28px] text-[#22201c]", "text-[13px] text-[#6f6a5f]")}
         </div>
+      )}
+
+      {/* All artists, in the middle: filled while it's the choice. */}
+      {centerAll && (
+        <button
+          type="button"
+          data-all
+          tabIndex={active ? 0 : -1}
+          aria-pressed={value === 0}
+          onClick={() => onChoose(0)}
+          className={`absolute -translate-x-1/2 whitespace-nowrap rounded-full px-5 py-2 text-[14px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${
+            dark ? "focus-visible:outline-white" : "focus-visible:outline-[#22201c]"
+          } ${
+            value === 0
+              ? dark
+                ? "bg-white text-[#22201c]"
+                : "bg-[#22201c] text-white"
+              : dark
+                ? "border border-white/50 text-white hover:bg-white/10"
+                : "border border-[#22201c]/30 bg-white text-[#22201c] hover:border-[#22201c]"
+          }`}
+          style={
+            skin === "orbit"
+              ? { left: g.cx, top: g.cy - g.RING + big / 2 + 100 }
+              : { left: g.cx, top: g.cy + g.HUB + 8 }
+          }
+        >
+          All artists
+        </button>
       )}
     </div>
   );
@@ -1326,7 +1381,7 @@ function Rotary({ options, value, onChange, skin = "disc" }: Props & { skin?: Ro
               className={card ? "rounded-[32px] bg-[#fbfaf7] shadow-[0_40px_90px_-30px_rgba(28,22,14,0.45),0_0_0_1px_rgba(34,32,28,0.06)]" : ""}
               style={{ padding: PAD }}
             >
-              <RotaryDial options={options} value={value} onChoose={choose} active={open} skin={skin} />
+              <RotaryDial options={options} value={value} onChoose={choose} active={open} skin={skin} centerAll={skin === "orbit"} />
             </div>
             <button
               type="button"
@@ -1362,7 +1417,7 @@ function RotaryInline({
   return (
     <div className="relative shrink-0" style={{ width, height: g.H * k }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ transform: `scale(${k})` }}>
-        <RotaryDial options={options} value={value} onChoose={onChange} skin={skin} />
+        <RotaryDial options={options} value={value} onChoose={onChange} skin={skin} centerAll={skin === "orbit"} />
       </div>
     </div>
   );
