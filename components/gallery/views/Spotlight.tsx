@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Fragment,
   useCallback,
   useEffect,
   useMemo,
@@ -104,8 +103,6 @@ const GLIDE_MS = 1200;
 const GESTURE_GAP_MS = 400;
 const easeInOut = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-/** The easing of the text reveals: a quick start that settles slowly. */
-const EASE = "cubic-bezier(0.2, 0.7, 0.2, 1)";
 
 /** A glide in progress (its frame) and the time before which new steps wait. */
 type Glider = { raf: number; until: number };
@@ -152,45 +149,6 @@ const offsetIn = (root: HTMLElement, panel: HTMLElement) =>
   root.scrollTop +
   panel.getBoundingClientRect().top -
   root.getBoundingClientRect().top;
-
-/**
- * A line revealed when its slide arrives: it fades up from `y` px after
- * `delay` ms. On the way out it hides at once, ready for the next visit.
- * `more` adds other transitions the element needs (e.g. hover effects).
- */
-const reveal = (
-  shown: boolean,
-  delay: number,
-  y = 22,
-  more = "",
-): React.CSSProperties => ({
-  opacity: shown ? 1 : 0,
-  transform: shown ? "translate3d(0,0,0)" : `translate3d(0,${y}px,0)`,
-  transition: `opacity 700ms ${EASE}, transform 900ms ${EASE}${more}`,
-  transitionDelay: shown ? `${delay}ms` : "0ms",
-});
-
-/** Like reveal(), but opacity only, for an element whose transform is the scroll's. */
-const revealOpacity = (shown: boolean, delay: number): React.CSSProperties => ({
-  // Shown: the scroll's own fade (from rise()) applies untouched.
-  ...(shown ? {} : { opacity: 0 }),
-  transition: `opacity 800ms ${EASE}`,
-  transitionDelay: shown ? `${delay}ms` : "0ms",
-});
-
-/**
- * A text line that trails the scroll by `px` and fades faster the further it
- * is from place. `side` (1 = the text is on the right, -1 = on the left) also
- * slides it in from its own edge of the screen.
- */
-const rise = (
-  px: number,
-  fade: number,
-  side: 1 | -1 = 1,
-): React.CSSProperties => ({
-  transform: `translate3d(calc(var(--p,0)*var(--p,0)*${side * px * 0.9}px),calc(var(--p,0)*${px}px),0)`,
-  opacity: `calc(1 - var(--p,0)*var(--p,0)*${fade})`,
-});
 
 /**
  * One work per screen. The room takes its tint from the work itself (the
@@ -287,8 +245,7 @@ export default function Spotlight({
 
     // Scroll-linked motion: each panel gets --p, its distance from the centre
     // of the view in screens (0 = in place, +1 = a screen below, -1 = above).
-    // The figure and the text lines read it at different rates, so they slide
-    // at different speeds and settle one after another.
+    // The figure reads it to drift and fade as it scrolls; the text stays put.
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
     const update = () => {
@@ -387,12 +344,6 @@ export default function Spotlight({
       cancelAnimationFrame(g.raf);
     };
   }, [works.length]);
-
-  // Visitors who prefer reduced motion see every slide's text in place.
-  const [calm, setCalm] = useState(false);
-  useEffect(() => {
-    setCalm(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
 
   // Up / Down (and Page Up / Down) step between works from anywhere on the
   // page, except while typing in the search box.
@@ -531,9 +482,6 @@ export default function Spotlight({
         {works.map((w, i) => {
           // Slides alternate: the model on the left and the text on the right, then the other way round.
           const flip = i % 2 === 1;
-          const side = flip ? -1 : 1;
-          // The current slide's text is revealed; the rest wait, hidden, for their turn.
-          const shown = i === active || calm;
           return (
             <section
               key={w.slug}
@@ -594,75 +542,24 @@ export default function Spotlight({
               <div
                 className={`max-w-[34rem] text-[var(--deep)] ${flip ? "md:order-1 md:justify-self-end" : ""}`}
               >
-                {/* Each line is placed by the scroll (rise) and, inside that, revealed in turn when the slide arrives (reveal). */}
-                <p
-                  className="text-[12px] tabular-nums tracking-[0.22em]"
-                  style={rise(24, 1.6, side)}
-                >
-                  <span className="block opacity-60">
-                    <span className="block" style={reveal(shown, 60)}>
-                      {String(i + 1).padStart(2, "0")} /{" "}
-                      {String(works.length).padStart(2, "0")}
-                    </span>
-                  </span>
+                <p className="text-[12px] tabular-nums tracking-[0.22em] opacity-60">
+                  {String(i + 1).padStart(2, "0")} /{" "}
+                  {String(works.length).padStart(2, "0")}
                 </p>
-                <p
-                  className="font-text mt-3 text-[clamp(15px,1.5vw,19px)] italic"
-                  style={rise(36, 1.6, side)}
-                >
-                  <span className="block" style={reveal(shown, 140)}>
-                    {w.artist}
-                  </span>
+                <p className="font-text mt-3 text-[clamp(15px,1.5vw,19px)] italic">
+                  {w.artist}
                 </p>
-                <h2
-                  className="font-display mt-2 text-[clamp(34px,5.4vw,84px)] leading-[0.98] [text-wrap:balance]"
-                  style={rise(70, 1.5, side)}
-                >
-                  {/* The title rises word by word from behind a mask. */}
-                  {w.title.split(" ").map((word, k, all) => (
-                    <Fragment key={k}>
-                      <span className="-mb-[0.14em] inline-block overflow-hidden pb-[0.14em] align-bottom">
-                        <span
-                          className="inline-block"
-                          style={{
-                            transform: shown
-                              ? "translateY(0)"
-                              : "translateY(110%)",
-                            transition: `transform 1000ms ${EASE}`,
-                            transitionDelay: shown
-                              ? `${220 + k * 80}ms`
-                              : "0ms",
-                          }}
-                        >
-                          {word}
-                        </span>
-                      </span>
-                      {k < all.length - 1 ? " " : ""}
-                    </Fragment>
-                  ))}
+                <h2 className="font-display mt-2 text-[clamp(34px,5.4vw,84px)] leading-[0.98] [text-wrap:balance]">
+                  {w.title}
                 </h2>
                 {(w.year || w.material || w.dimensions || w.heightCm) && (
-                  <div style={rise(100, 1.8, side)}>
-                    {/* A rule that draws itself across before the details. */}
-                    <span
-                      aria-hidden
-                      className="mt-6 block h-px origin-left bg-[var(--deep)]/20"
-                      style={{
-                        transform: shown ? "scaleX(1)" : "scaleX(0)",
-                        transition: `transform 900ms ${EASE}`,
-                        transitionDelay: shown ? "420ms" : "0ms",
-                      }}
-                    />
-                  </div>
+                  <span
+                    aria-hidden
+                    className="mt-6 block h-px bg-[var(--deep)]/20"
+                  />
                 )}
                 {(w.year || w.material || w.dimensions || w.heightCm) && (
-                  <dl
-                    className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-[14px]"
-                    style={{
-                      ...rise(110, 1.8, side),
-                      ...revealOpacity(shown, 520),
-                    }}
-                  >
+                  <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 text-[14px]">
                     {w.year && (
                       <>
                         <dt className="opacity-60">Year</dt>
@@ -689,33 +586,14 @@ export default function Spotlight({
                     )}
                   </dl>
                 )}
-                <div className="mt-8" style={rise(150, 2, side)}>
+                <div className="mt-8">
                   <Link
                     href={`/artworks/${w.slug}`}
-                    className="group inline-flex items-center gap-3 rounded-full bg-[var(--deep)] py-1.5 pl-5 pr-1.5 text-[14px] text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)] hover:gap-4 hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--deep)]"
-                    style={reveal(
-                      shown,
-                      640,
-                      16,
-                      ", gap 300ms ease, box-shadow 300ms ease",
-                    )}
+                    className="group inline-flex items-center gap-3 rounded-full bg-[var(--deep)] py-1.5 pl-5 pr-1.5 text-[14px] text-white shadow-[0_10px_24px_-12px_rgba(0,0,0,0.55)] transition-[gap,box-shadow] duration-300 hover:gap-4 hover:shadow-[0_14px_30px_-12px_rgba(0,0,0,0.6)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--deep)]"
                   >
                     Open this work
                     <span className="grid h-8 w-8 place-items-center rounded-full bg-white/15 transition-[transform,background-color] duration-300 group-hover:translate-x-0.5 group-hover:bg-white/25">
-                      {/* The arrow slides in last. */}
-                      <span
-                        className="grid"
-                        style={{
-                          opacity: shown ? 1 : 0,
-                          transform: shown
-                            ? "translateX(0)"
-                            : "translateX(-10px)",
-                          transition: `opacity 500ms ${EASE}, transform 700ms ${EASE}`,
-                          transitionDelay: shown ? "900ms" : "0ms",
-                        }}
-                      >
-                        <ArrowRight size={16} aria-hidden />
-                      </span>
+                      <ArrowRight size={16} aria-hidden />
                     </span>
                   </Link>
                 </div>
