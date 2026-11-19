@@ -19,6 +19,12 @@ const DIALS: { id: DialVariant; name: string; about: string }[] = [
       "The floating dial (drag it anywhere) shows the chosen artist's face. Click it and it opens into a clock: each hour is an artist, their face where the number would be and their name outside the rim. Click a face, or drag the hand round.",
   },
   {
+    id: "clock-inline",
+    name: "Clock in page",
+    about:
+      "The same clock, always open, set beside the line of works (above it on phones). No popup: pick an artist straight away.",
+  },
+  {
     id: "knob",
     name: "Knob",
     about:

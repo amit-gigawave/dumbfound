@@ -329,7 +329,7 @@ export default function TrueScale({
               </p>
             </div>
           )}
-          {options.length > 2 && (
+          {options.length > 2 && dial !== "clock-inline" && (
             <ArtistDial
               variant={dial}
               options={options}
@@ -338,10 +338,31 @@ export default function TrueScale({
             />
           )}
         </div>
+        {/* The clock set into the page: here on phones, beside the stage on wider screens. */}
+        {options.length > 2 && dial === "clock-inline" && (
+          <div className="mx-auto md:hidden">
+            <ArtistDial
+              variant={dial}
+              options={options}
+              value={pick}
+              onChange={choose}
+            />
+          </div>
+        )}
       </div>
 
       {/* The stage: pushed to the bottom of the screen, so the works stand on its floor. */}
       <div className="mt-auto flex items-start pt-[clamp(16px,3vh,32px)]">
+        {options.length > 2 && dial === "clock-inline" && (
+          <div className="hidden shrink-0 self-center pl-[clamp(16px,3vw,40px)] md:block">
+            <ArtistDial
+              variant={dial}
+              options={options}
+              value={pick}
+              onChange={choose}
+            />
+          </div>
+        )}
         {/* Ruler: its own column to the left of every model. It stays put while the works scroll, and shares their floor. */}
         <div
           aria-hidden
