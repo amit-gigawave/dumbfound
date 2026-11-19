@@ -10,6 +10,9 @@ export function conceptWorks(): ConceptWork[] {
     title: w.title,
     artist: getArtist(w.artistSlug)?.name ?? "",
     artistSlug: w.artistSlug,
+    ...(getArtist(w.artistSlug)?.portrait && {
+      artistPortrait: getArtist(w.artistSlug)!.portrait,
+    }),
     hasModel: Boolean(w.modelUrl),
     ...(w.modelUrl && { modelUrl: w.modelUrl }),
     ...(w.facing !== undefined && { facing: w.facing }),

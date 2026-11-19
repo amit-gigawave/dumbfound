@@ -78,7 +78,7 @@ function HoverZone({
 export default function TrueScale({
   works,
   initialArtist,
-  dial = "knob",
+  dial = "clock",
 }: {
   works: ConceptWork[];
   /** Artist slug to start on (the page's ?artist=). */
@@ -104,6 +104,7 @@ export default function TrueScale({
         const o = m.get(w.artistSlug) ?? {
           slug: w.artistSlug,
           name: w.artist,
+          portrait: w.artistPortrait,
           n: 0,
         };
         o.n++;
@@ -300,10 +301,17 @@ export default function TrueScale({
             Tallest to smallest. Drag, scroll or use the arrows to walk the
             line; hover a work to see it in 3D, and drag it to turn it.
             {unsized > 0 &&
-              ` ${unsized} works without a recorded height aren't shown.`}
+              (unsized === 1
+                ? " 1 work without a recorded height isn't shown."
+                : ` ${unsized} works without a recorded height aren't shown.`)}
           </p>
         </div>
-        <div className="flex items-center gap-8">
+        <div
+          className={`flex items-center gap-8 ${
+            // The floating dials start in this corner: keep it clear for them.
+            dial === "clock" || dial === "float" ? "pr-[84px]" : ""
+          }`}
+        >
           {current && (
             <div aria-live="polite" className="min-w-0 text-right">
               <p className="text-[12px] text-stone">{current.artist}</p>
