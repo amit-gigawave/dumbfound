@@ -13,7 +13,11 @@ import { SculptureContents } from "../SculptureScene";
 import type { ArtworkLook } from "@/lib/sculptures";
 import { sharedRenderer } from "./renderer";
 
-const DPR_MAX = 1.5;
+/** Sharpness cap: a little lower on machines with fewer cores. */
+const DPR_MAX =
+  typeof navigator !== "undefined" && (navigator.hardwareConcurrency ?? 8) <= 8 ? 1.25 : 1.5;
+/** After a change (props, the model arriving), keep drawing this long so it settles. */
+const SETTLE_MS = 800;
 
 // <Canvas> registers three's classes for JSX itself; a bare root must do it.
 extend(THREE as unknown as Parameters<typeof extend>[0]);
@@ -47,6 +51,12 @@ export default function TilePreview({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rootRef = useRef<ReconcilerRoot<HTMLCanvasElement> | null>(null);
+  // Whether a frame is needed: until the model has drawn (its onReady comes
+  // from inside a frame), while it turns, and briefly after any change.
+  // Otherwise the still picture on the canvas stays as it is.
+  const readyRef = useRef(false);
+  const spinRef = useRef(autoRotate);
+  const settleRef = useRef(0);
 
   // The scene's root and its frame loop live as long as the tile shows 3D.
   useEffect(() => {
@@ -92,6 +102,7 @@ export default function TilePreview({
       raf = requestAnimationFrame(frame);
       const state = _roots.get(key)?.store.getState();
       if (!visible || !state) return;
+      if (readyRef.current && !spinRef.current && now > settleRef.current) return;
       if (gl.getPixelRatio() !== dpr) gl.setPixelRatio(dpr);
       gl.getSize(size);
       if (size.x !== width || size.y !== height) gl.setSize(width, height, false);
@@ -110,6 +121,8 @@ export default function TilePreview({
   }, []);
 
   useEffect(() => {
+    spinRef.current = autoRotate;
+    settleRef.current = performance.now() + SETTLE_MS;
     rootRef.current?.render(
       <SculptureContents
         url={url}
@@ -119,7 +132,11 @@ export default function TilePreview({
         reveal={false}
         adaptiveBackground={false}
         autoRotate={autoRotate}
-        onReady={onReady}
+        onReady={() => {
+          readyRef.current = true;
+          settleRef.current = performance.now() + SETTLE_MS;
+          onReady();
+        }}
         loader={false}
         card
       />,
