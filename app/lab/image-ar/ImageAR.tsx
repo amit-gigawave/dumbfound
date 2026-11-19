@@ -105,8 +105,9 @@ export default function ImageAR({
   const [cardCm, setCardCm] = useState(10);
   // Off by default: beside a small work a 1.7 m person fills the view.
   const [person, setPerson] = useState(false);
-  // Upright by default: the tracker holds a card best seen straight on.
-  const [place, setPlace] = useState<Place>("upright");
+  // Flat by default: the card lies on the floor or a table and the work
+  // stands straight up out of it, at 90 degrees to the card.
+  const [place, setPlace] = useState<Place>("flat");
   // Live settings for the render loop (it reads these, not React state).
   // The visitor's turn of the work (degrees), from a one-finger drag.
   const [turn, setTurn] = useState(0);
@@ -210,14 +211,13 @@ export default function ImageAR({
         Image AR (prototype)
       </h1>
       <p className="mt-3 max-w-[64ch] text-[15px] leading-relaxed text-stone">
-        Print one of the cards below, or open it on another screen. Hold or prop
-        the card upright, tap <b>Start camera</b> on your phone and point it at
-        the card, straight on: the sculpture stands in front of it. Pinch or use
-        the slider to resize, choose <b>Real size</b> and the printed width of
-        your card, or add a 1.7 m person at the same scale. A card lying flat on
-        a table works too (<b>Card flat on table</b>), but only seen from fairly
-        high above: the tracker loses a card tilted much more than about
-        35&deg;.
+        Print one of the cards below and lay it on the floor or a table. Tap{" "}
+        <b>Start camera</b> on your phone and point it down at the card: the
+        sculpture stands straight up out of it. Keep the phone fairly high above
+        the card, looking down: the tracker loses a card seen at a shallow
+        angle. Pinch or use the slider to resize, choose <b>Real size</b> and
+        the printed width of your card, or add a 1.7 m person at the same scale.
+        For a card held up or on a screen, switch to <b>Card upright</b>.
       </p>
       <p className="mt-3 max-w-[64ch] text-[15px] leading-relaxed text-stone">
         <b>For a steady view, tap Anchor it here</b> once the work appears. The
