@@ -17,7 +17,7 @@ const SculptureScene = dynamic(() => import("../../SculptureScene"), {
  * Height the tallest work is drawn at: what is left of the screen under the
  * site header, the title bar, the captions and the floating view switch.
  */
-const STAGE = "max(260px, calc(100svh - 440px))";
+const STAGE = "max(260px, calc(100svh - 470px))";
 /** The caption area under the floor line (px), and the line itself. */
 const CAPTION_PX = 95;
 /** Space between works. */
@@ -280,7 +280,7 @@ export default function TrueScale({
     });
 
   return (
-    <section className="flex min-h-[calc(100svh-85px)] flex-col bg-[#f3f2ee] pb-24 pt-[clamp(20px,3.5vh,40px)]">
+    <section className="flex min-h-[calc(100svh-137px)] flex-col bg-[#f3f2ee] pb-12 pt-[clamp(20px,3.5vh,40px)]">
       {/* Title on the left; the artist dial on the right. */}
       <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4 px-[clamp(16px,4vw,48px)]">
         <div>
