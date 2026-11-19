@@ -8,7 +8,7 @@ import ArtistPills from "@/components/gallery/ArtistPills";
 import ShuffleGrid from "@/components/gallery/ShuffleGrid";
 import SectionHeader from "@/components/gallery/SectionHeader";
 import PageHeader from "@/components/PageHeader";
-import ViewSwitch, { parseView } from "@/components/gallery/ViewSwitch";
+import ViewSwitch, { parseView, VIEW_BAR_PX } from "@/components/gallery/ViewSwitch";
 import Spotlight from "@/components/gallery/views/Spotlight";
 import TrueScale from "@/components/gallery/views/TrueScale";
 import { conceptWorks } from "@/lib/concept-works";
@@ -30,22 +30,22 @@ export default async function ArtworksPage({
   const { artist: artistSlug, view: viewParam } = await searchParams;
   const view = parseView(viewParam);
 
-  // Spotlight and True scale fill the screen, in place of the big header. The
-  // floating switch sits outside <main>: its page-in animation would otherwise
-  // make it the containing block of a fixed element.
+  // Spotlight and True scale fill the screen below the header and the view
+  // bar, in place of the big header. The bar sits before <main>, so it sticks
+  // for the whole page.
   if (view !== "cards") {
     const all = conceptWorks();
     return (
       <>
+        <ViewSwitch current={view} />
         <main>
           <h1 className="sr-only">Artworks</h1>
           {view === "spotlight" ? (
-            <Spotlight works={all} offset={HEADER_PX} />
+            <Spotlight works={all} offset={HEADER_PX + VIEW_BAR_PX} />
           ) : (
             <TrueScale works={all} initialArtist={artistSlug} />
           )}
         </main>
-        <ViewSwitch current={view} />
       </>
     );
   }
@@ -79,7 +79,10 @@ export default async function ArtworksPage({
           title="Artworks"
           line="Each work is presented as in a catalogue. Open any piece to read about its maker, its material and its story."
         />
-        <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(40px,6vw,72px)]">
+        {/* Between the title and the artist pills; it sticks under the site
+            header once scrolled to the top. */}
+        <ViewSwitch current={view} />
+        <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-7">
           {options.length > 1 && (
             <nav aria-label="Filter by artist" className="mb-8">
               <ArtistPills
@@ -115,7 +118,6 @@ export default async function ArtworksPage({
           </ShuffleGrid>
         </div>
       </main>
-      <ViewSwitch current={view} />
     </>
   );
 }
