@@ -5,6 +5,8 @@
  * the tab is hidden; off for visitors who prefer reduced motion.
  */
 
+import { cardsIn3D } from "./deviceTier";
+
 /** Most tiles turning on their own at once (fewer on small screens). */
 const maxAtOnce = () => (window.innerWidth < 768 ? 1 : 2);
 /** Gap between picks, in ms. */
@@ -54,8 +56,8 @@ const tick = () => {
 
 /** Enter a tile into the draw; returns a function that takes it out again. */
 export function registerAmbient(tile: AmbientTile) {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    return () => {};
+  // Desktops with power to spare only (this also covers reduced motion).
+  if (!cardsIn3D()) return () => {};
   tiles.add(tile);
   interval ??= setInterval(tick, EVERY);
   return () => {

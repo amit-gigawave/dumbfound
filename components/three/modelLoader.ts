@@ -128,7 +128,7 @@ let wanted: string[] = [];
 let fetching = false;
 
 /** Skip background downloads on data saver or slow connections. */
-const lightConnection = () => {
+export const lightConnection = () => {
   const c = (navigator as Navigator & {
     connection?: { saveData?: boolean; effectiveType?: string };
   }).connection;

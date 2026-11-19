@@ -3,7 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import type { Sculpture } from "@/lib/sculptures";
 import { getArtist } from "@/lib/artists";
 import { Rotate3d } from "lucide-react";
@@ -11,6 +18,11 @@ import { FIT_CARD, preloadModel, warm3D } from "../three/modelLoader";
 import { registerAmbient } from "./ambientTurn";
 import { registerNear } from "./nearCursor";
 import { tilt, untilt } from "./tilt";
+import { cardsIn3D } from "./deviceTier";
+
+/** The device check never changes during a visit; the server always says no. */
+const noSubscribe = () => () => {};
+const no3D = () => false;
 import ScaleMark from "./ScaleMark";
 
 const TilePreview = dynamic(() => import("../three/TilePreview"), {
@@ -77,7 +89,11 @@ const ArtworkTile = ({
 }) => {
   const label = variant === "label";
   const artist = getArtist(work.artistSlug);
-  const modelUrl = showcase ? work.modelUrl : undefined;
+  // 3D on the card (hover preview, ambient turns, prefetch) only where the
+  // device can afford it (see deviceTier); elsewhere the card is its photo.
+  // Read after hydration, so server and browser render the same HTML.
+  const can3D = useSyncExternalStore(noSubscribe, cardsIn3D, no3D);
+  const modelUrl = showcase && can3D ? work.modelUrl : undefined;
   const plateRef = useRef<HTMLDivElement>(null);
 
   const [hovering, setHovering] = useState(false);
