@@ -9,7 +9,16 @@ import { createPortal } from "react-dom";
  * by side so one can be chosen for the site.
  */
 export type DialVariant =
-  "rotary" | "rotary-inline" | "knob" | "ring" | "drum" | "tuner" | "float";
+  | "rotary"
+  | "rotary-gallery"
+  | "rotary-orbit"
+  | "rotary-bronze"
+  | "rotary-inline"
+  | "knob"
+  | "ring"
+  | "drum"
+  | "tuner"
+  | "float";
 
 export type DialOption = {
   slug: string | null;
@@ -819,50 +828,74 @@ function Face({ o, mono = false }: { o?: DialOption; mono?: boolean }) {
   );
 }
 
-/** Rotary sizes (px, before scaling). */
-const R = {
-  DISC: 168, // the turning disc's radius
-  RING: 124, // where the faces sit on it
-  PIC: 54, // a face
-  TOP: 1.3, // the chosen face, in the slot at the top, is this much larger
-  HUB: 74, // the fixed label in the middle
-  /** Room needed either side of the centre: names stick out at the sides. */
-  EXT_X: 262,
-  EXT_Y: 206,
+/**
+ * How the turning dial looks. Every skin works the same way (the place at
+ * the top is the choice; drag to turn, or click a face); only the drawing
+ * differs. Compared side by side on /lab/dials?dial=compare.
+ */
+export type RotarySkin = "disc" | "gallery" | "orbit" | "bronze";
+
+/** Each skin's geometry (px, before scaling). The faces turn round (cx, cy). */
+type Geo = {
+  W: number;
+  H: number;
+  cx: number;
+  cy: number;
+  /** Where the faces sit, from the centre. */
+  RING: number;
+  /** A face, and how much larger the chosen one (at the top) is. */
+  PIC: number;
+  TOP: number;
+  /** The turning plate under the faces (0: none). */
+  DISC: number;
+  /** The fixed label in the middle (0: none). */
+  HUB: number;
+  /** Where each surname goes: outside the circle, under its face, or none. */
+  label: "outside" | "below" | "none";
 };
+const GEO: Record<RotarySkin, Geo> = {
+  disc: { W: 524, H: 412, cx: 262, cy: 206, RING: 124, PIC: 54, TOP: 1.3, DISC: 168, HUB: 74, label: "outside" },
+  bronze: { W: 524, H: 412, cx: 262, cy: 206, RING: 124, PIC: 54, TOP: 1.3, DISC: 168, HUB: 74, label: "outside" },
+  gallery: { W: 500, H: 470, cx: 250, cy: 232, RING: 168, PIC: 62, TOP: 1.45, DISC: 0, HUB: 0, label: "below" },
+  orbit: { W: 620, H: 268, cx: 310, cy: 330, RING: 250, PIC: 70, TOP: 1.4, DISC: 0, HUB: 0, label: "none" },
+};
+/** Skins drawn on a light card (the others float over a dark veil). */
+const ON_CARD: Record<RotarySkin, boolean> = { disc: false, bronze: false, gallery: true, orbit: true };
+
 /** One easing for the turn, so the disc, faces and names move together. */
 const TURN = "transform 650ms cubic-bezier(0.22, 1, 0.36, 1)";
+const ACCENT = "#396046";
+const BRONZE_RIM =
+  "conic-gradient(from 210deg, #6b4f2a, #c9a56a 15%, #7d5f35 30%, #e6cc95 45%, #6b4f2a 60%, #b38c55 78%, #6b4f2a)";
 
 /**
- * The dial itself, drawn in a box 2·EXT_X × 2·EXT_Y. A disc carries the
- * artists' faces round; the slot at the top holds the choice and a fixed
- * label in the middle names it. Drag anywhere to turn the disc (it settles
- * with the nearest face in the slot), or click a face to turn it there.
+ * The dial itself. The faces turn round a centre; the place at the top
+ * holds the choice. Drag anywhere to turn (it settles with the nearest face
+ * at the top), or click a face to turn it there.
  */
 function RotaryDial({
   options,
   value,
   onChoose,
   active = true,
-  onDark = false,
+  skin = "disc",
 }: {
   options: DialOption[];
   value: number;
   onChoose: (i: number) => void;
   /** Whether it can take keyboard focus (false while a popup is shut). */
   active?: boolean;
-  /** Set over the dark veil (the popup): the names outside the disc are light. */
-  onDark?: boolean;
+  skin?: RotarySkin;
 }) {
+  const g = GEO[skin];
+  const dark = !ON_CARD[skin]; // text colours: light over the dark veil
   const count = options.length;
   const seg = 360 / count;
-  const W = R.EXT_X * 2;
-  const H = R.EXT_Y * 2;
   const [hoverI, setHoverI] = useState<number | null>(null);
 
-  // The disc's turn: face i sits at i·seg + rot degrees (0 = the slot at the
-  // top). Kept continuous, so going from the last artist to the first turns
-  // one step on rather than all the way back round.
+  // The turn: face i sits at i·seg + rot degrees (0 = the top). Kept
+  // continuous, so going from the last artist to the first turns one step on
+  // rather than all the way back round.
   const [rot, setRot] = useState(-value * seg);
   const [seen, setSeen] = useState(value);
   if (seen !== value) {
@@ -878,14 +911,31 @@ function RotaryDial({
   } | null>(null);
   const atTop = (r: number) => wrap(Math.round(-r / seg), count);
 
+  // The angle of the pointer round the dial's own centre (not the box's: the
+  // orbit's centre sits below its visible arc).
   const area = useRef<HTMLDivElement>(null);
+  const pointerAngle = (x: number, y: number) => {
+    const r = area.current!.getBoundingClientRect();
+    const k = r.width / g.W; // the dial may be drawn scaled
+    return (Math.atan2(x - (r.left + g.cx * k), -(y - (r.top + g.cy * k))) * 180) / Math.PI;
+  };
   useWheelStep(area, (d) => onChoose(wrap(value + d, count)));
 
   const turn = dragRot ?? rot;
   const top = dragRot !== null ? atTop(dragRot) : value;
   const shown = options[hoverI ?? top];
   const ease = dragRot === null ? TURN : "none";
-  const slot = R.PIC * R.TOP + 14;
+  const big = g.PIC * g.TOP;
+
+  // The name and count of the chosen (or pointed-at) artist.
+  const caption = (nameCls: string, countCls: string) => (
+    <>
+      <p className={`font-display leading-[1.12] [text-wrap:balance] ${nameCls}`}>{shown?.name}</p>
+      <p className={`mt-1 tabular-nums ${countCls}`}>
+        {shown?.n} {shown?.n === 1 ? "work" : "works"}
+      </p>
+    </>
+  );
 
   return (
     <div
@@ -897,17 +947,13 @@ function RotaryDial({
       aria-valuemax={count - 1}
       aria-valuenow={value}
       aria-valuetext={`${options[value]?.name}, ${options[value]?.n} works`}
-      onKeyDown={keyStep(
-        (d) => onChoose(wrap(value + d, count)),
-        onChoose,
-        count - 1,
-      )}
+      onKeyDown={keyStep((d) => onChoose(wrap(value + d, count)), onChoose, count - 1)}
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.currentTarget.setPointerCapture(e.pointerId);
         const hit = (e.target as HTMLElement).closest<HTMLElement>("[data-i]");
         drag.current = {
-          a: angleAround(e.currentTarget, e.clientX, e.clientY),
+          a: pointerAngle(e.clientX, e.clientY),
           rot,
           moved: false,
           target: hit ? Number(hit.dataset.i) : null,
@@ -916,7 +962,7 @@ function RotaryDial({
       onPointerMove={(e) => {
         const d = drag.current;
         if (!d) return;
-        let da = angleAround(e.currentTarget, e.clientX, e.clientY) - d.a;
+        let da = pointerAngle(e.clientX, e.clientY) - d.a;
         da = ((da + 540) % 360) - 180;
         if (!d.moved && Math.abs(d.rot + da - rot) < 4) return;
         d.moved = true;
@@ -939,51 +985,92 @@ function RotaryDial({
         drag.current = null;
         setDragRot(null);
       }}
-      className="relative cursor-grab touch-none select-none outline-none active:cursor-grabbing [&:focus-visible>.disc]:outline-2 [&:focus-visible>.disc]:outline-offset-4"
-      style={{ width: W, height: H }}
+      className={`relative cursor-grab touch-none select-none rounded-[28px] outline-none active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4 ${
+        dark ? "focus-visible:outline-white/70" : "focus-visible:outline-[#22201c]/50"
+      } ${skin === "orbit" ? "overflow-hidden" : ""}`}
+      style={{ width: g.W, height: g.H }}
     >
-      {/* The disc: it turns, carrying the faces; each face and name turns back to stay upright. */}
+      {/* Behind the faces, fixed: the gallery's hairline track, the orbit's pool of light. */}
+      {skin === "gallery" && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute rounded-full border border-[#22201c]/12"
+          style={{ left: g.cx - g.RING, top: g.cy - g.RING, width: g.RING * 2, height: g.RING * 2 }}
+        />
+      )}
+      {skin === "orbit" && (
+        <>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute rounded-full border border-[#22201c]/10"
+            style={{ left: g.cx - g.RING, top: g.cy - g.RING, width: g.RING * 2, height: g.RING * 2 }}
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.95),rgba(255,255,255,0))]"
+            style={{ left: g.cx - 120, top: g.cy - g.RING - 120, width: 240, height: 240 }}
+          />
+        </>
+      )}
+
+      {/* The turning part: a plate (disc, bronze) or just the faces. Each face
+          and name turns back to stay upright. */}
       <div
-        className={`disc absolute rounded-full shadow-[0_30px_60px_-24px_rgba(28,22,14,0.55),0_1px_0_rgba(255,255,255,0.6)_inset,0_-10px_24px_-14px_rgba(60,45,25,0.25)_inset] motion-reduce:!transition-none ${
-          onDark ? "outline-white/70" : "outline-[#22201c]/50"
-        }`}
+        className="absolute rounded-full motion-reduce:!transition-none"
         style={{
-          left: R.EXT_X - R.DISC,
-          top: R.EXT_Y - R.DISC,
-          width: R.DISC * 2,
-          height: R.DISC * 2,
-          // A pale plate with the faintest turned grooves, so it reads as something that turns.
-          background:
-            "repeating-radial-gradient(circle at 50% 50%, rgba(34,32,28,0.035) 0 1px, transparent 1px 5px), radial-gradient(circle at 50% 35%, #fdfcf9, #f1eee7 70%, #e8e3d9)",
+          left: g.cx - (g.DISC || g.RING),
+          top: g.cy - (g.DISC || g.RING),
+          width: (g.DISC || g.RING) * 2,
+          height: (g.DISC || g.RING) * 2,
           transform: `rotate(${turn}deg)`,
           transition: ease,
+          ...(skin === "disc" && {
+            background:
+              "repeating-radial-gradient(circle at 50% 50%, rgba(34,32,28,0.035) 0 1px, transparent 1px 5px), radial-gradient(circle at 50% 35%, #fdfcf9, #f1eee7 70%, #e8e3d9)",
+            boxShadow:
+              "0 30px 60px -24px rgba(28,22,14,0.55), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -10px 24px -14px rgba(60,45,25,0.25)",
+          }),
+          ...(skin === "bronze" && {
+            background:
+              "radial-gradient(circle at 50% 50%, #2a2520 0 62%, transparent 62.5%), repeating-radial-gradient(circle at 50% 50%, rgba(255,235,200,0.03) 0 1px, transparent 1px 6px), radial-gradient(circle at 40% 30%, #3b342c, #1c1915 75%)",
+            boxShadow: "0 0 0 5px #8a6a3f, 0 0 0 6px #e6cc95, 0 40px 80px -30px rgba(0,0,0,0.8)",
+          }),
         }}
       >
         {options.map((o, i) => {
-          const p = onCircle(R.DISC, R.DISC, R.RING, i * seg);
+          const R0 = g.DISC || g.RING;
+          const p = onCircle(R0, R0, g.RING, i * seg);
           const on = i === top;
           const hot = i === hoverI;
-          // Where this face is on screen now: its name sits just outside the
-          // disc there, its near edge towards the face.
-          const a = ((i * seg + turn) * Math.PI) / 180;
+          // Where this face is on screen now (0 = top), for names and the orbit's fade.
+          const now = i * seg + turn;
+          const a = (now * Math.PI) / 180;
           const sx = Math.sin(a);
           const cy = -Math.cos(a);
-          const out = R.DISC + 12 - R.RING;
+          // The orbit's faces shrink and fade as they turn away from the top
+          // (up: 1 at the top, 0 at the sides, below 0 under the centre).
+          const up = Math.cos(a);
+          const orbitScale = skin === "orbit" ? 0.62 + 0.38 * Math.max(0, up) ** 1.2 : 1;
+          const orbitFade = skin === "orbit" ? Math.max(0, Math.min(1, (up - 0.2) / 0.3)) : 1;
+          const scale = (on ? g.TOP : hot ? 1.08 : 1) * (on ? 1 : orbitScale);
+          const ring =
+            skin === "bronze"
+              ? { background: on ? BRONZE_RIM : "#8a6a3f", padding: on ? 3 : 2 }
+              : skin === "gallery"
+                ? { background: on ? ACCENT : "#ffffff", padding: 3 }
+                : skin === "orbit"
+                  ? { background: on ? "#22201c" : "#ffffff", padding: 3 }
+                  : { background: "#ffffff", padding: 3 };
           return (
             <div
               key={o.slug ?? "all"}
               className="absolute motion-reduce:!transition-none"
-              style={{
-                left: p.left,
-                top: p.top,
-                transform: `rotate(${-turn}deg)`,
-                transition: ease,
-              }}
+              style={{ left: p.left, top: p.top, transform: `rotate(${-turn}deg)`, transition: ease }}
             >
               <button
                 type="button"
                 data-i={i}
-                tabIndex={active ? 0 : -1}
+                tabIndex={active && orbitFade > 0 ? 0 : -1}
                 aria-label={`${o.name}, ${o.n} works`}
                 aria-pressed={i === value}
                 // Pointer picks are handled by the dial (it holds the pointer);
@@ -993,84 +1080,132 @@ function RotaryDial({
                 onMouseLeave={() => setHoverI(null)}
                 onFocus={() => setHoverI(i)}
                 onBlur={() => setHoverI(null)}
-                className={`pointer-events-auto absolute rounded-full bg-white p-[3px] transition-[transform,box-shadow] duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22201c] motion-reduce:transition-none ${
+                className={`pointer-events-auto absolute rounded-full transition-[transform,opacity,box-shadow] duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none ${
+                  dark ? "focus-visible:outline-white" : "focus-visible:outline-[#22201c]"
+                } ${
                   on
-                    ? "shadow-[0_10px_22px_-8px_rgba(28,22,14,0.55)]"
-                    : "shadow-[0_3px_8px_-3px_rgba(28,22,14,0.45),inset_0_0_0_1px_rgba(34,32,28,0.06)]"
+                    ? "shadow-[0_12px_26px_-10px_rgba(28,22,14,0.6)]"
+                    : "shadow-[0_4px_10px_-4px_rgba(28,22,14,0.45)]"
                 }`}
                 style={{
-                  left: -R.PIC / 2,
-                  top: -R.PIC / 2,
-                  width: R.PIC,
-                  height: R.PIC,
-                  transform: `scale(${on ? R.TOP : hot ? 1.08 : 1})`,
+                  left: -g.PIC / 2,
+                  top: -g.PIC / 2,
+                  width: g.PIC,
+                  height: g.PIC,
+                  transform: `scale(${scale})`,
+                  opacity: orbitFade,
+                  pointerEvents: orbitFade > 0.2 ? "auto" : "none",
+                  ...ring,
                 }}
               >
-                <Face o={o} mono={!(on || hot)} />
+                <Face o={o} mono={skin === "disc" && !(on || hot)} />
               </button>
-              <span
-                aria-hidden
-                className={`pointer-events-none absolute left-0 top-0 whitespace-nowrap text-[13px] motion-reduce:!transition-none ${
-                  on
-                    ? onDark
-                      ? "font-medium text-white"
-                      : "font-medium text-[#22201c]"
-                    : onDark
-                      ? "text-white/70"
-                      : "text-[#6f6a5f]"
-                }`}
-                style={{
-                  transform: `translate(${Math.round(-50 + sx * 50)}%, ${Math.round(-50 + cy * 50)}%) translate(${Math.round(sx * out)}px, ${Math.round(cy * out)}px)`,
-                  transition: ease,
-                }}
-              >
-                {surnameOf(o)}
-              </span>
+              {g.label !== "none" && (
+                <span
+                  aria-hidden
+                  className={`pointer-events-none absolute left-0 top-0 whitespace-nowrap motion-reduce:!transition-none ${
+                    skin === "bronze"
+                      ? `text-[13px] ${on ? "text-[#f3e2b8]" : "text-[#e6cc95]/75"}`
+                      : skin === "gallery"
+                        ? `text-[12.5px] ${hot ? "text-[#22201c]" : "text-[#6f6a5f]"}`
+                        : `text-[13px] ${on ? "font-medium text-white" : "text-white/70"}`
+                  } ${on && g.label === "below" ? "opacity-0" : "opacity-100"}`}
+                  style={
+                    g.label === "below"
+                      ? {
+                          transform: `translate(-50%, ${g.PIC / 2 + 8}px)`,
+                          transition: "opacity 200ms",
+                        }
+                      : {
+                          transform: `translate(${Math.round(-50 + sx * 50)}%, ${Math.round(-50 + cy * 50)}%) translate(${Math.round(sx * ((g.DISC || g.RING) + 14 - g.RING))}px, ${Math.round(cy * ((g.DISC || g.RING) + 14 - g.RING))}px)`,
+                          transition: ease,
+                        }
+                  }
+                >
+                  {surnameOf(o)}
+                </span>
+              )}
             </div>
           );
         })}
       </div>
 
-      {/* The slot at the top: fixed; the chosen face turns into it. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute rounded-full border-2 border-[#22201c]/80"
-        style={{
-          left: R.EXT_X - slot / 2,
-          top: R.EXT_Y - R.RING - slot / 2,
-          width: slot,
-          height: slot,
-        }}
-      />
+      {/* The place at the top, fixed: where the chosen face turns to. */}
+      {skin === "disc" && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute rounded-full border-2 border-[#22201c]/80"
+          style={{ left: g.cx - (big + 14) / 2, top: g.cy - g.RING - (big + 14) / 2, width: big + 14, height: big + 14 }}
+        />
+      )}
+      {skin === "bronze" && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute rounded-full border border-[#e6cc95]/80"
+          style={{ left: g.cx - (big + 16) / 2, top: g.cy - g.RING - (big + 16) / 2, width: big + 16, height: big + 16 }}
+        />
+      )}
+      {skin === "gallery" && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute h-[7px] w-[7px] -translate-x-1/2 rounded-full"
+          style={{ left: g.cx, top: g.cy - g.RING - big / 2 - 16, background: ACCENT }}
+        />
+      )}
 
-      {/* The label in the middle: fixed, naming the choice (or the face pointed at). */}
-      <div
-        className="pointer-events-none absolute grid place-items-center rounded-full bg-[#22201c] px-5 text-center shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)]"
-        style={{
-          left: R.EXT_X - R.HUB,
-          top: R.EXT_Y - R.HUB,
-          width: R.HUB * 2,
-          height: R.HUB * 2,
-        }}
-      >
-        <div>
-          <p className="font-display text-[18px] leading-[1.15] text-white [text-wrap:balance]">
-            {shown?.name}
-          </p>
-          <p className="mt-1 text-[12px] tabular-nums text-white/60">
-            {shown?.n} {shown?.n === 1 ? "work" : "works"}
-          </p>
+      {/* Naming the choice (or the face pointed at). */}
+      {(skin === "disc" || skin === "bronze") && (
+        <div
+          className="pointer-events-none absolute grid place-items-center rounded-full px-5 text-center"
+          style={{
+            left: g.cx - g.HUB,
+            top: g.cy - g.HUB,
+            width: g.HUB * 2,
+            height: g.HUB * 2,
+            ...(skin === "disc"
+              ? { background: "#22201c", boxShadow: "0 8px 20px -10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)" }
+              : {
+                  background: "radial-gradient(circle at 40% 30%, #3a332a, #191612 80%)",
+                  boxShadow: "0 0 0 2px #b08d57, 0 0 0 3px #3a2d1a, 0 10px 24px -10px rgba(0,0,0,0.8)",
+                }),
+          }}
+        >
+          <div>
+            {caption(
+              skin === "bronze" ? "text-[18px] text-[#f3e2b8]" : "text-[18px] text-white",
+              skin === "bronze" ? "text-[12px] text-[#e6cc95]/70" : "text-[12px] text-white/60",
+            )}
+          </div>
         </div>
-      </div>
+      )}
+      {skin === "gallery" && (
+        <div
+          className="pointer-events-none absolute text-center"
+          style={{ left: g.cx - 105, top: g.cy - 34, width: 210 }}
+        >
+          {caption("text-[27px] text-[#22201c]", "text-[13px] text-[#6f6a5f]")}
+        </div>
+      )}
+      {skin === "orbit" && (
+        <div
+          className="pointer-events-none absolute text-center"
+          style={{ left: g.cx - 160, top: g.cy - g.RING + big / 2 + 18, width: 320 }}
+        >
+          {caption("text-[28px] text-[#22201c]", "text-[13px] text-[#6f6a5f]")}
+        </div>
+      )}
     </div>
   );
 }
 
 /**
  * A button in the page, with the chosen artist's name and face; clicking it
- * opens the dial over a darkened page, centred on the button.
+ * opens the dial over the page, centred on the button.
  */
-function Rotary({ options, value, onChange }: Props) {
+function Rotary({ options, value, onChange, skin = "disc" }: Props & { skin?: RotarySkin }) {
+  const g = GEO[skin];
+  const card = ON_CARD[skin];
+  const PAD = card ? 28 : 0; // the light card round the dial
   const [open, setOpenState] = useState(false);
   // Where the button's centre was when the dial opened (the dial opens there).
   const [at, setAt] = useState<{ x: number; y: number } | null>(null);
@@ -1088,7 +1223,7 @@ function Rotary({ options, value, onChange }: Props) {
     if (!v) btn.current?.focus({ preventScroll: true });
   };
 
-  // Choosing closes the dial once the disc has turned, so the choice is seen to land.
+  // Choosing closes the dial once it has turned, so the choice is seen to land.
   const closer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const choose = (i: number) => {
     onChange(i);
@@ -1101,12 +1236,11 @@ function Rotary({ options, value, onChange }: Props) {
   const dialog = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
-    dialog.current
-      ?.querySelector<HTMLElement>('[role="slider"]')
-      ?.focus({ preventScroll: true });
+    dialog.current?.querySelector<HTMLElement>('[role="slider"]')?.focus({ preventScroll: true });
     const key = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     document.addEventListener("keydown", key);
     return () => document.removeEventListener("keydown", key);
+     
   }, [open]);
 
   const chosen = options[value];
@@ -1131,7 +1265,10 @@ function Rotary({ options, value, onChange }: Props) {
           </span>
         </span>
       </span>
-      <span className="block h-[60px] w-[60px] shrink-0 rounded-full bg-[#22201c] p-[3px] shadow-[0_12px_24px_-12px_rgba(40,25,8,0.7)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none">
+      <span
+        className="block h-[60px] w-[60px] shrink-0 rounded-full p-[3px] shadow-[0_12px_24px_-12px_rgba(40,25,8,0.7)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none"
+        style={{ background: skin === "bronze" ? BRONZE_RIM : skin === "gallery" ? ACCENT : "#22201c" }}
+      >
         <span className="block h-full w-full rounded-full bg-white p-[2px]">
           <Face o={chosen} />
         </span>
@@ -1147,9 +1284,11 @@ function Rotary({ options, value, onChange }: Props) {
   // stay whole on the screen.
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const k = Math.min(1, (vw - 8) / (2 * R.EXT_X), (vh - 80) / (2 * R.EXT_Y));
-  const ccx = clamp(at.x, R.EXT_X * k + 4, vw - R.EXT_X * k - 4);
-  const ccy = clamp(at.y, R.EXT_Y * k + 8, vh - R.EXT_Y * k - 56);
+  const w = g.W + PAD * 2;
+  const h = g.H + PAD * 2;
+  const k = Math.min(1, (vw - 16) / w, (vh - 90) / h);
+  const ccx = clamp(at.x, (w * k) / 2 + 8, vw - (w * k) / 2 - 8);
+  const ccy = clamp(at.y, (h * k) / 2 + 8, vh - (h * k) / 2 - 56);
 
   return (
     <>
@@ -1165,31 +1304,40 @@ function Rotary({ options, value, onChange }: Props) {
           }`}
         >
           <div
-            className="absolute inset-0 bg-[#1c1a17]/70 backdrop-blur-[4px]"
+            className={`absolute inset-0 ${
+              skin === "bronze"
+                ? "bg-[#0f0d0a]/80 backdrop-blur-[4px]"
+                : card
+                  ? "bg-[#f3f2ee]/70 backdrop-blur-[6px]"
+                  : "bg-[#1c1a17]/70 backdrop-blur-[4px]"
+            }`}
             onClick={() => setOpen(false)}
           />
           <div
             className="absolute transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
             style={{
-              left: ccx - R.EXT_X,
-              top: ccy - R.EXT_Y,
+              left: ccx - w / 2,
+              top: ccy - h / 2,
               transformOrigin: "center",
-              transform: `scale(${open ? k : k * 0.88})`,
+              transform: `scale(${open ? k : k * 0.92})`,
             }}
           >
-            <RotaryDial
-              options={options}
-              value={value}
-              onChoose={choose}
-              active={open}
-              onDark
-            />
+            <div
+              className={card ? "rounded-[32px] bg-[#fbfaf7] shadow-[0_40px_90px_-30px_rgba(28,22,14,0.45),0_0_0_1px_rgba(34,32,28,0.06)]" : ""}
+              style={{ padding: PAD }}
+            >
+              <RotaryDial options={options} value={value} onChoose={choose} active={open} skin={skin} />
+            </div>
             <button
               type="button"
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
-              className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[13px] text-white/75 underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-white"
-              style={{ top: R.EXT_Y * 2 + 4 }}
+              className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[13px] underline-offset-4 hover:underline focus-visible:outline-2 ${
+                card
+                  ? "text-[#22201c]/70 hover:text-[#22201c] focus-visible:outline-[#22201c]"
+                  : "text-white/75 hover:text-white focus-visible:outline-white"
+              }`}
+              style={{ top: h + 6 }}
             >
               Close
             </button>
@@ -1207,19 +1355,57 @@ function RotaryInline({
   value,
   onChange,
   width = 420,
-}: Props & { width?: number }) {
-  const k = width / (R.EXT_X * 2);
+  skin = "disc",
+}: Props & { width?: number; skin?: RotarySkin }) {
+  const g = GEO[skin];
+  const k = width / g.W;
   return (
-    <div
-      className="relative shrink-0"
-      style={{ width, height: R.EXT_Y * 2 * k }}
-    >
-      <div
-        className="absolute left-0 top-0 origin-top-left"
-        style={{ transform: `scale(${k})` }}
-      >
-        <RotaryDial options={options} value={value} onChoose={onChange} />
+    <div className="relative shrink-0" style={{ width, height: g.H * k }}>
+      <div className="absolute left-0 top-0 origin-top-left" style={{ transform: `scale(${k})` }}>
+        <RotaryDial options={options} value={value} onChoose={onChange} skin={skin} />
       </div>
+    </div>
+  );
+}
+
+/**
+ * Every look of the turning dial, open side by side (each works on its own),
+ * for choosing one on /lab/dials?dial=compare.
+ */
+export function RotaryCompare({ options }: { options: DialOption[] }) {
+  const [picks, setPicks] = useState<Record<RotarySkin, number>>({
+    disc: 0,
+    gallery: 0,
+    orbit: 0,
+    bronze: 0,
+  });
+  const looks: { skin: RotarySkin; name: string; about: string }[] = [
+    { skin: "gallery", name: "Gallery", about: "Light card, colour faces on a fine circle, the name large in the middle." },
+    { skin: "orbit", name: "Orbit", about: "The top of a large wheel: the chosen face large, the rest turning away." },
+    { skin: "bronze", name: "Bronze", about: "A dark disc with a bronze rim, gold-ringed faces, a bronze-edged centre." },
+    { skin: "disc", name: "Disc (current)", about: "Pale turning plate, black-and-white faces, dark centre label." },
+  ];
+  return (
+    <div className="grid gap-x-10 gap-y-14 px-[clamp(16px,4vw,48px)] py-12 lg:grid-cols-2">
+      {looks.map(({ skin, name, about }) => (
+        <section key={skin}>
+          <h2 className="font-display text-[24px] leading-none">{name}</h2>
+          <p className="mt-2 max-w-[48ch] text-[13px] text-stone">{about}</p>
+          <div
+            className={`mt-5 grid place-items-center overflow-hidden rounded-[28px] p-6 ${
+              ON_CARD[skin] ? "bg-[#fbfaf7] shadow-[0_30px_70px_-34px_rgba(28,22,14,0.45),0_0_0_1px_rgba(34,32,28,0.06)]" : skin === "bronze" ? "bg-[#14120f]" : "bg-[#3a3631]"
+            }`}
+          >
+            <RotaryInline
+              skin={skin}
+              width={Math.min(GEO[skin].W, 520)}
+              options={options}
+              value={picks[skin]}
+              onChange={(i) => setPicks((p) => ({ ...p, [skin]: i }))}
+            />
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
@@ -1231,6 +1417,12 @@ export default function ArtistDial({
   switch (variant) {
     case "rotary":
       return <Rotary {...props} />;
+    case "rotary-gallery":
+      return <Rotary {...props} skin="gallery" />;
+    case "rotary-orbit":
+      return <Rotary {...props} skin="orbit" />;
+    case "rotary-bronze":
+      return <Rotary {...props} skin="bronze" />;
     case "rotary-inline":
       return <RotaryInline {...props} />;
     case "ring":

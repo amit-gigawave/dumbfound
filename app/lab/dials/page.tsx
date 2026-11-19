@@ -1,28 +1,59 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import TrueScale from "@/components/gallery/views/TrueScale";
-import type { DialVariant } from "@/components/gallery/views/ArtistDial";
+import {
+  RotaryCompare,
+  type DialOption,
+  type DialVariant,
+} from "@/components/gallery/views/ArtistDial";
 import { conceptWorks } from "@/lib/concept-works";
 
-// Internal comparison page for the artist dial on True scale: the real stage
-// with each proposed dial. Not linked anywhere.
+// Internal comparison page for the artist dial on True scale: every look of
+// the turning dial side by side, and the real stage with each proposed dial.
+// Not linked anywhere.
 export const metadata: Metadata = {
   title: "Artist dials — comparison",
   robots: { index: false, follow: false },
 };
 
-const DIALS: { id: DialVariant; name: string; about: string }[] = [
+type Tab = DialVariant | "compare";
+
+const DIALS: { id: Tab; name: string; about: string }[] = [
+  {
+    id: "compare",
+    name: "Compare looks",
+    about:
+      "Four looks for the same turning dial, open side by side. Each works on its own: drag it round, or click a face.",
+  },
+  {
+    id: "rotary-gallery",
+    name: "Gallery",
+    about:
+      "On True scale: the button opens a light card with the faces in colour on a fine circle and the chosen name large in the middle.",
+  },
+  {
+    id: "rotary-orbit",
+    name: "Orbit",
+    about:
+      "On True scale: the button opens the top of a large wheel; the chosen face sits large at the top and the rest turn away.",
+  },
+  {
+    id: "rotary-bronze",
+    name: "Bronze",
+    about:
+      "On True scale: the button opens a dark disc with a bronze rim, gold-ringed faces and a bronze-edged centre.",
+  },
   {
     id: "rotary",
-    name: "Dial",
+    name: "Disc (current)",
     about:
-      "The floating button (drag it anywhere) shows the chosen artist's face. Click it and the artists open in a circle; the one at the top is chosen. Turn the circle, or click a face to bring it to the top.",
+      "On True scale: the button opens a pale turning disc with black-and-white faces and a dark label in the middle.",
   },
   {
     id: "rotary-inline",
     name: "Dial in page",
     about:
-      "The same dial, always open, set beside the line of works (above it on phones). No popup: pick an artist straight away.",
+      "The disc, always open, set beside the line of works (above it on phones). No popup: pick an artist straight away.",
   },
   {
     id: "knob",
@@ -61,6 +92,23 @@ const pill = (on: boolean) =>
     on ? "bg-ink text-paper" : "text-stone hover:text-ink"
   }`;
 
+/** The dial's choices, as True scale makes them: all artists, then each artist with a work on the stage. */
+function dialOptions(): DialOption[] {
+  const works = conceptWorks().filter((w) => w.heightCm);
+  const m = new Map<string, DialOption>();
+  for (const w of works) {
+    const o = m.get(w.artistSlug) ?? {
+      slug: w.artistSlug,
+      name: w.artist,
+      portrait: w.artistPortrait,
+      n: 0,
+    };
+    o.n++;
+    m.set(w.artistSlug, o);
+  }
+  return [{ slug: null, name: "All artists", n: works.length }, ...m.values()];
+}
+
 export default async function DialsLab({
   searchParams,
 }: {
@@ -73,12 +121,12 @@ export default async function DialsLab({
     <main>
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-rule bg-white px-[clamp(16px,4vw,48px)] py-3">
         <h1 className="font-display text-[22px] leading-none">Artist dial</h1>
-        <div className="-mx-1 overflow-x-auto px-1">
+        <div className="-mx-1 max-w-full overflow-x-auto px-1">
           <div className="inline-flex rounded-full border border-rule bg-white p-1">
             {DIALS.map((d) => (
               <Link
                 key={d.id}
-                href={`/lab/dials${d.id === "rotary" ? "" : `?dial=${d.id}`}`}
+                href={`/lab/dials${d.id === "compare" ? "" : `?dial=${d.id}`}`}
                 className={pill(d.id === dial.id)}
               >
                 {d.name}
@@ -88,13 +136,17 @@ export default async function DialsLab({
         </div>
         <p className="max-w-[60ch] text-[13px] text-stone">{dial.about}</p>
       </div>
-      {/* Keyed by dial, so each one starts fresh. */}
-      <TrueScale
-        key={dial.id}
-        works={conceptWorks()}
-        initialArtist={params.artist}
-        dial={dial.id}
-      />
+      {dial.id === "compare" ? (
+        <RotaryCompare options={dialOptions()} />
+      ) : (
+        // Keyed by dial, so each one starts fresh.
+        <TrueScale
+          key={dial.id}
+          works={conceptWorks()}
+          initialArtist={params.artist}
+          dial={dial.id}
+        />
+      )}
     </main>
   );
 }
