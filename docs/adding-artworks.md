@@ -44,6 +44,8 @@ everything else:
    how far to turn it (`90`, `180`, `270`). It turns it, renders again and asks
    again.
 7. **Builds the AR copy**, `public/ar/<slug>.glb` (see [AR](#things-to-know-about-ar)).
+8. **Builds the card preview**, `public/previews/<slug>.glb`: a light copy
+   (1024 px textures) that the artwork cards turn in 3D on hover.
 
 It doesn't commit. At the end it prints the files it made and a ready
 `git add` / `git commit` command, so you can check the page first.
@@ -144,6 +146,14 @@ reports on 1–3 and 5 without changing anything.
 
    ```bash
    npm run ar-models -- my-sculpture
+   ```
+
+5. **Make the card preview** (the light copy the artwork cards turn in 3D,
+   `public/previews/<slug>.glb`: same shape, 1024 px textures). Redo it
+   whenever the model changes:
+
+   ```bash
+   npm run preview-models -- my-sculpture
    ```
 
 ### A 3D scan (.usdz or .usdc)
@@ -254,7 +264,7 @@ Optional details only appear on the page when filled in. Text that starts with `
 - **Asking a 3D artist for a model:** a `.glb` (or a `.usdz`, which packs its textures; a `.usdc` doesn't, so textures go missing) with the colour baked into one texture of 4096 px. No colour stored on the mesh (vertex colours) instead of a texture: it can only be as sharp as the mesh, so details smear. Opaque, single-sided material, facing front, with the real height in cm.
 - **Thumbnails of 3D works** are renders of the model itself (transparent 800 × 1000 WebP), so what visitors see on the grid matches the 3D view.
 - **Removing a work:** delete its entry from `lib/sculptures.ts` and its files (`public/sculptures/<slug>.glb`, `public/ar/<slug>.glb`, `public/thumbnails/<slug>.webp` or `public/artworks/<slug>.webp`).
-- **Replacing a model:** `npm run add-model -- "<new file>" --slug <slug> --replace`. By hand: overwrite the `.glb`, bump `?v=N` on `modelUrl`, then run `npm run thumbnails -- <slug>` and `npm run ar-models -- <slug>` again.
+- **Replacing a model:** `npm run add-model -- "<new file>" --slug <slug> --replace`. By hand: overwrite the `.glb`, bump `?v=N` on `modelUrl`, then run `npm run thumbnails -- <slug>`, `npm run ar-models -- <slug>` and `npm run preview-models -- <slug>` again.
 
 ---
 

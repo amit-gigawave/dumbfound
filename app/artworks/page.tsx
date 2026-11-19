@@ -92,14 +92,24 @@ export default async function ArtworksPage({
           <SectionHeader
             title={selected ? `Works by ${selected.name}` : "All artworks"}
           />
-          {/* Choosing an artist shuffles the cards: the ones that stay glide to their new places. */}
+          {/* Choosing an artist shuffles the cards: the ones that stay glide to their new places.
+              One card per row on phones, two from 640 px, three from 1024 px. */}
           <ShuffleGrid
             data-reveal-stagger
-            className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3"
+            className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-3"
           >
             {works.map((work, i) => (
               <div key={work.slug} data-key={work.slug}>
-                <ArtworkTile work={work} priority={i < 3} showcase ambient />
+                <ArtworkTile
+                  work={work}
+                  // Only the first card is on screen at once on a phone; the
+                  // others load lazily as the grid scrolls into view.
+                  priority={i < 1}
+                  showcase
+                  ambient
+                  // Full width on phones, so ask for an image that wide.
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                />
               </div>
             ))}
           </ShuffleGrid>

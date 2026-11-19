@@ -312,6 +312,15 @@ console.log("\nBuilding the AR copy…");
 if (node("scripts/make-ar-models.mjs", [slug])) summary.push(`AR copy public/ar/${slug}.glb`);
 else console.warn(`The AR copy could not be made. Later:  npm run ar-models -- ${slug}`);
 
+// ---------- card preview ----------
+
+// Only a new or replaced model needs a new light copy (turning one doesn't).
+if (source) {
+  console.log("\nBuilding the card preview…");
+  if (node("scripts/make-preview-models.mjs", [slug])) summary.push(`Card preview public/previews/${slug}.glb`);
+  else console.warn(`The card preview could not be made. Later:  npm run preview-models -- ${slug}`);
+}
+
 // ---------- done ----------
 
 works = await loadWorks();
@@ -320,6 +329,7 @@ const files = [
   source && out,
   `public/thumbnails/${slug}.webp`,
   `public/ar/${slug}.glb`,
+  source && `public/previews/${slug}.glb`,
   "lib/sculptures.ts",
 ].filter(Boolean);
 console.log(`\nDone: ${title}\n${summary.map((s) => `  • ${s}`).join("\n")}`);

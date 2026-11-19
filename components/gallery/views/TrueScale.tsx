@@ -78,7 +78,7 @@ function HoverZone({
 export default function TrueScale({
   works,
   initialArtist,
-  dial = "rotary",
+  dial = "rotary-orbit",
 }: {
   works: ConceptWork[];
   /** Artist slug to start on (the page's ?artist=). */

@@ -124,6 +124,16 @@ export const AR_DEFAULT_CM = 50;
 /** The AR copy of a work's model, built by `npm run ar-models`. */
 export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
 
+/**
+ * The light copy the artwork cards turn in 3D (1024 px textures), built by
+ * `npm run preview-models`. It carries the full model's ?v=, so replacing a
+ * model (which bumps that) also refreshes the card's copy.
+ */
+export const previewModelUrl = (work: Sculpture) =>
+  work.modelUrl
+    ? `/previews/${work.slug}.glb${work.modelUrl.match(/\?v=\d+/)?.[0] ?? ""}`
+    : undefined;
+
 export const sculptures: Sculpture[] = [
   // Descriptions (2026-11-19, at the user's request) are written only from each
   // work's sourced details below: title, artist, medium, size, year, edition, and
@@ -923,6 +933,41 @@ export const sculptures: Sculpture[] = [
     year: "",
     dimensions: "16 × 14 × 14 inches",
     heightCm: 41,
+  },
+  // Scan "39.glb" (2026-11-19). Details from the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), GD-0038, matched by photo (the file name's 39 is
+  // not the sheet's #39, which is Matar). Year and edition not given there. Height from the dimensions.
+  {
+    slug: "gaurab-das-couple-1",
+    title: "Couple 1",
+    description: "Couple 1, a bronze by Gaurab Das, 14 × 11 × 6 inches.",
+    longDescription:
+      "Two figures stand side by side, pressed together along one edge so that they read as a single block on four long legs. Each rises to a small rounded head on a narrow neck, the head tipped slightly forward to a blunt point.\n\nThe figure on the left opens out into a broad, flat shoulder that juts sideways like a shelf, with two small round forms set on its upper surface. Beneath it the body swells into a deep, rounded bowl with a raised rim. The figure on the right is narrower and straighter, and from its side a curved, hollow flap sweeps out and up like a folded wing. The legs are long, flat-sided and slightly splayed, each ending in a squared foot.\n\nCouple 1 is a semi-abstract bronze by Gaurab Das, measuring 14 × 11 × 6 inches, about 36 centimetres tall. Its surface is a mottled blue-green, broken by patches of warm brown that show most clearly on the two heads and along the edges of the flat planes.",
+    artistSlug: "gaurab-das",
+    thumbnail: "/thumbnails/gaurab-das-couple-1.webp",
+    modelUrl: "/sculptures/gaurab-das-couple-1.glb",
+    look: { metalness: 0.42, roughness: 1.59, reflections: 0.6 },
+    material: "Bronze",
+    year: "",
+    dimensions: "14 × 11 × 6 inches",
+    heightCm: 36,
+  },
+  // Scan "13 - Thotta Head 04.glb" (2026-11-19). Artist from the file name; the user confirmed it is a new
+  // work, not the Saree Lady Series (White). The photo in row "13" of the Sheet "Sculpted India (Digital)"
+  // shows this head, but that row's details are marked [TO CONFIRM] and belong to another work, so none
+  // are used. No Artlogic match. Title is a description of the work; medium, year and size unknown.
+  {
+    slug: "thota-head-with-nose-ring-and-hair-ornaments",
+    title: "Head with Nose Ring and Hair Ornaments",
+    description: "A head by Thota Vaikuntam, with a nose ring, earrings and ornaments in its hair.",
+    longDescription:
+      "A woman's head faces straight ahead on a long, columnar neck. A broad yellow band runs across the forehead, and a large round orange bindi sits at its centre. Below it the brows sweep out in a single line, and the eyes are long and almond-shaped, each outlined with a raised rim and a small round pupil.\n\nThe face is a deep brown, smooth and full at the cheeks. A crescent-shaped ring hangs from one side of the nose, with a small drop beside it, and a narrow yellow stripe runs from beneath the lower lip down to the chin. The ears are long and flat, each with a round earring at the lobe. Dark hair is drawn back from the face, held at the sides by banded clips, and at the back of the head large round ornaments, ringed with fine patterned bands, are set into the hair.\n\nA raised ring circles the base of the neck, which rests on a pale grey collar. A short vertical groove marks the front of the throat. The large vermilion bindi and almond eyes recur in the women of Thota Vaikuntam's paintings.",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-head-with-nose-ring-and-hair-ornaments.webp",
+    modelUrl: "/sculptures/thota-head-with-nose-ring-and-hair-ornaments.glb",
+    look: { metalness: 0.28, roughness: 1.58, reflections: 0.6 },
+    material: "",
+    year: "",
   },
 ];
 

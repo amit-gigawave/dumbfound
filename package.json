@@ -13,6 +13,7 @@
     "add-model": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/add-model.mjs",
     "check-model": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-model.mjs",
     "ar-models": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/make-ar-models.mjs",
+    "preview-models": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/make-preview-models.mjs",
     "tunnel": "node scripts/tunnel.mjs"
   },
   "dependencies": {
