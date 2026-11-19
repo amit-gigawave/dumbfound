@@ -89,13 +89,16 @@ export default async function ArtworkPage({
           should show at once, not wait for scripts to load. */}
       <div className="grid items-start gap-[clamp(32px,5vw,72px)] pb-[72px] pt-7 min-[820px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]"
       >
-        <ArtworkStage
-          key={work.slug}
-          work={work}
-          alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
-        />
-
+        {/* The work stays in view while the visitor reads down the column beside it. */}
         <div className="min-[820px]:sticky min-[820px]:top-[100px]">
+          <ArtworkStage
+            key={work.slug}
+            work={work}
+            alt={`${work.title}${artist ? ` by ${artist.name}` : ""}`}
+          />
+        </div>
+
+        <div>
           {artist &&
             (artist.placeholder ? (
               <span className="label">{artist.name}</span>
@@ -146,39 +149,115 @@ export default async function ArtworkPage({
             Interested in this artwork <span className="nudge">→</span>
           </Link>
 
+          {/* About the artist: their sourced summary, biography, a quote and
+              some honours and collections (all from lib/artists.ts, where each
+              fact keeps its source), so the column carries real reading. */}
           {artist && !artist.placeholder && (
-            <Link
-              href={`/artists/${artist.slug}`}
-              className="group mt-10 flex items-center gap-4 rounded-[14px] border border-rule bg-white p-4 transition-colors duration-300 hover:border-accent"
+            <section
+              aria-labelledby="about-artist"
+              className="mt-12 border-t border-rule pt-8"
             >
-              <span className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plate">
-                {artist.portrait ? (
-                  <Image
-                    src={artist.portrait}
-                    alt=""
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <span aria-hidden className="font-display text-xl text-[#bdbdbd]">
-                    {initials(artist.name)}
+              <Link
+                href={`/artists/${artist.slug}`}
+                className="group flex items-center gap-4"
+              >
+                <span className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full bg-plate">
+                  {artist.portrait ? (
+                    <Image
+                      src={artist.portrait}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="font-display text-xl text-[#bdbdbd]"
+                    >
+                      {initials(artist.name)}
+                    </span>
+                  )}
+                </span>
+                <span className="grid min-w-0 gap-0.5">
+                  <span className="label">About the artist</span>
+                  <span
+                    id="about-artist"
+                    className="font-display text-[22px] tracking-[0.03em] transition-colors group-hover:text-accent"
+                  >
+                    {artist.name}
                   </span>
-                )}
-              </span>
-              <span className="grid min-w-0 gap-0.5">
-                <span className="label">About the artist</span>
-                <span className="font-display text-xl tracking-[0.03em] transition-colors group-hover:text-accent">
-                  {artist.name}
+                  <span className="text-[13px] text-stone">
+                    {[artist.born, artist.place].filter(Boolean).join(", ")}
+                  </span>
                 </span>
-                <span className="text-[13px] text-stone">
-                  {[artist.born, artist.medium].filter(Boolean).join(" · ")}
+              </Link>
+
+              {[artist.summary, ...artist.bio].filter(hasValue).map((para, i) => (
+                <p
+                  key={i}
+                  className="font-text mt-5 text-[16px] leading-[1.75] text-[#333333]"
+                >
+                  {para}
+                </p>
+              ))}
+
+              {artist.quotes[0] && (
+                <figure className="mt-7 border-l-2 border-accent pl-5">
+                  <blockquote className="font-display text-[19px] leading-[1.45] text-ink">
+                    “{artist.quotes[0].text}”
+                  </blockquote>
+                  <figcaption className="mt-2 text-[13px] text-stone">
+                    <a
+                      href={artist.quotes[0].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-accent hover:underline"
+                    >
+                      {artist.quotes[0].source}
+                    </a>
+                  </figcaption>
+                </figure>
+              )}
+
+              {(
+                [
+                  ["Honours", artist.honours],
+                  ["In collections", artist.collections],
+                ] as const
+              )
+                .filter(([, facts]) => facts.length > 0)
+                .map(([label, facts]) => (
+                  <div key={label} className="mt-7">
+                    <h2 className="label">{label}</h2>
+                    <ul className="mt-2 border-t border-rule">
+                      {facts.slice(0, 3).map((f, i) => (
+                        <li
+                          key={i}
+                          className="flex gap-4 border-b border-rule py-2.5 text-sm"
+                        >
+                          {f.when && (
+                            <span className="w-[4.5rem] shrink-0 tabular-nums text-stone">
+                              {f.when}
+                            </span>
+                          )}
+                          <span>{f.what}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+
+              <Link
+                href={`/artists/${artist.slug}`}
+                className="mt-7 inline-flex items-center gap-2 text-sm text-ink underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-accent"
+              >
+                More about {artist.name}{" "}
+                <span aria-hidden className="nudge">
+                  →
                 </span>
-              </span>
-              <span aria-hidden className="nudge ml-auto pr-1 text-accent">
-                →
-              </span>
-            </Link>
+              </Link>
+            </section>
           )}
         </div>
       </div>
