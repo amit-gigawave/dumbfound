@@ -73,14 +73,16 @@ export default async function ArtworksPage({
 
   return (
     <>
-      <ViewSwitch current={view} />
       <main>
         <PageHeader
           label="The collection"
           title="Artworks"
           line="Each work is presented as in a catalogue. Open any piece to read about its maker, its material and its story."
         />
-        <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(40px,6vw,72px)]">
+        {/* Between the title and the artist pills; it sticks under the site
+            header once scrolled to the top. */}
+        <ViewSwitch current={view} />
+        <div className="mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)] pb-[clamp(64px,8vw,104px)] pt-7">
           {options.length > 1 && (
             <nav aria-label="Filter by artist" className="mb-8">
               <ArtistPills
