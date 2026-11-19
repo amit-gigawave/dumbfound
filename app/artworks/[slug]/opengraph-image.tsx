@@ -19,6 +19,10 @@ export const alt = "Artwork";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/jpeg";
 
+// Every work's image is made at build time; an unknown address is a 404, so
+// the deployed function never has to read a picture.
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return sculptures.map((s) => ({ slug: s.slug }));
 }
@@ -39,7 +43,12 @@ export default async function ArtworkOpenGraphImage({
   // The thumbnail is a transparent WebP: put it on the plate as a PNG, the
   // format the image renderer reads.
   const art = work
-    ? await sharp(join(process.cwd(), "public", work.thumbnail.split("?")[0]))
+    ? await sharp(
+        // turbopackIgnore: a computed path under public/ would otherwise make
+        // file tracing pack all of public/ (3D models, AR copies: far past
+        // Vercel's 250 MB function limit) into this route's function.
+        join(/* turbopackIgnore: true */ process.cwd(), "public", work.thumbnail.split("?")[0]),
+      )
         .resize(504, 630, { fit: "contain", background: PLATE })
         .flatten({ background: PLATE })
         .png()
