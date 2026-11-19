@@ -71,7 +71,7 @@ function HoverZone({
  * to the sculpture's own edges, so the drawn height is the real one.
  *
  * The stage fills the screen. The work nearest the centre is in focus (the
- * rest dim back) and named at the top; drag, the wheel, the arrow keys or the
+ * rest dim back); drag, the wheel, the arrow keys or the
  * side buttons walk the line. Hovering a work turns it into its 3D model. A
  * dial in the top-right corner shows one artist's works at a time.
  */
@@ -137,7 +137,6 @@ export default function TrueScale({
 
   const row = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLLIElement | null)[]>([]);
-  const [focus, setFocus] = useState(0);
   // Whether the line is at its start or end (the arrow that can't go further hides).
   const [edges, setEdges] = useState({ start: true, end: false });
   // The "hover / drag" hint shows until the visitor first brings up a 3D model.
@@ -175,7 +174,7 @@ export default function TrueScale({
   };
 
   // Focus: each work gets --f, 1 at the focus point fading to 0 half a screen
-  // away; the nearest one is named at the top. The focus point travels with
+  // away (the rest dim back). The focus point travels with
   // the scroll, from the left of the stage at the start to its right at the
   // end, so the first works are in focus as the page opens and the last ones
   // can still reach it.
@@ -195,20 +194,13 @@ export default function TrueScale({
       setEdges((e) =>
         e.start === start && e.end === atEnd ? e : { start, end: atEnd },
       );
-      let best = 0;
-      let bestD = Infinity;
-      items.current.forEach((li, i) => {
+      items.current.forEach((li) => {
         if (!li) return;
         const r = li.getBoundingClientRect();
         const d = Math.abs(r.left + r.width / 2 - mid);
         const f = Math.max(0, 1 - d / (box.width * 0.55));
         li.style.setProperty("--f", f.toFixed(3));
-        if (d < bestD) {
-          bestD = d;
-          best = i;
-        }
       });
-      setFocus(best);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -287,11 +279,9 @@ export default function TrueScale({
       behavior: "smooth",
     });
 
-  const current = sized[focus];
-
   return (
     <section className="flex min-h-[calc(100svh-85px)] flex-col bg-[#f3f2ee] pb-24 pt-[clamp(20px,3.5vh,40px)]">
-      {/* Title on the left; the work in focus, and the artist dial, on the right. */}
+      {/* Title on the left; the artist dial on the right. */}
       <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4 px-[clamp(16px,4vw,48px)]">
         <div>
           <h2 className="font-display text-[clamp(28px,3.6vw,48px)] leading-none">
@@ -307,28 +297,11 @@ export default function TrueScale({
           </p>
         </div>
         <div
-          className={`flex items-center gap-8 ${
-            // The floating dials start in this corner: keep it clear for them.
-            dial === "rotary" || dial === "float" ? "pr-[84px]" : ""
+          className={`ml-auto flex items-center gap-8 ${
+            // The floating dial starts in this corner: keep it clear for it.
+            dial === "float" ? "pr-[84px]" : ""
           }`}
         >
-          {current && (
-            <div aria-live="polite" className="min-w-0 text-right">
-              <p className="text-[12px] text-stone">{current.artist}</p>
-              <p className="font-display max-w-[22ch] truncate text-[clamp(18px,1.8vw,24px)] leading-tight">
-                {current.title}
-              </p>
-              <p className="mt-0.5 text-[13px] tabular-nums text-ink">
-                {current.heightCm} cm
-                <Link
-                  href={`/artworks/${current.slug}`}
-                  className="ml-3 border-b border-current text-[12px] hover:opacity-70"
-                >
-                  Open
-                </Link>
-              </p>
-            </div>
-          )}
           {options.length > 2 && dial !== "rotary-inline" && (
             <ArtistDial
               variant={dial}

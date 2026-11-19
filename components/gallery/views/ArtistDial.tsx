@@ -9,13 +9,7 @@ import { createPortal } from "react-dom";
  * by side so one can be chosen for the site.
  */
 export type DialVariant =
-  | "rotary"
-  | "rotary-inline"
-  | "knob"
-  | "ring"
-  | "drum"
-  | "tuner"
-  | "float";
+  "rotary" | "rotary-inline" | "knob" | "ring" | "drum" | "tuner" | "float";
 
 export type DialOption = {
   slug: string | null;
@@ -129,7 +123,10 @@ function Readout({ o }: { o?: DialOption }) {
   );
 }
 
-const sliderProps = ({ options, value }: Props, label = "Choose an artist") => ({
+const sliderProps = (
+  { options, value }: Props,
+  label = "Choose an artist",
+) => ({
   role: "slider" as const,
   tabIndex: 0,
   "aria-label": label,
@@ -289,7 +286,9 @@ function Ring(props: Props) {
 
   return (
     <div className="flex items-center gap-4">
-      <Readout o={options[preview ?? (dragRot !== null ? at(dragRot) : value)]} />
+      <Readout
+        o={options[preview ?? (dragRot !== null ? at(dragRot) : value)]}
+      />
       <div
         className="relative shrink-0 select-none"
         style={{ width: BOX, height: BOX }}
@@ -417,7 +416,9 @@ function Drum(props: Props) {
         onPointerDown={(e) => {
           if (e.button !== 0) return;
           e.currentTarget.setPointerCapture(e.pointerId);
-          const hit = (e.target as HTMLElement).closest<HTMLElement>("[data-i]");
+          const hit = (e.target as HTMLElement).closest<HTMLElement>(
+            "[data-i]",
+          );
           drag.current = {
             y: e.clientY,
             from: value,
@@ -463,7 +464,9 @@ function Drum(props: Props) {
               data-i={i}
               aria-hidden
               className={`absolute inset-x-0 top-1/2 flex items-center justify-between px-5 text-[14px] ${
-                pos === null ? "transition-[transform,opacity] duration-300 ease-out" : ""
+                pos === null
+                  ? "transition-[transform,opacity] duration-300 ease-out"
+                  : ""
               } ${Math.round(p) === i ? "text-ink" : "text-stone"}`}
               style={{
                 height: ITEM,
@@ -498,7 +501,8 @@ function Tuner(props: Props) {
   const step = (d: 1 | -1) => onChange(clamp(value + d, 0, count - 1));
   useWheelStep(band, step);
   const fracOf = (i: number) => (count < 2 ? 0.5 : i / (count - 1));
-  const nearest = (f: number) => clamp(Math.round(f * (count - 1)), 0, count - 1);
+  const nearest = (f: number) =>
+    clamp(Math.round(f * (count - 1)), 0, count - 1);
   const read = (e: React.PointerEvent) => {
     const r = band.current!.getBoundingClientRect();
     return clamp((e.clientX - r.left - 14) / (r.width - 28), 0, 1);
@@ -630,8 +634,7 @@ function useFab(size: number, onTap: () => void, onMove: () => void) {
     onPointerMove: (e: React.PointerEvent) => {
       const d = drag.current;
       if (!d) return;
-      if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 5)
-        return;
+      if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) < 5) return;
       if (!d.moved) onMove();
       d.moved = true;
       setAt({
@@ -740,7 +743,9 @@ function Floating({ options, value, onChange }: Props) {
             onFocus={() => setHoverI(i)}
             onBlur={() => setHoverI(null)}
             className={`absolute left-1/2 top-1/2 grid h-[34px] w-[34px] place-items-center rounded-full text-[11px] font-medium shadow-[0_6px_16px_-6px_rgba(0,0,0,0.4)] transition-[transform,opacity] duration-300 ease-out ${
-              i === value ? "bg-ink text-white" : "bg-white text-ink hover:bg-[#efece5]"
+              i === value
+                ? "bg-ink text-white"
+                : "bg-white text-ink hover:bg-[#efece5]"
             } ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
             style={{
               transform: open
@@ -1062,17 +1067,26 @@ function RotaryDial({
 }
 
 /**
- * The popup: a floating button with the chosen artist's face. Drag it
- * anywhere; click it and the dial opens over a darkened page.
+ * A button in the page, with the chosen artist's name and face; clicking it
+ * opens the dial over a darkened page, centred on the button.
  */
 function Rotary({ options, value, onChange }: Props) {
-  const SIZE = 64;
-  const [open, setOpen] = useState(false);
-  const { at, handlers } = useFab(
-    SIZE,
-    () => setOpen((v) => !v),
-    () => setOpen(false),
-  );
+  const [open, setOpenState] = useState(false);
+  // Where the button's centre was when the dial opened (the dial opens there).
+  const [at, setAt] = useState<{ x: number; y: number } | null>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const setOpen = (v: boolean) => {
+    if (v && btn.current) {
+      const r = btn.current.getBoundingClientRect();
+      // Centred on the face (the right end of the button).
+      setAt({ x: r.right - r.height / 2, y: r.top + r.height / 2 });
+      // A frame later, so a popup mounting for the first time still fades in.
+      requestAnimationFrame(() => setOpenState(true));
+      return;
+    }
+    setOpenState(v);
+    if (!v) btn.current?.focus({ preventScroll: true });
+  };
 
   // Choosing closes the dial once the disc has turned, so the choice is seen to land.
   const closer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -1095,85 +1109,95 @@ function Rotary({ options, value, onChange }: Props) {
     return () => document.removeEventListener("keydown", key);
   }, [open]);
 
-  if (!at) return null;
+  const chosen = options[value];
+  const button = (
+    <button
+      ref={btn}
+      type="button"
+      aria-label={`Artist: ${chosen?.name}, ${chosen?.n} works. Choose another artist.`}
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      onClick={() => setOpen(true)}
+      className="group flex shrink-0 items-center gap-3 rounded-full py-1 pl-4 pr-1 text-right transition-colors hover:bg-[#22201c]/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22201c]"
+    >
+      <span className="min-w-0">
+        <span className="block max-w-[16rem] truncate font-display text-[clamp(17px,1.6vw,21px)] leading-tight text-[#22201c]">
+          {chosen?.name}
+        </span>
+        <span className="block text-[12px] tabular-nums text-[#6f6a5f]">
+          {chosen?.n} {chosen?.n === 1 ? "work" : "works"}
+          <span className="ml-2 underline decoration-[#6f6a5f]/40 underline-offset-[3px] group-hover:decoration-current">
+            Change
+          </span>
+        </span>
+      </span>
+      <span className="block h-[60px] w-[60px] shrink-0 rounded-full bg-[#22201c] p-[3px] shadow-[0_12px_24px_-12px_rgba(40,25,8,0.7)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none">
+        <span className="block h-full w-full rounded-full bg-white p-[2px]">
+          <Face o={chosen} />
+        </span>
+      </span>
+    </button>
+  );
+
+  // Until the dial has been opened once, there's only the button (and no
+  // popup to render on the server).
+  if (!at) return button;
 
   // The dial opens round the button, moved in and scaled down as needed to
   // stay whole on the screen.
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const k = Math.min(1, (vw - 8) / (2 * R.EXT_X), (vh - 80) / (2 * R.EXT_Y));
-  const ccx = clamp(at.x + SIZE / 2, R.EXT_X * k + 4, vw - R.EXT_X * k - 4);
-  const ccy = clamp(at.y + SIZE / 2, R.EXT_Y * k + 8, vh - R.EXT_Y * k - 56);
-  const chosen = options[value];
+  const ccx = clamp(at.x, R.EXT_X * k + 4, vw - R.EXT_X * k - 4);
+  const ccy = clamp(at.y, R.EXT_Y * k + 8, vh - R.EXT_Y * k - 56);
 
-  return createPortal(
+  return (
     <>
-      <div
-        ref={dialog}
-        role="dialog"
-        aria-label="Choose an artist"
-        aria-hidden={!open}
-        className={`fixed inset-0 z-50 select-none transition-opacity duration-300 motion-reduce:transition-none ${
-          open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      >
+      {button}
+      {createPortal(
         <div
-          className="absolute inset-0 bg-[#1c1a17]/70 backdrop-blur-[4px]"
-          onClick={() => setOpen(false)}
-        />
-        <div
-          className="absolute transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
-          style={{
-            left: ccx - R.EXT_X,
-            top: ccy - R.EXT_Y,
-            transformOrigin: "center",
-            transform: `scale(${open ? k : k * 0.88})`,
-          }}
+          ref={dialog}
+          role="dialog"
+          aria-label="Choose an artist"
+          aria-hidden={!open}
+          className={`fixed inset-0 z-50 select-none transition-opacity duration-300 motion-reduce:transition-none ${
+            open ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
         >
-          <RotaryDial
-            options={options}
-            value={value}
-            onChoose={choose}
-            active={open}
-            onDark
-          />
-          <button
-            type="button"
-            tabIndex={open ? 0 : -1}
+          <div
+            className="absolute inset-0 bg-[#1c1a17]/70 backdrop-blur-[4px]"
             onClick={() => setOpen(false)}
-            className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[13px] text-white/75 underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-white"
-            style={{ top: R.EXT_Y * 2 + 4 }}
+          />
+          <div
+            className="absolute transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+            style={{
+              left: ccx - R.EXT_X,
+              top: ccy - R.EXT_Y,
+              transformOrigin: "center",
+              transform: `scale(${open ? k : k * 0.88})`,
+            }}
           >
-            Close
-          </button>
-        </div>
-      </div>
-
-      <div
-        className={`fixed z-50 select-none transition-opacity duration-200 ${
-          open ? "pointer-events-none opacity-0" : "opacity-100"
-        }`}
-        style={{ left: at.x, top: at.y, width: SIZE, height: SIZE }}
-      >
-        <button
-          type="button"
-          aria-label={`Artist: ${chosen?.name}. Click to choose another, or drag to move.`}
-          aria-haspopup="dialog"
-          aria-expanded={open}
-          {...handlers}
-          className="relative block h-full w-full cursor-grab touch-none rounded-full bg-[#22201c] p-[3px] shadow-[0_14px_28px_-12px_rgba(40,25,8,0.7)] transition-transform duration-200 hover:scale-105 active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22201c] motion-reduce:transition-none"
-        >
-          <span className="block h-full w-full rounded-full bg-white p-[2px]">
-            <Face o={chosen} />
-          </span>
-        </button>
-        <span className="pointer-events-none absolute left-1/2 top-full mt-2 w-max -translate-x-1/2 whitespace-nowrap rounded-full bg-[#f6f3ec]/95 px-3 py-1 text-[12px] text-[#22201c] shadow-[0_6px_16px_-8px_rgba(40,25,8,0.45)]">
-          <span className="font-display text-[13px]">{chosen?.name}</span>
-          <span className="ml-1.5 tabular-nums text-[#6f6a5f]">{chosen?.n}</span>
-        </span>
-      </div>
-    </>,
-    document.body,
+            <RotaryDial
+              options={options}
+              value={value}
+              onChoose={choose}
+              active={open}
+              onDark
+            />
+            <button
+              type="button"
+              tabIndex={open ? 0 : -1}
+              onClick={() => setOpen(false)}
+              className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[13px] text-white/75 underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-white"
+              style={{ top: R.EXT_Y * 2 + 4 }}
+            >
+              Close
+            </button>
+          </div>
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }
 
