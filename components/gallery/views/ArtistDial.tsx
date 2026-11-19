@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 /**
@@ -9,8 +9,8 @@ import { createPortal } from "react-dom";
  * by side so one can be chosen for the site.
  */
 export type DialVariant =
-  | "clock"
-  | "clock-inline"
+  | "rotary"
+  | "rotary-inline"
   | "knob"
   | "ring"
   | "drum"
@@ -780,36 +780,22 @@ function Floating({ options, value, onChange }: Props) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 6. Clock: each hour is an artist. Their face sits on the hour, their */
-/*    surname is engraved round the rim, and a bronze hand points at    */
-/*    the one chosen. As a popup (from a floating button) or set        */
-/*    straight into the page.                                           */
+/* 6. Rotary: the artists' faces in a circle. The place at the top is   */
+/*    the choice: turn the circle to bring an artist there, or click a  */
+/*    face and the circle turns it to the top. As a popup (from a       */
+/*    floating button) or set straight into the page.                   */
 /* ------------------------------------------------------------------ */
-
-/** Cast bronze, as a sweep of light round a rim. */
-const BRONZE =
-  "conic-gradient(from 200deg, #5e4424, #c9a56a 12%, #7d5f35 26%, #e6cc95 40%, #6b4f2a 55%, #b38c55 70%, #e0c48f 84%, #5e4424)";
-/** The same metal for the hand: lit down one edge. */
-const BRONZE_HAND = "linear-gradient(90deg, #6b4f2a, #e0c48f 45%, #8a6a3f)";
 
 /** "Krishen Khanna" → "Khanna", as a catalogue names an artist. */
 const surnameOf = (o: DialOption) =>
   o.slug === null ? "All" : (o.name.trim().split(/\s+/).pop() ?? o.name);
 
 /**
- * An artist's face, or a stone disc for "All". `mono` shows the photo in
+ * An artist's face, or a dark disc for "All". `mono` shows the photo in
  * black and white: the portraits come from many sources, and grey makes
  * them read as one set; the chosen or pointed-at face turns to colour.
  */
-function Face({
-  o,
-  mono = false,
-  className = "",
-}: {
-  o?: DialOption;
-  mono?: boolean;
-  className?: string;
-}) {
+function Face({ o, mono = false }: { o?: DialOption; mono?: boolean }) {
   if (!o) return null;
   return o.portrait ? (
     // eslint-disable-next-line @next/next/no-img-element
@@ -819,345 +805,285 @@ function Face({
       draggable={false}
       className={`h-full w-full rounded-full object-cover transition-[filter] duration-300 ${
         mono ? "grayscale contrast-[1.05]" : ""
-      } ${className}`}
+      }`}
     />
   ) : (
-    <span
-      className={`grid h-full w-full place-items-center rounded-full bg-[#2a2620] font-display text-[13px] text-[#e6cc95] ${className}`}
-    >
+    <span className="grid h-full w-full place-items-center rounded-full bg-[#2a2620] font-display text-[13px] text-[#f6f3ec]">
       All
     </span>
   );
 }
 
-/** Round to 2 decimals (server and browser must print the same numbers). */
-const r2 = (v: number) => Math.round(v * 100) / 100;
-
-/** SVG arc of radius r round (0,0) from angle a to b (degrees, 0 = up, clockwise). */
-const arc = (r: number, a: number, b: number, clockwise: boolean) => {
-  const p = (d: number) => {
-    const t = (d * Math.PI) / 180;
-    return `${r2(Math.sin(t) * r)} ${r2(-Math.cos(t) * r)}`;
-  };
-  return `M ${p(a)} A ${r} ${r} 0 0 ${clockwise ? 1 : 0} ${p(b)}`;
+/** Rotary sizes (px, before scaling). */
+const R = {
+  DISC: 168, // the turning disc's radius
+  RING: 124, // where the faces sit on it
+  PIC: 54, // a face
+  TOP: 1.3, // the chosen face, in the slot at the top, is this much larger
+  HUB: 74, // the fixed label in the middle
+  /** Room needed either side of the centre: names stick out at the sides. */
+  EXT_X: 262,
+  EXT_Y: 206,
 };
-
-/** Clock sizes (px, before scaling). */
-const C = {
-  FACE: 150, // face radius, rim included
-  RIM: 9,
-  PIC_R: 104, // where the faces sit
-  PIC: 48,
-  NAME_R: 168, // engraved names, outside the rim
-  HAND: 74,
-  /** Room the clock needs either side of its centre, names included. */
-  EXT: 192,
-};
+/** One easing for the turn, so the disc, faces and names move together. */
+const TURN = "transform 650ms cubic-bezier(0.22, 1, 0.36, 1)";
 
 /**
- * The clock itself, drawn round its own centre (place it with a wrapper).
- * Click a face or a name, or drag the hand. `lit` is the artist being
- * pointed at (shown in colour and named on the face).
+ * The dial itself, drawn in a box 2·EXT_X × 2·EXT_Y. A disc carries the
+ * artists' faces round; the slot at the top holds the choice and a fixed
+ * label in the middle names it. Drag anywhere to turn the disc (it settles
+ * with the nearest face in the slot), or click a face to turn it there.
  */
-function ClockFace({
+function RotaryDial({
   options,
   value,
   onChoose,
   active = true,
-  entering = false,
   onDark = false,
 }: {
   options: DialOption[];
   value: number;
   onChoose: (i: number) => void;
-  /** Set over the dark veil (the popup): the engraved names are light. */
-  onDark?: boolean;
-  /** Whether the faces can take keyboard focus (false while a popup is shut). */
+  /** Whether it can take keyboard focus (false while a popup is shut). */
   active?: boolean;
-  /** The popup is opening: the hour ring turns into place. */
-  entering?: boolean;
+  /** Set over the dark veil (the popup): the names outside the disc are light. */
+  onDark?: boolean;
 }) {
   const count = options.length;
   const seg = 360 / count;
-  const id = useId().replace(/:/g, "");
+  const W = R.EXT_X * 2;
+  const H = R.EXT_Y * 2;
   const [hoverI, setHoverI] = useState<number | null>(null);
 
-  // The hand's angle, kept continuous so going from the last hour to the
-  // first turns one step on rather than all the way back.
-  const [hand, setHand] = useState(value * seg);
+  // The disc's turn: face i sits at i·seg + rot degrees (0 = the slot at the
+  // top). Kept continuous, so going from the last artist to the first turns
+  // one step on rather than all the way back round.
+  const [rot, setRot] = useState(-value * seg);
   const [seen, setSeen] = useState(value);
   if (seen !== value) {
     setSeen(value);
-    setHand((cur) => cur + ((((value * seg - cur) % 360) + 540) % 360) - 180);
+    setRot((cur) => cur + ((((-value * seg - cur) % 360) + 540) % 360) - 180);
   }
-  const [dragAt, setDragAt] = useState<number | null>(null);
-  const drag = useRef<{ last: number } | null>(null);
-  const hourOf = (deg: number) => wrap(Math.round(deg / seg), count);
+  const [dragRot, setDragRot] = useState<number | null>(null);
+  const drag = useRef<{
+    a: number;
+    rot: number;
+    moved: boolean;
+    target: number | null;
+  } | null>(null);
+  const atTop = (r: number) => wrap(Math.round(-r / seg), count);
 
-  const faceRef = useRef<HTMLDivElement>(null);
-  useWheelStep(faceRef, (d) => onChoose(wrap(value + d, count)));
+  const area = useRef<HTMLDivElement>(null);
+  useWheelStep(area, (d) => onChoose(wrap(value + d, count)));
 
-  const turn = dragAt ?? hand;
-  const lit = hoverI ?? (dragAt !== null ? hourOf(dragAt) : value);
-  const shown = options[lit];
-  const box = C.EXT * 2;
+  const turn = dragRot ?? rot;
+  const top = dragRot !== null ? atTop(dragRot) : value;
+  const shown = options[hoverI ?? top];
+  const ease = dragRot === null ? TURN : "none";
+  const slot = R.PIC * R.TOP + 14;
 
   return (
-    <div className="relative" style={{ width: 0, height: 0 }}>
-      {/* Rim and face. Drag anywhere on the face to turn the hand. */}
+    <div
+      ref={area}
+      role="slider"
+      tabIndex={active ? 0 : -1}
+      aria-label="Choose an artist: turn the dial, or pick a face"
+      aria-valuemin={0}
+      aria-valuemax={count - 1}
+      aria-valuenow={value}
+      aria-valuetext={`${options[value]?.name}, ${options[value]?.n} works`}
+      onKeyDown={keyStep(
+        (d) => onChoose(wrap(value + d, count)),
+        onChoose,
+        count - 1,
+      )}
+      onPointerDown={(e) => {
+        if (e.button !== 0) return;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        const hit = (e.target as HTMLElement).closest<HTMLElement>("[data-i]");
+        drag.current = {
+          a: angleAround(e.currentTarget, e.clientX, e.clientY),
+          rot,
+          moved: false,
+          target: hit ? Number(hit.dataset.i) : null,
+        };
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current;
+        if (!d) return;
+        let da = angleAround(e.currentTarget, e.clientX, e.clientY) - d.a;
+        da = ((da + 540) % 360) - 180;
+        if (!d.moved && Math.abs(d.rot + da - rot) < 4) return;
+        d.moved = true;
+        d.rot += da;
+        d.a += da;
+        setDragRot(d.rot);
+      }}
+      onPointerUp={() => {
+        const d = drag.current;
+        drag.current = null;
+        if (!d) return;
+        if (d.moved) {
+          const snapped = Math.round(d.rot / seg) * seg;
+          setRot(snapped);
+          setDragRot(null);
+          onChoose(atTop(snapped));
+        } else if (d.target !== null) onChoose(d.target);
+      }}
+      onPointerCancel={() => {
+        drag.current = null;
+        setDragRot(null);
+      }}
+      className="relative cursor-grab touch-none select-none outline-none active:cursor-grabbing [&:focus-visible>.disc]:outline-2 [&:focus-visible>.disc]:outline-offset-4"
+      style={{ width: W, height: H }}
+    >
+      {/* The disc: it turns, carrying the faces; each face and name turns back to stay upright. */}
       <div
-        ref={faceRef}
-        role="slider"
-        tabIndex={active ? 0 : -1}
-        aria-label="Choose an artist"
-        aria-valuemin={0}
-        aria-valuemax={count - 1}
-        aria-valuenow={value}
-        aria-valuetext={`${options[value]?.name}, ${options[value]?.n} works`}
-        onKeyDown={keyStep(
-          (d) => onChoose(wrap(value + d, count)),
-          onChoose,
-          count - 1,
-        )}
-        onPointerDown={(e) => {
-          if (e.button !== 0) return;
-          e.currentTarget.setPointerCapture(e.pointerId);
-          const a = angleAround(e.currentTarget, e.clientX, e.clientY);
-          drag.current = {
-            last: hand + ((((a - hand) % 360) + 540) % 360) - 180,
-          };
-          setDragAt(drag.current.last);
-        }}
-        onPointerMove={(e) => {
-          const d = drag.current;
-          if (!d) return;
-          const a = angleAround(e.currentTarget, e.clientX, e.clientY);
-          d.last += ((((a - d.last) % 360) + 540) % 360) - 180;
-          setDragAt(d.last);
-        }}
-        onPointerUp={() => {
-          const d = drag.current;
-          drag.current = null;
-          if (!d) return;
-          setHand(Math.round(d.last / seg) * seg);
-          setDragAt(null);
-          onChoose(hourOf(d.last));
-        }}
-        onPointerCancel={() => {
-          drag.current = null;
-          setDragAt(null);
-        }}
-        className="absolute cursor-grab touch-none rounded-full shadow-[0_40px_70px_-30px_rgba(20,14,6,0.75),0_2px_0_rgba(255,255,255,0.4)] outline-none active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e0c48f]"
+        className={`disc absolute rounded-full shadow-[0_30px_60px_-24px_rgba(28,22,14,0.55),0_1px_0_rgba(255,255,255,0.6)_inset,0_-10px_24px_-14px_rgba(60,45,25,0.25)_inset] motion-reduce:!transition-none ${
+          onDark ? "outline-white/70" : "outline-[#22201c]/50"
+        }`}
         style={{
-          left: -C.FACE,
-          top: -C.FACE,
-          width: C.FACE * 2,
-          height: C.FACE * 2,
-          background: BRONZE,
+          left: R.EXT_X - R.DISC,
+          top: R.EXT_Y - R.DISC,
+          width: R.DISC * 2,
+          height: R.DISC * 2,
+          // A pale plate with the faintest turned grooves, so it reads as something that turns.
+          background:
+            "repeating-radial-gradient(circle at 50% 50%, rgba(34,32,28,0.035) 0 1px, transparent 1px 5px), radial-gradient(circle at 50% 35%, #fdfcf9, #f1eee7 70%, #e8e3d9)",
+          transform: `rotate(${turn}deg)`,
+          transition: ease,
         }}
       >
-        <div
-          className="absolute rounded-full bg-[radial-gradient(circle_at_50%_38%,#f6f3ec,#ece8e0_62%,#dfd9cd)] shadow-[inset_0_3px_10px_rgba(60,40,15,0.35)]"
-          style={{ inset: C.RIM }}
-        >
-          {/* Minute marks, engraved. */}
-          {Array.from({ length: 60 }, (_, m) =>
-            m % 5 === 0 ? null : (
-              <span
-                key={m}
-                aria-hidden
-                className="absolute left-1/2 top-0 h-[5px] w-px bg-[#22201c]/30"
-                style={{
-                  transformOrigin: `0.5px ${C.FACE - C.RIM}px`,
-                  transform: `translateX(-0.5px) rotate(${m * 6}deg) translateY(6px)`,
-                }}
-              />
-            ),
-          )}
-          {/* The artist pointed at, written on the lower face. */}
-          {/* Narrow enough to clear the faces at four and eight o'clock; long names wrap. */}
-          <div className="pointer-events-none absolute inset-x-[76px] top-[57%] text-center">
-            <p className="font-display text-[16px] leading-[1.15] text-[#22201c] [text-wrap:balance]">
-              {shown?.name}
-            </p>
-            <p className="mt-0.5 text-[11px] tabular-nums text-[#6f6a5f]">
-              {shown?.n} {shown?.n === 1 ? "work" : "works"}
-            </p>
-          </div>
-        </div>
-        {/* The hand: tapered bronze, with a counterweight tail. */}
-        <div
-          aria-hidden
-          className={`pointer-events-none absolute inset-0 ${
-            dragAt === null
-              ? "transition-transform duration-500 ease-[cubic-bezier(0.3,1.35,0.5,1)] motion-reduce:transition-none"
-              : ""
-          }`}
-          style={{ transform: `rotate(${turn}deg)` }}
-        >
-          <span
-            className="absolute left-1/2 w-[10px] -translate-x-1/2 drop-shadow-[0_3px_3px_rgba(40,25,8,0.35)]"
-            style={{
-              top: C.FACE - C.HAND,
-              height: C.HAND + 22,
-              background: BRONZE_HAND,
-              clipPath: "polygon(50% 0, 72% 78%, 60% 100%, 40% 100%, 28% 78%)",
-            }}
-          />
-          <span
-            className="absolute left-1/2 h-[14px] w-[14px] -translate-x-1/2 rounded-full"
-            style={{ top: C.FACE + 16, background: BRONZE_HAND }}
-          />
-        </div>
-        <span
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[18px] w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full shadow-[0_2px_4px_rgba(40,25,8,0.5)]"
-          style={{ background: BRONZE }}
-        />
-      </div>
-
-      {/* The hour ring: faces and engraved names. It turns into place as the popup opens. */}
-      <div
-        className="pointer-events-none absolute transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none"
-        style={{
-          left: -C.EXT,
-          top: -C.EXT,
-          width: box,
-          height: box,
-          transform: entering ? "rotate(-14deg)" : "rotate(0deg)",
-        }}
-      >
-        <svg
-          aria-hidden
-          viewBox={`${-C.EXT} ${-C.EXT} ${box} ${box}`}
-          width={box}
-          height={box}
-          className="absolute inset-0 overflow-visible"
-        >
-          {options.map((o, i) => {
-            const deg = i * seg;
-            const half = seg * 0.48;
-            // Names on the lower half run the other way, so none reads upside down.
-            const low = deg > 90 && deg < 270;
-            const d = low
-              ? arc(C.NAME_R + 10, deg + half, deg - half, false)
-              : arc(C.NAME_R, deg - half, deg + half, true);
-            const on = i === value;
-            const hot = i === lit;
-            return (
-              <g key={o.slug ?? "all"}>
-                <path id={`${id}-n${i}`} d={d} fill="none" />
-                <text
-                  onClick={() => onChoose(i)}
-                  onMouseEnter={() => setHoverI(i)}
-                  onMouseLeave={() => setHoverI(null)}
-                  className="pointer-events-auto cursor-pointer font-display transition-[fill] duration-200"
-                  style={
-                    onDark
-                      ? {
-                          fontSize: 14,
-                          letterSpacing: "0.04em",
-                          fill: on
-                            ? "#f3e2b8"
-                            : hot
-                              ? "#ffffff"
-                              : "rgba(255,255,255,0.72)",
-                          paintOrder: "stroke",
-                          stroke: "rgba(25,18,8,0.35)",
-                          strokeWidth: 3,
-                        }
-                      : {
-                          fontSize: 15,
-                          letterSpacing: "0.04em",
-                          fill: on ? "#7d5f35" : hot ? "#22201c" : "#6f6a5f",
-                          fontWeight: on ? 600 : 400,
-                        }
-                  }
-                >
-                  <textPath
-                    href={`#${id}-n${i}`}
-                    startOffset="50%"
-                    textAnchor="middle"
-                  >
-                    {surnameOf(o)}
-                  </textPath>
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-
         {options.map((o, i) => {
-          const p = onCircle(C.EXT, C.EXT, C.PIC_R, i * seg);
-          const on = i === value;
-          const hot = i === lit;
+          const p = onCircle(R.DISC, R.DISC, R.RING, i * seg);
+          const on = i === top;
+          const hot = i === hoverI;
+          // Where this face is on screen now: its name sits just outside the
+          // disc there, its near edge towards the face.
+          const a = ((i * seg + turn) * Math.PI) / 180;
+          const sx = Math.sin(a);
+          const cy = -Math.cos(a);
+          const out = R.DISC + 12 - R.RING;
           return (
-            <button
+            <div
               key={o.slug ?? "all"}
-              type="button"
-              tabIndex={active ? 0 : -1}
-              aria-label={`${o.name}, ${o.n} works`}
-              aria-pressed={on}
-              onClick={() => onChoose(i)}
-              onMouseEnter={() => setHoverI(i)}
-              onMouseLeave={() => setHoverI(null)}
-              onFocus={() => setHoverI(i)}
-              onBlur={() => setHoverI(null)}
-              className="pointer-events-auto absolute rounded-full p-[2.5px] shadow-[0_6px_12px_-6px_rgba(40,25,8,0.6)] transition-transform duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22201c] motion-reduce:transition-none"
+              className="absolute motion-reduce:!transition-none"
               style={{
-                left: p.left - C.PIC / 2,
-                top: p.top - C.PIC / 2,
-                width: C.PIC,
-                height: C.PIC,
-                background: on ? BRONZE : "#f6f3ec",
-                // Upright again, whatever the ring's own turn.
-                transform: `rotate(${entering ? 14 : 0}deg) scale(${hot ? 1.12 : 1})`,
+                left: p.left,
+                top: p.top,
+                transform: `rotate(${-turn}deg)`,
+                transition: ease,
               }}
             >
-              <Face o={o} mono={!(on || hot)} />
-            </button>
+              <button
+                type="button"
+                data-i={i}
+                tabIndex={active ? 0 : -1}
+                aria-label={`${o.name}, ${o.n} works`}
+                aria-pressed={i === value}
+                // Pointer picks are handled by the dial (it holds the pointer);
+                // this is Enter / Space.
+                onClick={(e) => e.detail === 0 && onChoose(i)}
+                onMouseEnter={() => setHoverI(i)}
+                onMouseLeave={() => setHoverI(null)}
+                onFocus={() => setHoverI(i)}
+                onBlur={() => setHoverI(null)}
+                className={`pointer-events-auto absolute rounded-full bg-white p-[3px] transition-[transform,box-shadow] duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22201c] motion-reduce:transition-none ${
+                  on
+                    ? "shadow-[0_10px_22px_-8px_rgba(28,22,14,0.55)]"
+                    : "shadow-[0_3px_8px_-3px_rgba(28,22,14,0.45),inset_0_0_0_1px_rgba(34,32,28,0.06)]"
+                }`}
+                style={{
+                  left: -R.PIC / 2,
+                  top: -R.PIC / 2,
+                  width: R.PIC,
+                  height: R.PIC,
+                  transform: `scale(${on ? R.TOP : hot ? 1.08 : 1})`,
+                }}
+              >
+                <Face o={o} mono={!(on || hot)} />
+              </button>
+              <span
+                aria-hidden
+                className={`pointer-events-none absolute left-0 top-0 whitespace-nowrap text-[13px] motion-reduce:!transition-none ${
+                  on
+                    ? onDark
+                      ? "font-medium text-white"
+                      : "font-medium text-[#22201c]"
+                    : onDark
+                      ? "text-white/70"
+                      : "text-[#6f6a5f]"
+                }`}
+                style={{
+                  transform: `translate(${Math.round(-50 + sx * 50)}%, ${Math.round(-50 + cy * 50)}%) translate(${Math.round(sx * out)}px, ${Math.round(cy * out)}px)`,
+                  transition: ease,
+                }}
+              >
+                {surnameOf(o)}
+              </span>
+            </div>
           );
         })}
+      </div>
+
+      {/* The slot at the top: fixed; the chosen face turns into it. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute rounded-full border-2 border-[#22201c]/80"
+        style={{
+          left: R.EXT_X - slot / 2,
+          top: R.EXT_Y - R.RING - slot / 2,
+          width: slot,
+          height: slot,
+        }}
+      />
+
+      {/* The label in the middle: fixed, naming the choice (or the face pointed at). */}
+      <div
+        className="pointer-events-none absolute grid place-items-center rounded-full bg-[#22201c] px-5 text-center shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)]"
+        style={{
+          left: R.EXT_X - R.HUB,
+          top: R.EXT_Y - R.HUB,
+          width: R.HUB * 2,
+          height: R.HUB * 2,
+        }}
+      >
+        <div>
+          <p className="font-display text-[18px] leading-[1.15] text-white [text-wrap:balance]">
+            {shown?.name}
+          </p>
+          <p className="mt-1 text-[12px] tabular-nums text-white/60">
+            {shown?.n} {shown?.n === 1 ? "work" : "works"}
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
 /**
- * The popup: a floating button with the chosen artist's face, in a bronze
- * ring with hour marks. Drag it anywhere; click it and the clock opens over
- * a darkened page.
+ * The popup: a floating button with the chosen artist's face. Drag it
+ * anywhere; click it and the dial opens over a darkened page.
  */
-function Clock({ options, value, onChange }: Props) {
-  const SIZE = 66;
-  const [open, setOpenState] = useState(false);
-  // False until a frame after opening, so the hour ring can turn into place.
-  const [settled, setSettled] = useState(false);
-  const setOpen = (v: boolean | ((cur: boolean) => boolean)) => {
-    setSettled(false);
-    setOpenState(v);
-  };
+function Rotary({ options, value, onChange }: Props) {
+  const SIZE = 64;
+  const [open, setOpen] = useState(false);
   const { at, handlers } = useFab(
     SIZE,
     () => setOpen((v) => !v),
     () => setOpen(false),
   );
-  useEffect(() => {
-    if (!open) return;
-    const f = requestAnimationFrame(() => setSettled(true));
-    return () => cancelAnimationFrame(f);
-  }, [open]);
 
-  // Choosing closes the clock a moment later, so the hand is seen to land.
+  // Choosing closes the dial once the disc has turned, so the choice is seen to land.
   const closer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const choose = (i: number) => {
     onChange(i);
     clearTimeout(closer.current);
-    closer.current = setTimeout(() => setOpen(false), 420);
+    closer.current = setTimeout(() => setOpen(false), 700);
   };
   useEffect(() => () => clearTimeout(closer.current), []);
 
-  // Escape closes; opening puts the focus on the clock.
+  // Escape closes; opening puts the focus on the dial.
   const dialog = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -1171,13 +1097,13 @@ function Clock({ options, value, onChange }: Props) {
 
   if (!at) return null;
 
-  // The clock opens round the button, moved in and scaled down as needed
-  // to stay whole on the screen.
+  // The dial opens round the button, moved in and scaled down as needed to
+  // stay whole on the screen.
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const k = Math.min(1, (vw - 16) / (2 * C.EXT), (vh - 80) / (2 * C.EXT));
-  const ccx = clamp(at.x + SIZE / 2, C.EXT * k + 8, vw - C.EXT * k - 8);
-  const ccy = clamp(at.y + SIZE / 2, C.EXT * k + 8, vh - C.EXT * k - 56);
+  const k = Math.min(1, (vw - 8) / (2 * R.EXT_X), (vh - 80) / (2 * R.EXT_Y));
+  const ccx = clamp(at.x + SIZE / 2, R.EXT_X * k + 4, vw - R.EXT_X * k - 4);
+  const ccy = clamp(at.y + SIZE / 2, R.EXT_Y * k + 8, vh - R.EXT_Y * k - 56);
   const chosen = options[value];
 
   return createPortal(
@@ -1192,37 +1118,31 @@ function Clock({ options, value, onChange }: Props) {
         }`}
       >
         <div
-          className="absolute inset-0 bg-[radial-gradient(circle_at_var(--cx)_var(--cy),rgba(34,32,28,0.45),rgba(34,32,28,0.72))] backdrop-blur-[3px]"
-          style={
-            {
-              "--cx": `${ccx}px`,
-              "--cy": `${ccy}px`,
-            } as React.CSSProperties
-          }
+          className="absolute inset-0 bg-[#1c1a17]/70 backdrop-blur-[4px]"
           onClick={() => setOpen(false)}
         />
         <div
-          className="absolute transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none"
+          className="absolute transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
           style={{
-            left: ccx,
-            top: ccy,
-            transform: `scale(${open && settled ? k : k * 0.86})`,
+            left: ccx - R.EXT_X,
+            top: ccy - R.EXT_Y,
+            transformOrigin: "center",
+            transform: `scale(${open ? k : k * 0.88})`,
           }}
         >
-          <ClockFace
+          <RotaryDial
             options={options}
             value={value}
             onChoose={choose}
             active={open}
-            entering={!settled}
             onDark
           />
           <button
             type="button"
             tabIndex={open ? 0 : -1}
             onClick={() => setOpen(false)}
-            className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[13px] text-white/80 underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-white"
-            style={{ top: C.EXT + 6 }}
+            className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[13px] text-white/75 underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-white"
+            style={{ top: R.EXT_Y * 2 + 4 }}
           >
             Close
           </button>
@@ -1241,21 +1161,9 @@ function Clock({ options, value, onChange }: Props) {
           aria-haspopup="dialog"
           aria-expanded={open}
           {...handlers}
-          className="group relative block h-full w-full cursor-grab touch-none rounded-full p-[4px] shadow-[0_14px_28px_-12px_rgba(40,25,8,0.7)] transition-transform duration-200 hover:scale-105 active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22201c] motion-reduce:transition-none"
-          style={{ background: BRONZE }}
+          className="relative block h-full w-full cursor-grab touch-none rounded-full bg-[#22201c] p-[3px] shadow-[0_14px_28px_-12px_rgba(40,25,8,0.7)] transition-transform duration-200 hover:scale-105 active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#22201c] motion-reduce:transition-none"
         >
-          {/* Hour marks on the rim. */}
-          <span
-            aria-hidden
-            className="absolute inset-0 rounded-full"
-            style={{
-              background:
-                "repeating-conic-gradient(from -1.5deg, rgba(40,25,8,0.75) 0 3deg, transparent 3deg 30deg)",
-              mask: "radial-gradient(circle, transparent 62%, #000 63%)",
-              WebkitMask: "radial-gradient(circle, transparent 62%, #000 63%)",
-            }}
-          />
-          <span className="relative block h-full w-full rounded-full bg-[#f6f3ec] p-[2px]">
+          <span className="block h-full w-full rounded-full bg-white p-[2px]">
             <Face o={chosen} />
           </span>
         </button>
@@ -1269,38 +1177,38 @@ function Clock({ options, value, onChange }: Props) {
   );
 }
 
-/** The clock set straight into the page, no popup: scaled to `size` px wide. */
-function ClockInline({
+/** The dial set straight into the page, no popup: scaled to `width` px. */
+function RotaryInline({
   options,
   value,
   onChange,
-  size = 300,
-}: Props & { size?: number }) {
-  const k = size / (C.EXT * 2);
+  width = 420,
+}: Props & { width?: number }) {
+  const k = width / (R.EXT_X * 2);
   return (
     <div
-      className="relative shrink-0 select-none"
-      style={{ width: size, height: size }}
+      className="relative shrink-0"
+      style={{ width, height: R.EXT_Y * 2 * k }}
     >
       <div
-        className="absolute left-1/2 top-1/2"
+        className="absolute left-0 top-0 origin-top-left"
         style={{ transform: `scale(${k})` }}
       >
-        <ClockFace options={options} value={value} onChoose={onChange} />
+        <RotaryDial options={options} value={value} onChoose={onChange} />
       </div>
     </div>
   );
 }
 
 export default function ArtistDial({
-  variant = "clock",
+  variant = "rotary",
   ...props
 }: Props & { variant?: DialVariant }) {
   switch (variant) {
-    case "clock":
-      return <Clock {...props} />;
-    case "clock-inline":
-      return <ClockInline {...props} />;
+    case "rotary":
+      return <Rotary {...props} />;
+    case "rotary-inline":
+      return <RotaryInline {...props} />;
     case "ring":
       return <Ring {...props} />;
     case "drum":

@@ -78,7 +78,7 @@ function HoverZone({
 export default function TrueScale({
   works,
   initialArtist,
-  dial = "clock",
+  dial = "rotary",
 }: {
   works: ConceptWork[];
   /** Artist slug to start on (the page's ?artist=). */
@@ -309,7 +309,7 @@ export default function TrueScale({
         <div
           className={`flex items-center gap-8 ${
             // The floating dials start in this corner: keep it clear for them.
-            dial === "clock" || dial === "float" ? "pr-[84px]" : ""
+            dial === "rotary" || dial === "float" ? "pr-[84px]" : ""
           }`}
         >
           {current && (
@@ -329,7 +329,7 @@ export default function TrueScale({
               </p>
             </div>
           )}
-          {options.length > 2 && dial !== "clock-inline" && (
+          {options.length > 2 && dial !== "rotary-inline" && (
             <ArtistDial
               variant={dial}
               options={options}
@@ -338,8 +338,8 @@ export default function TrueScale({
             />
           )}
         </div>
-        {/* The clock set into the page: here on phones, beside the stage on wider screens. */}
-        {options.length > 2 && dial === "clock-inline" && (
+        {/* The dial set into the page: here on phones, beside the stage on wider screens. */}
+        {options.length > 2 && dial === "rotary-inline" && (
           <div className="mx-auto md:hidden">
             <ArtistDial
               variant={dial}
@@ -353,7 +353,7 @@ export default function TrueScale({
 
       {/* The stage: pushed to the bottom of the screen, so the works stand on its floor. */}
       <div className="mt-auto flex items-start pt-[clamp(16px,3vh,32px)]">
-        {options.length > 2 && dial === "clock-inline" && (
+        {options.length > 2 && dial === "rotary-inline" && (
           <div className="hidden shrink-0 self-center pl-[clamp(16px,3vw,40px)] md:block">
             <ArtistDial
               variant={dial}

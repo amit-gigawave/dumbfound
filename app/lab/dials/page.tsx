@@ -13,16 +13,16 @@ export const metadata: Metadata = {
 
 const DIALS: { id: DialVariant; name: string; about: string }[] = [
   {
-    id: "clock",
-    name: "Clock",
+    id: "rotary",
+    name: "Dial",
     about:
-      "The floating dial (drag it anywhere) shows the chosen artist's face. Click it and it opens into a clock: each hour is an artist, their face where the number would be and their name outside the rim. Click a face, or drag the hand round.",
+      "The floating button (drag it anywhere) shows the chosen artist's face. Click it and the artists open in a circle; the one at the top is chosen. Turn the circle, or click a face to bring it to the top.",
   },
   {
-    id: "clock-inline",
-    name: "Clock in page",
+    id: "rotary-inline",
+    name: "Dial in page",
     about:
-      "The same clock, always open, set beside the line of works (above it on phones). No popup: pick an artist straight away.",
+      "The same dial, always open, set beside the line of works (above it on phones). No popup: pick an artist straight away.",
   },
   {
     id: "knob",
@@ -78,7 +78,7 @@ export default async function DialsLab({
             {DIALS.map((d) => (
               <Link
                 key={d.id}
-                href={`/lab/dials${d.id === "clock" ? "" : `?dial=${d.id}`}`}
+                href={`/lab/dials${d.id === "rotary" ? "" : `?dial=${d.id}`}`}
                 className={pill(d.id === dial.id)}
               >
                 {d.name}
