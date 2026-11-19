@@ -19,6 +19,7 @@ type Work = {
   title: string;
   artist: string;
   modelUrl: string;
+  thumbnail: string;
   facing: number;
   look: ArtworkLook;
 };
@@ -98,6 +99,27 @@ export default function LookTweaker({
     [changed, works],
   );
 
+  // ← and → step through the works (not while a slider or menu has the focus,
+  // where the arrow keys move that control instead).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      if ((e.target as HTMLElement | null)?.closest("input, select, textarea")) return;
+      e.preventDefault();
+      go(index + (e.key === "ArrowRight" ? 1 : -1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go, index]);
+
+  // Keep the current work's picture in view in the strip.
+  const strip = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    strip.current
+      ?.querySelector<HTMLElement>(`[data-slug="${slug}"]`)
+      ?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  }, [slug]);
+
   const set = (patch: Partial<ArtworkLook>) => {
     setStatus(null);
     setLook((l) => ({ ...l, ...patch }));
@@ -158,8 +180,42 @@ export default function LookTweaker({
           <ChevronRight size={16} />
         </button>
         <span className="text-[13px] tabular-nums text-stone">
-          {index + 1} of {works.length}
+          {index + 1} of {works.length} · ← → to switch
         </span>
+      </div>
+
+      {/* Every work, to switch with one click. */}
+      <div
+        ref={strip}
+        role="listbox"
+        aria-label="All works"
+        className="-mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-2 [scrollbar-width:thin]"
+      >
+        {works.map((w, i) => {
+          const on = w.slug === slug;
+          return (
+            <button
+              key={w.slug}
+              type="button"
+              role="option"
+              aria-selected={on}
+              data-slug={w.slug}
+              onClick={() => go(i)}
+              title={`${w.title} · ${w.artist}`}
+              className={`relative h-[84px] w-[68px] shrink-0 overflow-hidden rounded-[10px] border bg-white transition-[border-color,box-shadow] ${
+                on
+                  ? "border-accent shadow-[0_0_0_2px_#396046]"
+                  : "border-rule hover:border-ink"
+              }`}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={w.thumbnail} alt="" loading="lazy" className="h-full w-full object-contain p-1" />
+              {on && changed && (
+                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[#b4532a]" aria-label="Not saved" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="mt-5 grid gap-6 min-[900px]:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">

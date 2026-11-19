@@ -25,6 +25,7 @@ export default async function LookPage({
       title: w.title,
       artist: getArtist(w.artistSlug)?.name ?? "",
       modelUrl: w.modelUrl!,
+      thumbnail: w.thumbnail,
       facing: w.facing ?? 0,
       look: w.look ?? {},
     }));
