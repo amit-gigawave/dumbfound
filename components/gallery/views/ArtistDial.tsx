@@ -859,6 +859,13 @@ const GEO: Record<RotarySkin, Geo> = {
   gallery: { W: 500, H: 470, cx: 250, cy: 232, RING: 168, PIC: 62, TOP: 1.45, DISC: 0, HUB: 0, label: "below" },
   orbit: { W: 620, H: 300, cx: 310, cy: 330, RING: 250, PIC: 70, TOP: 1.4, DISC: 0, HUB: 0, label: "none" },
 };
+/**
+ * The orbit on a phone: a tighter wheel laid out for a narrow screen, so it
+ * shows at full size in the bottom sheet (faces stay finger-sized, names
+ * readable) rather than shrunk to fit.
+ */
+const GEO_ORBIT_PHONE: Geo = { W: 380, H: 290, cx: 190, cy: 268, RING: 175, PIC: 64, TOP: 1.35, DISC: 0, HUB: 0, label: "none" };
+
 /** Skins drawn on a light card (the others float over a dark veil). */
 const ON_CARD: Record<RotarySkin, boolean> = { disc: false, bronze: false, gallery: true, orbit: true };
 
@@ -880,6 +887,7 @@ function RotaryDial({
   active = true,
   skin = "disc",
   centerAll = false,
+  geo,
 }: {
   options: DialOption[];
   value: number;
@@ -893,8 +901,10 @@ function RotaryDial({
    * chosen, no face is at the top.
    */
   centerAll?: boolean;
+  /** A different layout for the skin (the orbit on a phone). */
+  geo?: Geo;
 }) {
-  const g = GEO[skin];
+  const g = geo ?? GEO[skin];
   const dark = !ON_CARD[skin]; // text colours: light over the dark veil
   const total = options.length;
   // The faces on the wheel, and the wheel position of the choice (null: All, in the middle).
@@ -1015,8 +1025,10 @@ function RotaryDial({
       }}
       className={`relative cursor-grab touch-none select-none rounded-[28px] outline-none active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-4 ${
         dark ? "focus-visible:outline-white/70" : "focus-visible:outline-[#22201c]/50"
-      } ${skin === "orbit" ? "overflow-hidden" : ""}`}
-      style={{ width: g.W, height: g.H }}
+      }`}
+      // The orbit trims only its bottom edge (the hidden half of the wheel),
+      // so the names on the side faces aren't cut off.
+      style={{ width: g.W, height: g.H, ...(skin === "orbit" && { clipPath: "inset(-80px -80px 0 -80px)" }) }}
     >
       {/* Behind the faces, fixed: the gallery's hairline track, the orbit's pool of light. */}
       {skin === "gallery" && (
@@ -1260,7 +1272,7 @@ function RotaryDial({
           tabIndex={active ? 0 : -1}
           aria-pressed={value === 0}
           onClick={() => onChoose(0)}
-          className={`absolute -translate-x-1/2 whitespace-nowrap rounded-full px-5 py-2 text-[14px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${
+          className={`absolute min-h-11 -translate-x-1/2 whitespace-nowrap rounded-full px-5 py-2 text-[14px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 ${
             dark ? "focus-visible:outline-white" : "focus-visible:outline-[#22201c]"
           } ${
             value === 0
@@ -1293,14 +1305,15 @@ function Rotary({ options, value, onChange, skin = "disc" }: Props & { skin?: Ro
   const card = ON_CARD[skin];
   const PAD = card ? 28 : 0; // the light card round the dial
   const [open, setOpenState] = useState(false);
-  // Where the button's centre was when the dial opened (the dial opens there).
-  const [at, setAt] = useState<{ x: number; y: number } | null>(null);
+  // Where the button's centre was when the dial opened (the dial opens there),
+  // and whether the screen is phone-sized (the dial opens as a bottom sheet).
+  const [at, setAt] = useState<{ x: number; y: number; phone: boolean } | null>(null);
   const btn = useRef<HTMLButtonElement>(null);
   const setOpen = (v: boolean) => {
     if (v && btn.current) {
       const r = btn.current.getBoundingClientRect();
       // Centred on the face (the right end of the button).
-      setAt({ x: r.right - r.height / 2, y: r.top + r.height / 2 });
+      setAt({ x: r.right - r.height / 2, y: r.top + r.height / 2, phone: window.innerWidth < 640 });
       // A frame later, so a popup mounting for the first time still fades in.
       requestAnimationFrame(() => setOpenState(true));
       return;
@@ -1366,6 +1379,66 @@ function Rotary({ options, value, onChange, skin = "disc" }: Props & { skin?: Ro
   // popup to render on the server).
   if (!at) return button;
 
+  // On a phone: a sheet from the bottom of the screen, within thumb reach, the
+  // wheel laid out for the narrow screen and shown at (near) full size.
+  if (at.phone) {
+    const pg = skin === "orbit" ? GEO_ORBIT_PHONE : g;
+    const pk = Math.min(1, (window.innerWidth - 8) / pg.W);
+    return (
+      <>
+        {button}
+        {createPortal(
+          <div
+            ref={dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Choose an artist"
+            aria-hidden={!open}
+            className={`fixed inset-0 z-[70] select-none transition-opacity duration-300 motion-reduce:transition-none ${
+              open ? "opacity-100" : "pointer-events-none opacity-0"
+            }`}
+          >
+            <div className="absolute inset-0 bg-[#1c1a17]/45 backdrop-blur-[3px]" onClick={() => setOpen(false)} />
+            <div
+              className="absolute inset-x-0 bottom-0 rounded-t-[28px] bg-[#fbfaf7] pb-[max(16px,env(safe-area-inset-bottom))] shadow-[0_-20px_60px_-20px_rgba(28,22,14,0.45)] transition-transform duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+              style={{ transform: open ? "translateY(0)" : "translateY(100%)" }}
+            >
+              {/* The grab bar, and a finger-sized way out. */}
+              <span aria-hidden className="absolute left-1/2 top-2.5 h-1 w-10 -translate-x-1/2 rounded-full bg-[#22201c]/15" />
+              <div className="flex items-center justify-between px-5 pt-5">
+                <p className="text-[13px] text-[#6f6a5f]">Turn the wheel or tap an artist</p>
+                <button
+                  type="button"
+                  tabIndex={open ? 0 : -1}
+                  onClick={() => setOpen(false)}
+                  className="-mr-2 h-11 rounded-full px-4 text-[15px] font-medium text-[#22201c] focus-visible:outline-2 focus-visible:outline-[#22201c]"
+                >
+                  Done
+                </button>
+              </div>
+              <div className="flex justify-center pt-1">
+                <div style={{ width: pg.W * pk, height: pg.H * pk }}>
+                  <div className="origin-top-left" style={{ transform: `scale(${pk})` }}>
+                    <RotaryDial
+                      options={options}
+                      value={value}
+                      onChoose={choose}
+                      active={open}
+                      skin={skin}
+                      centerAll={skin === "orbit"}
+                      geo={pg}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+      </>
+    );
+  }
+
   // The dial opens round the button, moved in and scaled down as needed to
   // stay whole on the screen.
   const vw = window.innerWidth;
@@ -1385,7 +1458,8 @@ function Rotary({ options, value, onChange, skin = "disc" }: Props & { skin?: Ro
           role="dialog"
           aria-label="Choose an artist"
           aria-hidden={!open}
-          className={`fixed inset-0 z-50 select-none transition-opacity duration-300 motion-reduce:transition-none ${
+          // Above the floating view switch (z-60).
+          className={`fixed inset-0 z-[70] select-none transition-opacity duration-300 motion-reduce:transition-none ${
             open ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
         >
