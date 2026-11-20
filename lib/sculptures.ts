@@ -402,7 +402,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-yellow-saree-lady.webp?v=6",
     modelUrl: "/sculptures/female-head.glb?v=3",
-    look: { metalness: 0.47, roughness: 1.32, reflections: 0.6, light: 0.65 },
+    look: { metalness: 0.5, roughness: 1.2, reflections: 0.55, light: 0.8, sideLights: 0.4 },
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",
