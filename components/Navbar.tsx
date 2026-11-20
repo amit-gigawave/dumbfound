@@ -8,6 +8,9 @@ import { site } from "@/lib/site";
 import MobileMenu from "./MobileMenu";
 import SearchDialog, { SearchIcon } from "./SearchDialog";
 
+/** Where the header's Enquire button goes (the Enquiry page). */
+const ENQUIRE = "/contact";
+
 /** Catalogue header: wordmark left, page links in normal case, search right. */
 export default function Navbar() {
   const pathname = usePathname() ?? "/";
@@ -61,7 +64,8 @@ export default function Navbar() {
             aria-label="Main"
             className="hidden gap-5 md:flex lg:gap-6 xl:gap-8"
           >
-            {site.nav.map((link) => (
+            {/* Enquiry is the button on the right, not a link here. */}
+            {site.nav.filter((link) => link.href !== ENQUIRE).map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -94,6 +98,14 @@ export default function Navbar() {
                 /
               </kbd>
             </button>
+
+            <Link
+              href={ENQUIRE}
+              aria-current={isActive(ENQUIRE) ? "page" : undefined}
+              className="hidden rounded-full bg-[#1c1c1c] px-[18px] py-2 text-[14px] font-medium leading-[18px] text-white transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:bg-accent md:inline-block"
+            >
+              Enquire
+            </Link>
 
             <button
               type="button"
