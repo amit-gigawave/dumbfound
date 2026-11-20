@@ -37,8 +37,12 @@ const heroWorkFor = (slug: string): HeroWork | undefined => {
   };
 };
 
-/** Painted scans for "In the Round": one row, in colour. */
-const EXPLORE = [
+/**
+ * Featured works on the home page: the works marked `featured`, without the
+ * hero's own work, topped up to a row of three from this list (in order;
+ * painted scans that show well in colour).
+ */
+const FEATURED_EXTRA = [
   "sansanwal-levitation",
   "khanna-patinder-rawat-trumpet-walae",
   "ghosh-head-in-fragments",
@@ -70,10 +74,19 @@ export const revalidate = 3600;
 
 export default function Home() {
   const live = publishedArtists();
-  const featured = getFeaturedWorks();
-  const explore = EXPLORE.flatMap((slug) => getSculpture(slug) ?? []).filter(
-    (w) => w.modelUrl,
-  );
+  const featuredWorks = [
+    ...getFeaturedWorks(),
+    // The top-up skips works already on the to-scale shelf further down.
+    ...FEATURED_EXTRA.filter((slug) => !TO_SCALE.includes(slug)).flatMap(
+      (slug) => getSculpture(slug) ?? [],
+    ),
+  ]
+    .filter(
+      (w, i, list) =>
+        w.slug !== HERO_WORK &&
+        list.findIndex((x) => x.slug === w.slug) === i,
+    )
+    .slice(0, 3);
   // Ten portraits fill two rows of five; the rest are a click away.
   const homeArtists = live.filter((a) => a.portrait).slice(0, 10);
   const quoted = live.find((a) => a.quotes.length > 0 && a.portrait);
@@ -115,6 +128,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Section grounds alternate (paper, white, patina tint, black) so each
+          section reads as its own chapter. */}
+      <section id="featured" className="mt-[clamp(56px,7vw,96px)] border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
+        <div className={wrap}>
+          <SectionHeader
+            title="Featured works"
+                        link={{ label: "All artworks", href: "/artworks" }}
+          />
+          <div
+            data-reveal-stagger
+            className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {featuredWorks.map((work, i) => (
+              <ArtworkTile
+                key={work.slug}
+                work={work}
+                priority={i < 3}
+                showcase
+                quiet
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Artists"
@@ -131,34 +169,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section grounds alternate (paper, white, patina tint, black) so each
-          section reads as its own chapter. */}
-      <section id="featured" className="border-y border-rule bg-white py-[clamp(64px,8vw,110px)]">
-        <div className={wrap}>
-          <SectionHeader
-            title="Featured works"
-                        link={{ label: "All artworks", href: "/artworks" }}
-          />
-          <div
-            data-reveal-stagger
-            className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {featured.map((work, i) => (
-              <ArtworkTile
-                key={work.slug}
-                work={work}
-                priority={i < 3}
-                showcase
-                quiet
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* To scale: a shelf of works at their real heights, the way into True scale. */}
       {toScale.length > 1 && (
-        <section className="border-b border-rule pb-[clamp(56px,6vw,72px)] pt-[clamp(64px,8vw,110px)]">
+        <section className="border-y border-rule bg-white pb-[clamp(56px,6vw,72px)] pt-[clamp(64px,8vw,110px)]">
           <div className={wrap}>
             <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
               <div className="grid gap-3">
@@ -187,32 +200,6 @@ export default function Home() {
             >
               Open True scale
             </Link>
-          </div>
-        </section>
-      )}
-
-      {explore.length > 0 && (
-        <section className="py-[clamp(64px,8vw,110px)]">
-          <div className={wrap}>
-            <SectionHeader
-              title="More from the collection"
-                            link={{ label: "All artworks", href: "/artworks" }}
-            />
-            <div
-              data-reveal-stagger
-              className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4"
-            >
-              {explore.map((work) => (
-                <ArtworkTile
-                  key={work.slug}
-                  work={work}
-                  showcase
-                  ambient
-                  quiet
-                  sizes="(min-width: 1024px) 25vw, 50vw"
-                />
-              ))}
-            </div>
           </div>
         </section>
       )}
