@@ -117,11 +117,7 @@ const pickBackground = (lum: number) =>
  * The surface a work is drawn with: a clone of its own material, cleaned of
  * scan export faults and adjusted by the work's `look`.
  */
-const prepareMaterial = (
-  m: THREE.Material,
-  look: ArtworkLook | undefined,
-  clip: THREE.Plane,
-) => {
+const prepareMaterial = (m: THREE.Material, clip: THREE.Plane) => {
   const c = m.clone();
   c.clippingPlanes = [clip];
   if (c instanceof THREE.MeshPhysicalMaterial) {
@@ -130,14 +126,31 @@ const prepareMaterial = (
     c.transmission = 0;
     const s = c.specularColor;
     s.setRGB(Math.min(s.r, 1), Math.min(s.g, 1), Math.min(s.b, 1));
-    if (look?.specular !== undefined) c.specularIntensity = look.specular;
   }
   if (c instanceof THREE.MeshStandardMaterial) {
-    c.metalness *= look?.metalness ?? 1;
-    // Scales the roughness texture too; the shader caps it at fully matte.
-    c.roughness *= (look?.roughness ?? 1) * SHINE.roughness;
+    // The scan's own values, which the look scales (see applyLook).
+    c.userData.base = {
+      metalness: c.metalness,
+      roughness: c.roughness,
+      specular: c instanceof THREE.MeshPhysicalMaterial ? c.specularIntensity : undefined,
+    };
   }
   return c;
+};
+
+/**
+ * Sets a prepared material's surface from the work's `look`. It only changes
+ * values (no new materials, no shader rebuild), so the look tweaker's sliders
+ * stay smooth.
+ */
+const applyLook = (c: THREE.Material, look: ArtworkLook | undefined) => {
+  if (!(c instanceof THREE.MeshStandardMaterial)) return;
+  const base = c.userData.base as { metalness: number; roughness: number; specular?: number };
+  c.metalness = base.metalness * (look?.metalness ?? 1);
+  // Scales the roughness texture too; the shader caps it at fully matte.
+  c.roughness = base.roughness * (look?.roughness ?? 1) * SHINE.roughness;
+  if (c instanceof THREE.MeshPhysicalMaterial && base.specular !== undefined)
+    c.specularIntensity = look?.specular ?? base.specular;
 };
 
 interface SculptureSceneProps {
@@ -259,7 +272,6 @@ const RevealModel: FC<{
   const { scene } = useGLTF(url, DRACO_PATH);
   // Keep the model cached while it's on screen; afterwards it may be evicted.
   useEffect(() => retainModel(url, scene), [url, scene]);
-  const lookKey = JSON.stringify(look ?? {});
   const get = useThree((state) => state.get);
 
   // Choose a contrasting backdrop from the model's own base colour.
@@ -336,7 +348,8 @@ const RevealModel: FC<{
     return clone;
   }, [scene, willReveal, wireClipBottom, wireClipTop]);
 
-  // Textured clone — the real surface, revealed from the floor up.
+  // Textured clone — the real surface, revealed from the floor up. Built once
+  // per model; the look is applied to its materials below.
   const texScene = useMemo(() => {
     const clone = scene.clone(true);
     clone.traverse((child) => {
@@ -345,14 +358,24 @@ const RevealModel: FC<{
         child.receiveShadow = true;
         const orig = child.material;
         child.material = Array.isArray(orig)
-          ? orig.map((m) => prepareMaterial(m, look, texClip))
-          : prepareMaterial(orig, look, texClip);
+          ? orig.map((m) => prepareMaterial(m, texClip))
+          : prepareMaterial(orig, texClip);
       }
     });
     return clone;
-    // The look is compared by value: callers may pass a fresh object each render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scene, texClip, lookKey]);
+  }, [scene, texClip]);
+
+  const metalness = look?.metalness;
+  const roughness = look?.roughness;
+  const specular = look?.specular;
+  useLayoutEffect(() => {
+    const surface = { metalness, roughness, specular };
+    texScene.traverse((child) => {
+      if (child instanceof THREE.Mesh)
+        for (const m of [child.material].flat()) applyLook(m, surface);
+    });
+    get().invalidate();
+  }, [texScene, metalness, roughness, specular, get]);
 
   // Center + uniform-scale once, synchronously, before first paint.
   useLayoutEffect(() => {
