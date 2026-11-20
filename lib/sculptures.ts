@@ -364,7 +364,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp?v=6",
     modelUrl: "/sculptures/head-g.glb?v=2",
-    look: { metalness: 0.22, roughness: 1.75, reflections: 0.6, light: 0.65 },
+    look: { metalness: 0.3, roughness: 1.75, reflections: 0.6, light: 1.05, sideLights: 0.3 },
     facing: 180,
     material: "Bronze",
     year: "2026",
