@@ -117,11 +117,7 @@ const pickBackground = (lum: number) =>
  * The surface a work is drawn with: a clone of its own material, cleaned of
  * scan export faults and adjusted by the work's `look`.
  */
-const prepareMaterial = (
-  m: THREE.Material,
-  look: ArtworkLook | undefined,
-  clip: THREE.Plane,
-) => {
+const prepareMaterial = (m: THREE.Material, clip: THREE.Plane) => {
   const c = m.clone();
   c.clippingPlanes = [clip];
   if (c instanceof THREE.MeshPhysicalMaterial) {
@@ -130,15 +126,37 @@ const prepareMaterial = (
     c.transmission = 0;
     const s = c.specularColor;
     s.setRGB(Math.min(s.r, 1), Math.min(s.g, 1), Math.min(s.b, 1));
-    if (look?.specular !== undefined) c.specularIntensity = look.specular;
   }
   if (c instanceof THREE.MeshStandardMaterial) {
-    c.metalness *= look?.metalness ?? 1;
-    // Scales the roughness texture too; the shader caps it at fully matte.
-    c.roughness *= (look?.roughness ?? 1) * SHINE.roughness;
+    // The scan's own values, which the look scales (see applyLook).
+    c.userData.base = {
+      metalness: c.metalness,
+      roughness: c.roughness,
+      specular: c instanceof THREE.MeshPhysicalMaterial ? c.specularIntensity : undefined,
+    };
   }
   return c;
 };
+
+/**
+ * Sets a prepared material's surface from the work's `look`. It only changes
+ * values (no new materials, no shader rebuild), so the look tweaker's sliders
+ * stay smooth.
+ */
+const applyLook = (c: THREE.Material, look: ArtworkLook | undefined) => {
+  if (!(c instanceof THREE.MeshStandardMaterial)) return;
+  const base = c.userData.base as { metalness: number; roughness: number; specular?: number };
+  // A part's own setting (look.parts) replaces the whole work's multiplier.
+  const part = look?.parts?.[c.userData.part as string];
+  c.metalness = part?.metalness ?? base.metalness * (look?.metalness ?? 1);
+  // Scales the roughness texture too; the shader caps it at fully matte.
+  c.roughness = (part?.roughness ?? base.roughness * (look?.roughness ?? 1)) * SHINE.roughness;
+  if (c instanceof THREE.MeshPhysicalMaterial && base.specular !== undefined)
+    c.specularIntensity = look?.specular ?? base.specular;
+};
+
+/** One surface of a model, as the look tweaker lists it. */
+export type ModelPart = { name: string; points: number; metalness: number; roughness: number };
 
 interface SculptureSceneProps {
   url: string;
@@ -181,6 +199,10 @@ interface SculptureSceneProps {
   facing?: number;
   /** Per-work surface and light tuning (see Sculpture.look). */
   look?: ArtworkLook;
+  /** Reports the model's parts (surfaces), largest first; for the look tweaker. */
+  onParts?: (parts: ModelPart[]) => void;
+  /** A part to tint green, to show where it is (look tweaker). */
+  highlight?: string;
   /** A candidate light rig to preview (components/three/lighting.ts); default LIGHTING. */
   rig?: string;
   /**
@@ -255,11 +277,12 @@ const RevealModel: FC<{
   adaptiveBg: boolean;
   onBackground?: (hex: string) => void;
   onReady?: () => void;
-}> = ({ url, offsetX, offsetY, reveal, fit, facing, look, cardFrame, adaptiveBg, onBackground, onReady }) => {
+  onParts?: (parts: ModelPart[]) => void;
+  highlight?: string;
+}> = ({ url, offsetX, offsetY, reveal, fit, facing, look, cardFrame, adaptiveBg, onBackground, onReady, onParts, highlight }) => {
   const { scene } = useGLTF(url, DRACO_PATH);
   // Keep the model cached while it's on screen; afterwards it may be evicted.
   useEffect(() => retainModel(url, scene), [url, scene]);
-  const lookKey = JSON.stringify(look ?? {});
   const get = useThree((state) => state.get);
 
   // Choose a contrasting backdrop from the model's own base colour.
@@ -336,23 +359,92 @@ const RevealModel: FC<{
     return clone;
   }, [scene, willReveal, wireClipBottom, wireClipTop]);
 
-  // Textured clone — the real surface, revealed from the floor up.
+  // Textured clone — the real surface, revealed from the floor up. Built once
+  // per model; the look is applied to its materials below.
   const texScene = useMemo(() => {
     const clone = scene.clone(true);
+    // Each surface is a "part", named after its material in the model file
+    // (look.parts); unnamed ones are numbered in the order they're met.
+    let unnamed = 0;
+    const named = new Map<THREE.Material, string>();
+    const partOf = (m: THREE.Material) => {
+      if (!named.has(m)) named.set(m, m.name || `Part ${++unnamed}`);
+      return named.get(m)!;
+    };
     clone.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
         const orig = child.material;
-        child.material = Array.isArray(orig)
-          ? orig.map((m) => prepareMaterial(m, look, texClip))
-          : prepareMaterial(orig, look, texClip);
+        const prep = (m: THREE.Material) => {
+          const c = prepareMaterial(m, texClip);
+          c.userData.part = partOf(m);
+          return c;
+        };
+        child.material = Array.isArray(orig) ? orig.map(prep) : prep(orig);
       }
     });
     return clone;
-    // The look is compared by value: callers may pass a fresh object each render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scene, texClip, lookKey]);
+  }, [scene, texClip]);
+
+  const metalness = look?.metalness;
+  const roughness = look?.roughness;
+  const specular = look?.specular;
+  const partsKey = JSON.stringify(look?.parts ?? {});
+  useLayoutEffect(() => {
+    const surface: ArtworkLook = { metalness, roughness, specular, parts: JSON.parse(partsKey) };
+    texScene.traverse((child) => {
+      if (child instanceof THREE.Mesh)
+        for (const m of [child.material].flat()) applyLook(m, surface);
+    });
+    get().invalidate();
+  }, [texScene, metalness, roughness, specular, partsKey, get]);
+
+  // Report the parts (for the look tweaker), largest first.
+  useEffect(() => {
+    if (!onParts) return;
+    const found = new Map<string, ModelPart>();
+    texScene.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+      const points = child.geometry.getAttribute("position")?.count ?? 0;
+      for (const m of [child.material].flat()) {
+        const name = m.userData.part as string;
+        const base = m.userData.base as { metalness: number; roughness: number } | undefined;
+        const p = found.get(name) ?? { name, points: 0, metalness: base?.metalness ?? 0, roughness: base?.roughness ?? 1 };
+        p.points += points;
+        found.set(name, p);
+      }
+    });
+    onParts([...found.values()].sort((a, b) => b.points - a.points));
+  }, [texScene, onParts]);
+
+  // Tint one part green for a moment, so the tweaker can show which it is.
+  useEffect(() => {
+    if (!highlight) return;
+    const lit: THREE.MeshStandardMaterial[] = [];
+    texScene.traverse((child) => {
+      if (child instanceof THREE.Mesh)
+        for (const m of [child.material].flat())
+          if (m instanceof THREE.MeshStandardMaterial && m.userData.part === highlight) lit.push(m);
+    });
+    const before = lit.map((m) => [m.emissive.clone(), m.emissiveIntensity, m.emissiveMap] as const);
+    for (const m of lit) {
+      m.emissive.set("#3fa85f");
+      m.emissiveIntensity = 0.6;
+      m.emissiveMap = null;
+      m.needsUpdate = true;
+    }
+    get().invalidate();
+    return () => {
+      lit.forEach((m, i) => {
+        m.emissive.copy(before[i][0]);
+        m.emissiveIntensity = before[i][1];
+        m.emissiveMap = before[i][2];
+        m.needsUpdate = true;
+      });
+      get().invalidate();
+    };
+  }, [highlight, texScene, get]);
 
   // Center + uniform-scale once, synchronously, before first paint.
   useLayoutEffect(() => {
@@ -544,6 +636,8 @@ export const SculptureContents: FC<
   rig: rigName,
   rotateOnly = false,
   card = false,
+  onParts,
+  highlight,
 }) => {
   const camZ = 4.0 / (defaultZoom <= 0 ? 1 : defaultZoom);
   // Thumbnails and card previews sit on a light plate, the viewer on its own
@@ -614,6 +708,8 @@ export const SculptureContents: FC<
           adaptiveBg={!isThumb && adaptiveBackground}
           onBackground={onBackground}
           onReady={onReady}
+          onParts={onParts}
+          highlight={highlight}
         />
         <WarmFrames key={`${url}|${facing}|${fit}|${JSON.stringify(look ?? {})}`} />
       </Suspense>

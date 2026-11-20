@@ -116,6 +116,13 @@ export interface ArtworkLook {
   cardZoom?: number;
   cardShift?: number;
   cardLift?: number;
+  /**
+   * Per-part surface, by the part's material name in the model file. Sets (not
+   * multiplies) metalness and roughness, 0–1, for that part in place of the
+   * whole-work values above; a part whose own metalness is 0 can only be
+   * changed this way. Set in the look tweaker (/lab/look).
+   */
+  parts?: Record<string, { metalness?: number; roughness?: number }>;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */
@@ -364,7 +371,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-dark-green-saree-lady.webp?v=6",
     modelUrl: "/sculptures/head-g.glb?v=2",
-    look: { metalness: 0.22, roughness: 1.75, reflections: 0.6, light: 0.65 },
+    look: { metalness: 0.3, roughness: 1.75, reflections: 0.6, light: 1.05, sideLights: 0.3 },
     facing: 180,
     material: "Bronze",
     year: "2026",
@@ -382,7 +389,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-blue-saree.webp?v=7",
     modelUrl: "/sculptures/female-with-blue-saree.glb?v=4",
-    look: { metalness: 0.17, roughness: 1.06, reflections: 1.8, light: 2, specular: 1 },
+    look: { metalness: 0.5, roughness: 1.5, reflections: 1.8, light: 0.3, specular: 1 },
     material: "Bronze",
     year: "",
     dimensions: "23 × 9 × 7 inches",
@@ -402,7 +409,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-yellow-saree-lady.webp?v=6",
     modelUrl: "/sculptures/female-head.glb?v=3",
-    look: { metalness: 0.47, roughness: 1.32, reflections: 0.6, light: 0.65 },
+    look: { metalness: 0.5, roughness: 1.2, reflections: 0.55, light: 0.8, sideLights: 0.4 },
     material: "Bronze",
     year: "2026",
     dimensions: "24 × 16 × 24 inches",

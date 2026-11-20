@@ -38,13 +38,24 @@ const ORDER = [
   "cardZoom",
   "cardShift",
   "cardLift",
+  "parts",
 ];
+
+/** A part's settings: metalness and roughness, each 0–1. */
+const PART_KEYS = ["metalness", "roughness"] as const;
 
 const round = (v: number) => Math.round(v * 100) / 100;
 
 function serialise(look: Record<string, unknown>) {
   const parts = ORDER.filter((k) => look[k] !== undefined).map((k) => {
     const v = look[k];
+    if (k === "parts") {
+      const each = Object.entries(v as Record<string, Record<string, number>>).map(([name, p]) => {
+        const set = PART_KEYS.filter((pk) => p[pk] !== undefined).map((pk) => `${pk}: ${p[pk]}`);
+        return `${JSON.stringify(name)}: { ${set.join(", ")} }`;
+      });
+      return `parts: { ${each.join(", ")} }`;
+    }
     return `${k}: ${typeof v === "string" ? JSON.stringify(v) : String(v)}`;
   });
   return parts.length ? `{ ${parts.join(", ")} }` : "{}";
@@ -77,6 +88,26 @@ export async function POST(req: Request) {
     } else if (k === "rig") {
       if (v !== "previous") return NextResponse.json({ error: "rig can only be \"previous\"." }, { status: 400 });
       look[k] = v;
+    } else if (k === "parts") {
+      if (typeof v !== "object" || Array.isArray(v)) {
+        return NextResponse.json({ error: "parts must be an object." }, { status: 400 });
+      }
+      const parts: Record<string, Record<string, number>> = {};
+      for (const [name, p] of Object.entries(v as Record<string, unknown>)) {
+        if (!name || name.length > 120 || /[\r\n]/.test(name) || typeof p !== "object" || p === null) {
+          return NextResponse.json({ error: `Part "${name}" isn't valid.` }, { status: 400 });
+        }
+        const set: Record<string, number> = {};
+        for (const [pk, pv] of Object.entries(p as Record<string, unknown>)) {
+          if (pv === undefined || pv === null) continue;
+          if (!(PART_KEYS as readonly string[]).includes(pk) || typeof pv !== "number" || !Number.isFinite(pv) || pv < 0 || pv > 1) {
+            return NextResponse.json({ error: `Part "${name}": ${pk} must be a number from 0 to 1.` }, { status: 400 });
+          }
+          set[pk] = round(pv);
+        }
+        if (Object.keys(set).length) parts[name] = set;
+      }
+      if (Object.keys(parts).length) look[k] = parts;
     } else if (k === "selfShadow") {
       if (typeof v !== "boolean") return NextResponse.json({ error: "selfShadow must be true or false." }, { status: 400 });
       look[k] = v;
