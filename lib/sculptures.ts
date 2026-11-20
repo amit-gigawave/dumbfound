@@ -382,7 +382,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "thota-vaikuntam",
     thumbnail: "/thumbnails/thota-blue-saree.webp?v=7",
     modelUrl: "/sculptures/female-with-blue-saree.glb?v=4",
-    look: { metalness: 0.17, roughness: 1.06, reflections: 1.8, light: 2, specular: 1 },
+    look: { metalness: 0.5, roughness: 1.5, reflections: 1.8, light: 0.3, specular: 1 },
     material: "Bronze",
     year: "",
     dimensions: "23 × 9 × 7 inches",
