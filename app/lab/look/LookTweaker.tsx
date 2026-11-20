@@ -6,13 +6,19 @@
 // through /api/lab/look (local dev server only).
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { ArtworkLook } from "@/lib/sculptures";
 import { FIT_VIEWER } from "@/components/three/modelLoader";
 
 const SculptureScene = dynamic(() => import("@/components/SculptureScene"), { ssr: false });
+
+/** sessionStorage key for the save message, kept across the reload that follows a save. */
+const SAVED_KEY = "look-tweaker-saved";
+
+const savedText = (title: string, slug: string) =>
+  `Saved. ${title} now uses this look on the site. Its card picture updates when you run "npm run thumbnails -- ${slug}".`;
 
 type Work = {
   slug: string;
@@ -72,6 +78,30 @@ export default function LookTweaker({
   const saved = work.look;
   const [look, setLook] = useState<ArtworkLook>(saved);
   const [status, setStatus] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+  const [saving, setSaving] = useState(false);
+  // The viewer follows the sliders a beat behind, so dragging stays smooth.
+  const shown = useDeferredValue(look);
+
+  // Saving rewrites lib/sculptures.ts, and the dev server then reloads this
+  // page. The message is kept for that reload so it isn't lost.
+  useEffect(() => {
+    try {
+      const kept = sessionStorage.getItem(SAVED_KEY);
+      if (!kept) return;
+      // Kept before sending, as the reload (sometimes two) can come before the
+      // server's reply: the save went through if the catalogue now holds that
+      // look. Shown for a minute, or until the next change.
+      const { slug: s, sent, at } = JSON.parse(kept);
+      if (s !== slug || Date.now() - at > 60_000) return sessionStorage.removeItem(SAVED_KEY);
+      setStatus(
+        same(sent, saved)
+          ? { kind: "ok", text: savedText(work.title, slug) }
+          : { kind: "error", text: "The last save didn't go through. Try Save to site again." },
+      );
+    } catch {}
+    // Only on load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [bg, setBg] = useState<string | null>(null);
   const controls = useRef<OrbitControlsImpl | null>(null);
   const changed = !same(look, saved);
@@ -120,24 +150,44 @@ export default function LookTweaker({
       ?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
   }, [slug]);
 
+  const forgetSave = () => {
+    try {
+      sessionStorage.removeItem(SAVED_KEY);
+    } catch {}
+  };
+
   const set = (patch: Partial<ArtworkLook>) => {
+    forgetSave();
     setStatus(null);
     setLook((l) => ({ ...l, ...patch }));
   };
 
   const save = async () => {
     setStatus(null);
+    setSaving(true);
+    try {
+      sessionStorage.setItem(SAVED_KEY, JSON.stringify({ slug, sent: normal(look), at: Date.now() }));
+    } catch {}
     try {
       const res = await fetch("/api/lab/look", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ slug, look: normal(look) }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Saving failed.");
-      setStatus({ kind: "ok", text: `Saved to lib/sculptures.ts. Run "npm run thumbnails -- ${slug}" to update its card image.` });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Saving failed (error ${res.status}). Check the dev server is running.`);
+      setStatus({ kind: "ok", text: savedText(work.title, slug) });
     } catch (e) {
-      setStatus({ kind: "error", text: (e as Error).message });
+      try {
+        sessionStorage.removeItem(SAVED_KEY);
+      } catch {}
+      const msg = (e as Error).message;
+      setStatus({
+        kind: "error",
+        text: msg === "Failed to fetch" ? "Couldn't reach the dev server. Check it's running, then save again." : msg,
+      });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -230,7 +280,7 @@ export default function LookTweaker({
             interactive
             fit={FIT_VIEWER}
             facing={viewer.facing}
-            look={look}
+            look={shown}
             reveal={false}
             controlsRef={controls}
             onBackground={setBg}
@@ -331,11 +381,11 @@ export default function LookTweaker({
             <button
               type="button"
               onClick={save}
-              disabled={!canSave || !changed}
+              disabled={!canSave || !changed || saving}
               className="btn !px-5 !py-2 disabled:cursor-not-allowed disabled:opacity-40"
               title={canSave ? undefined : "Saving only works on the local dev server"}
             >
-              Save to site
+              {saving ? "Saving…" : "Save to site"}
             </button>
             <button type="button" onClick={() => { setStatus(null); setLook(saved); }} disabled={!changed} className="rounded-full border border-rule bg-white px-4 py-2 text-[14px] hover:border-ink disabled:opacity-40">
               Reset to saved
