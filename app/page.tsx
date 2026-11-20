@@ -115,41 +115,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* To scale: a shelf of works at their real heights, the way into True scale. */}
-      {toScale.length > 1 && (
-        <section className="mt-[clamp(56px,7vw,96px)] border-y border-rule bg-white pb-[clamp(56px,6vw,72px)] pt-[clamp(48px,6vw,88px)]">
-          <div className={wrap}>
-            <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
-              <div className="grid gap-3">
-                <h2 className="font-display text-[clamp(32px,3.1vw,44px)] leading-[1.18]">
-                  Twelve works at their real heights
-                </h2>
-                <p className="font-text max-w-[36em] text-[clamp(16px,1.25vw,18px)] leading-[1.6] text-[#333]">
-                  Each work stands at the height given in its listed
-                  dimensions, from a 25 cm bandsman to a 183 cm Ganesha.
-                  <span className="md:hidden"> Swipe along the shelf.</span>
-                </p>
-              </div>
-              <Link
-                href="/artworks?view=scale"
-                className="hidden rounded-[2px] border border-ink bg-white px-5 py-3 text-[14px] text-ink transition-colors hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink md:inline-block"
-              >
-                Open True scale
-              </Link>
-            </div>
-            <div className="mt-10 md:mt-[clamp(150px,13vw,190px)]">
-              <ToScaleShelf works={toScale} />
-            </div>
-            <Link
-              href="/artworks?view=scale"
-              className="mt-6 inline-block text-[15px] text-accent underline underline-offset-4 md:hidden"
-            >
-              Open True scale
-            </Link>
-          </div>
-        </section>
-      )}
-
       <section className={`${wrap} py-[clamp(64px,8vw,110px)]`}>
         <SectionHeader
           title="Artists"
@@ -190,6 +155,41 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* To scale: a shelf of works at their real heights, the way into True scale. */}
+      {toScale.length > 1 && (
+        <section className="border-b border-rule pb-[clamp(56px,6vw,72px)] pt-[clamp(64px,8vw,110px)]">
+          <div className={wrap}>
+            <div className="flex flex-wrap items-start justify-between gap-x-10 gap-y-5">
+              <div className="grid gap-3">
+                <h2 className="font-display text-[clamp(32px,3.1vw,44px)] leading-[1.18]">
+                  Twelve works at their real heights
+                </h2>
+                <p className="font-text max-w-[36em] text-[clamp(16px,1.25vw,18px)] leading-[1.6] text-[#333]">
+                  Each work stands at the height given in its listed
+                  dimensions, from a 25 cm bandsman to a 183 cm Ganesha.
+                  <span className="md:hidden"> Swipe along the shelf.</span>
+                </p>
+              </div>
+              <Link
+                href="/artworks?view=scale"
+                className="hidden rounded-[2px] border border-ink bg-white px-5 py-3 text-[14px] text-ink transition-colors hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink md:inline-block"
+              >
+                Open True scale
+              </Link>
+            </div>
+            <div className="mt-10 md:mt-[clamp(150px,13vw,190px)]">
+              <ToScaleShelf works={toScale} />
+            </div>
+            <Link
+              href="/artworks?view=scale"
+              className="mt-6 inline-block text-[15px] text-accent underline underline-offset-4 md:hidden"
+            >
+              Open True scale
+            </Link>
+          </div>
+        </section>
+      )}
 
       {explore.length > 0 && (
         <section className="py-[clamp(64px,8vw,110px)]">
