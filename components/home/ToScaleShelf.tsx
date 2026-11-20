@@ -12,8 +12,9 @@ import { useImageStats } from "../gallery/views/imageStats";
  */
 const CM = "clamp(1.25px, 0.132vw, 1.9px)";
 const cm = (h: number) => `calc(${h} * var(--cm))`;
-/** Height guides behind the works. */
-const GUIDES = [50, 100, 150];
+/** Height guides behind the works: every 50 cm below the tallest. */
+const guides = (tallest: number) =>
+  Array.from({ length: Math.ceil(tallest / 50) - 1 }, (_, i) => (i + 1) * 50);
 
 /**
  * The home page's taste of True scale: a fixed set of works standing on one
@@ -64,7 +65,7 @@ export default function ToScaleShelf({ works }: { works: ConceptWork[] }) {
     >
       {/* Guides: a line every 50 cm, labelled in the left margin (wider screens). */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[25px] hidden md:block" style={{ height: cm(tallest) }}>
-        {GUIDES.filter((g) => g < tallest).map((g) => (
+        {guides(tallest).map((g) => (
           <div
             key={g}
             className="absolute inset-x-0 flex items-center gap-4"
