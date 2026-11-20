@@ -95,7 +95,9 @@ export default function Home() {
       )}
 
       {/* About: what Sculpted India stands for, set as plain text. */}
-      <section id="about" className="pb-[clamp(8px,2vw,24px)] pt-[clamp(88px,12vw,168px)]">
+      {/* On large screens it rises into the empty foot of the hero's pinned
+          panel (whose content is centred on the screen), so the gap stays small. */}
+      <section id="about" className="relative pb-[clamp(8px,2vw,24px)] pt-[clamp(40px,5vw,64px)] lg:-mt-[14vh] motion-reduce:lg:mt-0">
         <div
           className={`${wrap} grid gap-[clamp(28px,5vw,80px)] md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:items-end`}
         >
