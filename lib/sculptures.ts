@@ -116,6 +116,13 @@ export interface ArtworkLook {
   cardZoom?: number;
   cardShift?: number;
   cardLift?: number;
+  /**
+   * Per-part surface, by the part's material name in the model file. Sets (not
+   * multiplies) metalness and roughness, 0–1, for that part in place of the
+   * whole-work values above; a part whose own metalness is 0 can only be
+   * changed this way. Set in the look tweaker (/lab/look).
+   */
+  parts?: Record<string, { metalness?: number; roughness?: number }>;
 }
 
 /** AR height for works whose real height (`heightCm`) isn't known yet. */

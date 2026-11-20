@@ -11,6 +11,7 @@ import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { ArtworkLook } from "@/lib/sculptures";
 import { FIT_VIEWER } from "@/components/three/modelLoader";
+import type { ModelPart } from "@/components/SculptureScene";
 
 const SculptureScene = dynamic(() => import("@/components/SculptureScene"), { ssr: false });
 
@@ -54,13 +55,36 @@ function normal(l: ArtworkLook): ArtworkLook {
   for (const s of SLIDERS) if (l[s.key] !== undefined && l[s.key] !== s.base) out[s.key] = l[s.key];
   for (const k of ["specular", "rig", "cardLight", "selfShadow", "cardZoom", "cardShift", "cardLift"] as const)
     if (l[k] !== undefined) out[k] = l[k];
+  // Parts with at least one setting, by name, each as metalness then roughness.
+  const parts: Record<string, { metalness?: number; roughness?: number }> = {};
+  for (const name of Object.keys(l.parts ?? {}).sort()) {
+    const p = l.parts![name];
+    const set = {
+      ...(p.metalness !== undefined && { metalness: p.metalness }),
+      ...(p.roughness !== undefined && { roughness: p.roughness }),
+    };
+    if (Object.keys(set).length) parts[name] = set;
+  }
+  if (Object.keys(parts).length) out.parts = parts;
   return out as ArtworkLook;
 }
 const asLine = (l: ArtworkLook) => {
   const n = normal(l) as Record<string, unknown>;
-  const parts = Object.entries(n).map(([k, v]) => `${k}: ${typeof v === "string" ? JSON.stringify(v) : v}`);
+  const parts = Object.entries(n).map(([k, v]) => {
+    if (k === "parts") {
+      const each = Object.entries(v as Record<string, Record<string, number>>).map(
+        ([name, p]) => `${JSON.stringify(name)}: { ${Object.entries(p).map(([pk, pv]) => `${pk}: ${pv}`).join(", ")} }`,
+      );
+      return `parts: { ${each.join(", ")} }`;
+    }
+    return `${k}: ${typeof v === "string" ? JSON.stringify(v) : v}`;
+  });
   return `look: ${parts.length ? `{ ${parts.join(", ")} }` : "{}"},`;
 };
+
+/** Point count in a short form: 30k, 1.4M. */
+const points = (n: number) =>
+  n >= 1e6 ? `${(n / 1e6).toFixed(1)}M points` : n >= 1e3 ? `${Math.round(n / 1e3)}k points` : `${n} points`;
 
 export default function LookTweaker({
   works,
@@ -79,6 +103,34 @@ export default function LookTweaker({
   const [look, setLook] = useState<ArtworkLook>(saved);
   const [status, setStatus] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [saving, setSaving] = useState(false);
+  // The model's parts (reported by the viewer), the one being tuned (null is
+  // the whole work) and the one tinted to show where it is.
+  const [parts, setParts] = useState<ModelPart[]>([]);
+  const [part, setPart] = useState<string | null>(null);
+  const [highlight, setHighlight] = useState<string>();
+  useEffect(() => {
+    if (!highlight) return;
+    const t = setTimeout(() => setHighlight(undefined), 1200);
+    return () => clearTimeout(t);
+  }, [highlight]);
+  const choosePart = (name: string | null) => {
+    setPart(name);
+    setHighlight(name ?? undefined);
+  };
+  const setPartValue = (key: "metalness" | "roughness", value: number | undefined) => {
+    if (!part) return;
+    const current = { ...(look.parts?.[part] ?? {}), [key]: value };
+    if (value === undefined) delete current[key];
+    const next = { ...(look.parts ?? {}), [part]: current };
+    if (!Object.keys(current).length) delete next[part];
+    set({ parts: Object.keys(next).length ? next : undefined });
+  };
+  const clearPart = () => {
+    if (!part) return;
+    const next = { ...(look.parts ?? {}) };
+    delete next[part];
+    set({ parts: Object.keys(next).length ? next : undefined });
+  };
   // The viewer follows the sliders a beat behind, so dragging stays smooth.
   const shown = useDeferredValue(look);
 
@@ -109,6 +161,10 @@ export default function LookTweaker({
   // A different work (or a fresh save) starts from its saved look.
   const [seen, setSeen] = useState(`${slug}|${JSON.stringify(saved)}`);
   if (seen !== `${slug}|${JSON.stringify(saved)}`) {
+    if (!seen.startsWith(`${slug}|`)) {
+      setParts([]);
+      setPart(null);
+    }
     setSeen(`${slug}|${JSON.stringify(saved)}`);
     setLook(saved);
   }
@@ -284,6 +340,8 @@ export default function LookTweaker({
             reveal={false}
             controlsRef={controls}
             onBackground={setBg}
+            onParts={setParts}
+            highlight={highlight}
           />
           <button
             type="button"
@@ -376,6 +434,88 @@ export default function LookTweaker({
               </select>
             </label>
           </div>
+
+          {/* Parts: a model made of several surfaces can set each one's
+              metalness and roughness on its own. */}
+          {parts.length > 1 && (
+            <div className="mt-6 border-t border-rule pt-5">
+              <p className="text-[14px]">Parts</p>
+              <p className="mt-1 text-[12px] leading-snug text-stone">
+                This model has {parts.length} surfaces. Pick one to set it on its own; it lights up green in the
+                viewer. The sliders above still apply to every part you haven&rsquo;t set here.
+              </p>
+              <div role="radiogroup" aria-label="Part" className="mt-3 flex flex-wrap gap-1.5">
+                {[null, ...parts.map((p) => p.name)].map((name) => {
+                  const on = part === name;
+                  const info = parts.find((p) => p.name === name);
+                  const tuned = name !== null && look.parts?.[name] !== undefined;
+                  return (
+                    <button
+                      key={name ?? "whole"}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => choosePart(name)}
+                      title={info ? points(info.points) : undefined}
+                      className={`relative rounded-full border px-3 py-1.5 text-[13px] ${
+                        on ? "border-ink bg-ink text-white" : "border-rule bg-white hover:border-ink"
+                      }`}
+                    >
+                      {name ?? "Whole work"}
+                      {info && <span className={`ml-1.5 text-[11px] ${on ? "text-white/70" : "text-stone"}`}>{points(info.points)}</span>}
+                      {tuned && <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent" aria-label="Set on its own" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {part && (() => {
+                const info = parts.find((p) => p.name === part);
+                const own = look.parts?.[part] ?? {};
+                return (
+                  <div className="mt-4 space-y-5">
+                    {(["metalness", "roughness"] as const).map((key) => {
+                      const scan = info?.[key] ?? 0;
+                      const v = own[key];
+                      return (
+                        <label key={key} className="block">
+                          <span className="flex items-baseline justify-between text-[14px]">
+                            <span>{key === "metalness" ? "Metalness" : "Roughness"} of {part}</span>
+                            <span className="tabular-nums text-ink">
+                              {v !== undefined ? v.toFixed(2) : `scan's own ${scan.toFixed(2)}`}
+                            </span>
+                          </span>
+                          <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={v ?? scan}
+                            onChange={(e) => setPartValue(key, Number(e.target.value))}
+                            className="mt-1.5 w-full accent-[#396046]"
+                          />
+                          <span className="block text-[12px] leading-snug text-stone">
+                            {key === "metalness"
+                              ? "Sets this part's metalness: 0 is paint or stone, 1 is metal."
+                              : "Sets this part's roughness: 0 is glossy, 1 is fully matte."}
+                          </span>
+                        </label>
+                      );
+                    })}
+                    {Object.keys(own).length > 0 && (
+                      <button
+                        type="button"
+                        onClick={clearPart}
+                        className="rounded-full border border-rule bg-white px-3 py-1.5 text-[13px] hover:border-ink"
+                      >
+                        Follow the whole-work sliders
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
 
           <div className="mt-6 flex flex-wrap gap-2">
             <button
