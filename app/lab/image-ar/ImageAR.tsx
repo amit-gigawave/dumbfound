@@ -50,10 +50,6 @@ const FIT_UNITS = 1.1;
 const CARD_WIDTHS = [7, 10, 15];
 
 type Mode = "fit" | "real";
-/** Where the card is: upright (held up, on a stand or a screen) or flat on a table. */
-type Place = "upright" | "flat";
-/** The cards' height / width. */
-const CARD_RATIO = 1.3;
 
 /** How big the work is shown, in plain words: "Shown at 1/3 of real size". */
 function sizeText(ratio: number) {
@@ -105,16 +101,13 @@ export default function ImageAR({
   const [cardCm, setCardCm] = useState(10);
   // Off by default: beside a small work a 1.7 m person fills the view.
   const [person, setPerson] = useState(false);
-  // Flat by default: the card lies on the floor or a table and the work
-  // stands straight up out of it, at 90 degrees to the card.
-  const [place, setPlace] = useState<Place>("flat");
+  // The work always stands straight up out of the card's centre, at 90
+  // degrees to it, and stays fixed there: it can't be dragged round.
   // Live settings for the render loop (it reads these, not React state).
-  // The visitor's turn of the work (degrees), from a one-finger drag.
-  const [turn, setTurn] = useState(0);
-  const live = useRef({ mode, zoom, cardCm, person, place, turn });
+  const live = useRef({ mode, zoom, cardCm, person });
   useEffect(() => {
-    live.current = { mode, zoom, cardCm, person, place, turn };
-  }, [mode, zoom, cardCm, person, place, turn]);
+    live.current = { mode, zoom, cardCm, person };
+  }, [mode, zoom, cardCm, person]);
   const stopRef = useRef<() => void>(() => {});
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect -- the portal needs the browser
@@ -197,10 +190,9 @@ export default function ImageAR({
   };
   useEffect(() => () => stopRef.current(), []);
 
-  // Gestures on the camera view: one finger drags the work round, two
-  // fingers pinch to resize, a double tap puts both back.
+  // Gestures on the camera view: two fingers pinch to resize, a double tap
+  // puts the size back. One finger does nothing: the work stays where it is.
   const pinch = useRef<{ d: number; z: number } | null>(null);
-  const drag = useRef<{ x: number; turn: number } | null>(null);
   const lastTap = useRef(0);
   const touches = (e: React.TouchEvent) =>
     Math.hypot(
@@ -226,7 +218,7 @@ export default function ImageAR({
         the card, looking down: the tracker loses a card seen at a shallow
         angle. Pinch or use the slider to resize, choose <b>Real size</b> and
         the printed width of your card, or add a 1.7 m person at the same scale.
-        For a card held up or on a screen, switch to <b>Card upright</b>.
+        The work stays fixed on the card, standing at 90 degrees to it.
       </p>
       <p className="mt-3 max-w-[64ch] text-[15px] leading-relaxed text-stone">
         <b>For a steady view, tap Anchor it here</b> once the work appears. The
@@ -253,16 +245,11 @@ export default function ImageAR({
             onTouchStart={(e) => {
               if ((e.target as HTMLElement).closest("button, input")) return;
               if (e.touches.length === 2) {
-                drag.current = null;
                 pinch.current = { d: touches(e), z: zoom };
               } else if (e.touches.length === 1) {
                 const now = performance.now();
-                if (now - lastTap.current < 300) {
-                  setTurn(0);
-                  setZoom(1);
-                }
+                if (now - lastTap.current < 300) setZoom(1);
                 lastTap.current = now;
-                drag.current = { x: e.touches[0].clientX, turn };
               }
             }}
             onTouchMove={(e) => {
@@ -276,18 +263,9 @@ export default function ImageAR({
                     ),
                   ),
                 );
-              else if (e.touches.length === 1 && drag.current)
-                // A full drag across the screen turns the work once round.
-                setTurn(
-                  drag.current.turn +
-                    ((e.touches[0].clientX - drag.current.x) /
-                      window.innerWidth) *
-                      360,
-                );
             }}
             onTouchEnd={() => {
               pinch.current = null;
-              drag.current = null;
             }}
             className={
               running
@@ -311,7 +289,7 @@ export default function ImageAR({
                         {sizeText(ratio)}
                       </p>
                       <p className="mt-1 text-[12px] opacity-75">
-                        Drag to turn · pinch to resize · double-tap to reset
+                        Pinch to resize · double-tap to reset
                       </p>
                       {canAnchor && (
                         <p className="mt-1 text-[12px] opacity-75">
@@ -365,17 +343,6 @@ export default function ImageAR({
                     className={`rounded-full px-4 py-2 text-[14px] ${person ? "bg-white text-ink" : "bg-white/20"}`}
                   >
                     1.7 m person
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPlace((p) => (p === "upright" ? "flat" : "upright"))
-                    }
-                    className="rounded-full bg-white/20 px-4 py-2 text-[14px]"
-                  >
-                    {place === "upright"
-                      ? "Card upright"
-                      : "Card flat on table"}
                   </button>
                 </div>
                 {mode === "real" && (
@@ -471,8 +438,6 @@ async function startAR(
     zoom: number;
     cardCm: number;
     person: boolean;
-    place: Place;
-    turn: number;
   }>,
   onFound: (i: number | null) => void,
   onStatus: (s: string | null) => void,
@@ -602,17 +567,14 @@ async function startAR(
   });
 
   // Each work, and the person beside it, in cm inside `holder`, which turns
-  // cm into card units and places them every frame: upright, they stand in
-  // front of the card on its bottom edge, facing the viewer; flat, they stand
-  // up out of the card's centre, facing its bottom edge.
+  // cm into card units and stands them up out of the card's centre, facing
+  // its bottom edge.
   const loader = new GLTFLoader();
   const draco = new DRACOLoader();
   draco.setDecoderPath(DRACO_PATH);
   loader.setDRACOLoader(draco);
   const holders: (THREE.Group | null)[] = works.map(() => null);
   const people: THREE.Group[] = [];
-  const depths: number[] = []; // each work's depth (cm)
-  const pivots: (THREE.Group | null)[] = works.map(() => null);
   const load = (i: number) => {
     if (holders[i]) return;
     const w = works[i];
@@ -626,16 +588,11 @@ async function startAR(
       const size = box.getSize(new THREE.Vector3());
       const centre = box.getCenter(new THREE.Vector3());
       const toCm = w.heightCm / size.y;
-      depths[i] = size.z * toCm;
       const fitted = new THREE.Group();
       model.position.set(-centre.x, -box.min.y, -centre.z);
       fitted.add(model);
       fitted.scale.setScalar(toCm); // now in cm, base at 0
-      // The visitor turns the work (not the person) on this pivot.
-      const pivot = new THREE.Group();
-      pivot.add(fitted);
-      pivots[i] = pivot;
-      holder.add(pivot);
+      holder.add(fitted);
       // The optional person stands to the work's right.
       const fig = personFigure(PERSON_CM);
       fig.position.x = (size.x * toCm) / 2 + 30; // beside the work, 30 cm away
@@ -709,17 +666,11 @@ async function startAR(
         (s.mode === "real" ? 1 / s.cardCm : FIT_UNITS / works[i].heightCm) *
         s.zoom;
       h.scale.setScalar(perCm);
-      if (s.place === "flat") {
-        // Up (y) becomes out of the card (z); the front faces the bottom edge.
-        h.rotation.x = Math.PI / 2;
-        h.position.set(0, 0, 0);
-      } else {
-        // Standing on the card's bottom edge, just in front of it.
-        h.rotation.x = 0;
-        h.position.set(0, -CARD_RATIO / 2, ((depths[i] ?? 0) / 2) * perCm);
-      }
+      // Up (y) becomes out of the card (z): the work stands at 90 degrees to
+      // the card, its base on the card's centre, its front to the bottom edge.
+      h.rotation.x = Math.PI / 2;
+      h.position.set(0, 0, 0);
       if (people[i]) people[i].visible = s.person;
-      if (pivots[i]) pivots[i]!.rotation.y = (s.turn * Math.PI) / 180;
     });
     renderer.render(scene, camera);
   });
