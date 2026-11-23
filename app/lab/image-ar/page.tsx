@@ -19,6 +19,7 @@ const CARD_SLUGS = [
   "thota-female-head-with-polka-dot-collar",
   "sugandh-meri-patang",
   "thota-yellow-saree-lady",
+  "thota-ruby-saree-lady",
 ];
 
 export default function ImageARPage() {

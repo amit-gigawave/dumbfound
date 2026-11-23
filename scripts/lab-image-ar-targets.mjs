@@ -4,7 +4,7 @@
 //   node scripts/lab-image-ar-targets.mjs
 import puppeteer from "puppeteer";
 import { writeFileSync } from "node:fs";
-const SLUGS = ["khanna-kc-the-bandmaster", "thota-female-head-with-polka-dot-collar", "sugandh-meri-patang", "thota-yellow-saree-lady"];
+const SLUGS = ["khanna-kc-the-bandmaster", "thota-female-head-with-polka-dot-collar", "sugandh-meri-patang", "thota-yellow-saree-lady", "thota-ruby-saree-lady"];
 const b = await puppeteer.launch({ headless: true, args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });
 const p = await b.newPage();
 p.on("console", (m) => /progress|error/i.test(m.text()) && console.log("  page:", m.text().slice(0, 120)));
