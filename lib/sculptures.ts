@@ -1077,6 +1077,28 @@ export const sculptures: Sculpture[] = [
     dimensions: "92 × 71 × 80 inches",
     heightCm: 234,
   },
+  // Scan "headC.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "20 - Himmat Shah Bronze": HS-0428; the same work (HS-0428) in the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), matched by photo (the crack lines, broad nose and slit mouth).
+  // Titled "Untitled (Head)" in its source; descriptive name used on the site, as for the other Himmat Shah heads.
+  {
+    slug: "shah-cracked-head",
+    form: "head",
+    title: "Cracked Head",
+    description: "A bronze head by Himmat Shah, 49 × 27 × 31 inches, from an edition of 5 plus an artist's proof. Listed in its source as Untitled (Head).",
+    longDescription:
+      "A tall, smooth head rises from a long, slightly flared neck, its outline swelling to a broad, rounded crown. Across the whole surface runs a network of fine, dark lines, like cracks in dried earth or a glazed pot, dividing the skull, face and neck into irregular plates.\n\nThe face is reduced to a few features. A long, heavy nose runs down from the brow, its ridge rough and broken where the rest of the surface is smooth. On either side, two tiny round holes mark the eyes, set within softly raised areas. Below the nose, the mouth is a single short slit above a small, rounded chin.\n\nThe bronze has an even, warm grey-brown tone with a soft sheen, so the cracks read as drawn lines over the curved surfaces. A raised ridge runs over the top of the head from front to back. The bronze measures 49 × 27 × 31 inches, about 124 cm high, and comes from an edition of 5 plus an artist's proof. It is listed in its source as Untitled (Head).",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/shah-cracked-head.webp",
+    modelUrl: "/sculptures/shah-cracked-head.glb",
+    look: { metalness: 0.2, roughness: 1.31, reflections: 0.6 },
+    facing: 240,
+    material: "Bronze",
+    year: "",
+    dimensions: "49 × 27 × 31 inches",
+    edition: "Edition of 5 + AP",
+    heightCm: 124,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
