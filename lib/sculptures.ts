@@ -997,6 +997,27 @@ export const sculptures: Sculpture[] = [
     dimensions: "50 × 28 × 31 inches",
     heightCm: 127,
   },
+  // Scan "25.glb". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "25 - Himmat Shah Bronze": HS-0429; the same work (HS-0429) in the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), matched by photo.
+  // Titled "Untitled (Head)" in its source; descriptive name used on the site, as for the other Himmat Shah heads.
+  {
+    slug: "shah-faceted-head",
+    form: "head",
+    title: "Faceted Head",
+    description: "A bronze head by Himmat Shah, 52 × 19 × 26 inches, from an edition of 5 plus an artist's proof. Listed in its source as Untitled (Head).",
+    longDescription:
+      "A tall, narrow head stands on a block-like neck that widens into a squared base. Its outline is a long oval, but the surface is broken into flat, angled facets, as if the form had been cut and folded rather than smoothed, so that edges and ridges catch the light across the whole face.\n\nA thin, winding groove runs down the middle of the forehead from the crown. Below it, a small raised rectangle with a rounded hollow sits where the bridge of the nose would be. The lips are full and slightly parted, set above a short straight line that drops to the chin. The eyes are not shown as such: angled planes and shallow recesses on either side take their place.\n\nThe bronze is a warm brown, and patches of a paler, golden tone are scattered over the cheeks, brow and neck, with rough, mottled texture inside them. At the top, the crown is cut flat with a notch in the centre. The bronze measures 52 × 19 × 26 inches, about 132 cm high, and comes from an edition of 5 plus an artist's proof. It is listed in its source as Untitled (Head).",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/shah-faceted-head.webp",
+    modelUrl: "/sculptures/shah-faceted-head.glb",
+    look: { metalness: 0.15, roughness: 2.46, reflections: 0.6 },
+    material: "Bronze",
+    year: "",
+    dimensions: "52 × 19 × 26 inches",
+    edition: "Edition of 5 + AP",
+    heightCm: 132,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
