@@ -1101,6 +1101,26 @@ export const sculptures: Sculpture[] = [
     edition: "Edition of 5 + AP",
     heightCm: 124,
   },
+  // Scan "F_DRONE03.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "51 - Drone 03", and the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/, "To be Scanned works") (matched by photo): TVA/Jan2025/003. Year not given.
+  // Listed as 93 x 70 x 57 inches on a painted stainless steel pedestal (12 x 56 x 48 inches; overall height 105 inches).
+  // The scan has no pedestal, so the head's own size is shown (93 inches = 236 cm).
+  // Titled "Untitled (Female Head, long black hair, striped nose ring)" in its source; descriptive name used on the site, as for the other drone works.
+  {
+    slug: "thota-female-head-with-long-black-hair",
+    form: "head",
+    title: "Female Head with Long Black Hair",
+    description: "A head by Thota Vaikuntam in resinated fibreglass with automotive paint, 93 × 70 × 57 inches: well over two metres tall. Listed in its source as Untitled (Female Head, long black hair, striped nose ring).",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-female-head-with-long-black-hair.webp?v=2",
+    modelUrl: "/sculptures/thota-female-head-with-long-black-hair.glb",
+    look: { metalness: 0.2, roughness: 1.65, reflections: 0.6 },
+    facing: 90,
+    material: "Resinated Fibreglass with Automotive Paint",
+    year: "",
+    dimensions: "93 × 70 × 57 inches",
+    heightCm: 236,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
