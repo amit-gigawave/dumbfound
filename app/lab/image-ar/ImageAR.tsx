@@ -13,18 +13,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { DRACO_PATH } from "@/components/three/modelLoader";
-import {
-  detectPlatform,
-  launchSceneViewer,
-  openQuickLook,
-  resolveUsdz,
-  toAbs,
-  type WithModel,
-} from "@/components/ARButton";
-import WebXRStage, {
-  webXRSupported,
-  type WebXRStageHandle,
-} from "@/components/WebXRStage";
+import { type WithModel } from "@/components/ARButton";
 
 export type ARWork = {
   slug: string;
@@ -150,44 +139,6 @@ export default function ImageAR({
     setFound(null);
   };
 
-  // Hand-off to the phone's own AR, which tracks the room (SLAM: ARCore on
-  // Android, ARKit on iPhone) instead of following the card frame by frame,
-  // so the work stays pinned to its spot. The card has done its job: it told
-  // us which work this is. On Android the WebXR stage for the last work seen
-  // is kept loaded, so AR can start straight from the tap.
-  const [platform, setPlatform] = useState<"android" | "ios" | "desktop">(
-    "desktop",
-  );
-  const [webXR, setWebXR] = useState(false);
-  useEffect(() => {
-    const p = detectPlatform();
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser only
-    setPlatform(p);
-    if (p === "android") webXRSupported().then(setWebXR);
-  }, []);
-  const [lastSeen, setLastSeen] = useState<number | null>(null);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- follows the tracker
-    if (found !== null) setLastSeen(found);
-  }, [found]);
-  const xrRef = useRef<WebXRStageHandle>(null);
-  const canAnchor = platform === "ios" || platform === "android";
-  const anchor = async () => {
-    if (lastSeen === null) return;
-    const w = works[lastSeen];
-    // Free the camera first: the phone's AR needs it.
-    stop();
-    if (platform === "android") {
-      if (!xrRef.current?.launch())
-        launchSceneViewer(toAbs(w.arUrl), w.title, window.location.href);
-      return;
-    }
-    try {
-      openQuickLook(await resolveUsdz(w.sculpture));
-    } catch {
-      setStatus("Couldn't open AR on this phone.");
-    }
-  };
   useEffect(() => () => stopRef.current(), []);
 
   // Gestures on the camera view: two fingers pinch to resize, a double tap
@@ -219,13 +170,6 @@ export default function ImageAR({
         angle. Pinch or use the slider to resize, choose <b>Real size</b> and
         the printed width of your card, or add a 1.7 m person at the same scale.
         The work stays fixed on the card, standing at 90 degrees to it.
-      </p>
-      <p className="mt-3 max-w-[64ch] text-[15px] leading-relaxed text-stone">
-        <b>For a steady view, tap Anchor it here</b> once the work appears. The
-        phone&apos;s own AR takes over (ARCore on Android, ARKit on iPhone): it
-        tracks the whole room, not just the card, so the work stays pinned where
-        you put it as you walk round it. Lay the card on a table, aim at it and
-        tap to place the work there, at its real height; pinch to resize.
       </p>
 
       <button
@@ -291,11 +235,6 @@ export default function ImageAR({
                       <p className="mt-1 text-[12px] opacity-75">
                         Pinch to resize · double-tap to reset
                       </p>
-                      {canAnchor && (
-                        <p className="mt-1 text-[12px] opacity-75">
-                          Shaky? Use <b>Anchor it here</b> below.
-                        </p>
-                      )}
                     </>
                   ) : (
                     <p className="text-[15px]">
@@ -314,15 +253,6 @@ export default function ImageAR({
             )}
             {running && (
               <div className="absolute inset-x-0 bottom-0 z-10 space-y-3 bg-gradient-to-t from-black/70 to-transparent p-4 pb-[max(16px,env(safe-area-inset-bottom))] text-white">
-                {canAnchor && work && (
-                  <button
-                    type="button"
-                    onClick={anchor}
-                    className="w-full rounded-full bg-[#f3b23a] px-5 py-3 text-[15px] font-semibold text-[#1c1a17] shadow-[0_8px_24px_-8px_rgba(0,0,0,0.6)]"
-                  >
-                    Anchor it here · stable, real size
-                  </button>
-                )}
                 <div className="flex flex-wrap items-center gap-2">
                   {(["fit", "real"] as const).map((m) => (
                     <button
@@ -378,23 +308,6 @@ export default function ImageAR({
           document.body,
         )}
 
-      {webXR && lastSeen !== null && (
-        <WebXRStage
-          key={works[lastSeen].slug}
-          ref={xrRef}
-          src={toAbs(works[lastSeen].arUrl)}
-          title={works[lastSeen].title}
-          scale="auto"
-          onStart={() => {}}
-          onFail={() =>
-            launchSceneViewer(
-              toAbs(works[lastSeen].arUrl),
-              works[lastSeen].title,
-              window.location.href,
-            )
-          }
-        />
-      )}
 
       <h2 className="font-display mt-12 text-[24px]">The cards</h2>
       <p className="mt-2 max-w-[64ch] text-[14px] text-stone">
