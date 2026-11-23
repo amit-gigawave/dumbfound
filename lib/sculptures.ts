@@ -976,6 +976,48 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "56.glb". The Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U)
+  // has only row "56 - Bronze Head", with no details. Details from the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/, "To be Scanned works"): Himmat Shah, Bronze, 50 x 28 x 31 inches, HS-0421,
+  // matched by photo (the smooth head with an X on the face); the scan's proportions match those dimensions.
+  // No title in its source; descriptive name used on the site, as for the other Himmat Shah heads.
+  {
+    slug: "shah-head-with-a-cross",
+    form: "head",
+    title: "Head with a Cross",
+    description: "A bronze head by Himmat Shah, 50 × 28 × 31 inches. Listed in its source without a title.",
+    longDescription:
+      "A tall, smooth head rises from a long cylindrical neck, its outline swelling from a narrow jaw to a broad, rounded crown, like an egg set on a column. The surface is plain and unbroken, with almost nothing to mark it as a face.\n\nThe features are reduced to a few small signs. High on the head, two tiny circles with dots at their centres sit where the eyes might be, set wide apart and slightly uneven in height. Lower down, where a mouth would be, two short cuts cross to form an X, pressed into the surface. A faint vertical ridge runs down the middle of the front from the crown to the chin, dividing the face into two halves.\n\nThe chin is rounded and pushed slightly forward, and the jaw turns back sharply into the neck, which stands straight and smooth down to its flat base. Seen from the side, the back of the skull bulges outward well beyond the neck. The bronze measures 50 × 28 × 31 inches, about 127 cm high.",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/shah-head-with-a-cross.webp",
+    modelUrl: "/sculptures/shah-head-with-a-cross.glb",
+    look: { metalness: 0.05, roughness: 0.75, reflections: 0.6, light: 1.5, sideLights: 0.5 },
+    material: "Bronze",
+    year: "",
+    dimensions: "50 × 28 × 31 inches",
+    heightCm: 127,
+  },
+  // Scan "25.glb". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "25 - Himmat Shah Bronze": HS-0429; the same work (HS-0429) in the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/), matched by photo.
+  // Titled "Untitled (Head)" in its source; descriptive name used on the site, as for the other Himmat Shah heads.
+  {
+    slug: "shah-faceted-head",
+    form: "head",
+    title: "Faceted Head",
+    description: "A bronze head by Himmat Shah, 52 × 19 × 26 inches, from an edition of 5 plus an artist's proof. Listed in its source as Untitled (Head).",
+    longDescription:
+      "A tall, narrow head stands on a block-like neck that widens into a squared base. Its outline is a long oval, but the surface is broken into flat, angled facets, as if the form had been cut and folded rather than smoothed, so that edges and ridges catch the light across the whole face.\n\nA thin, winding groove runs down the middle of the forehead from the crown. Below it, a small raised rectangle with a rounded hollow sits where the bridge of the nose would be. The lips are full and slightly parted, set above a short straight line that drops to the chin. The eyes are not shown as such: angled planes and shallow recesses on either side take their place.\n\nThe bronze is a warm brown, and patches of a paler, golden tone are scattered over the cheeks, brow and neck, with rough, mottled texture inside them. At the top, the crown is cut flat with a notch in the centre. The bronze measures 52 × 19 × 26 inches, about 132 cm high, and comes from an edition of 5 plus an artist's proof. It is listed in its source as Untitled (Head).",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/shah-faceted-head.webp",
+    modelUrl: "/sculptures/shah-faceted-head.glb",
+    look: { metalness: 0.15, roughness: 2.46, reflections: 0.6 },
+    material: "Bronze",
+    year: "",
+    dimensions: "52 × 19 × 26 inches",
+    edition: "Edition of 5 + AP",
+    heightCm: 132,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
