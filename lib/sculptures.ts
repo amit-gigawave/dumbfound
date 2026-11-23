@@ -1089,9 +1089,9 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A tall, smooth head rises from a long, slightly flared neck, its outline swelling to a broad, rounded crown. Across the whole surface runs a network of fine, dark lines, like cracks in dried earth or a glazed pot, dividing the skull, face and neck into irregular plates.\n\nThe face is reduced to a few features. A long, heavy nose runs down from the brow, its ridge rough and broken where the rest of the surface is smooth. On either side, two tiny round holes mark the eyes, set within softly raised areas. Below the nose, the mouth is a single short slit above a small, rounded chin.\n\nThe bronze has an even, warm grey-brown tone with a soft sheen, so the cracks read as drawn lines over the curved surfaces. A raised ridge runs over the top of the head from front to back. The bronze measures 49 × 27 × 31 inches, about 124 cm high, and comes from an edition of 5 plus an artist's proof. It is listed in its source as Untitled (Head).",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-cracked-head.webp",
+    thumbnail: "/thumbnails/shah-cracked-head.webp?v=2",
     modelUrl: "/sculptures/shah-cracked-head.glb",
-    look: { metalness: 0.2, roughness: 1.31, reflections: 0.6 },
+    look: { metalness: 0.35, reflections: 0.65, light: 1.9, sideLights: 0.2 },
     facing: 240,
     material: "Bronze",
     year: "",
