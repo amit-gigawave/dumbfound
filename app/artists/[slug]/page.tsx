@@ -157,22 +157,16 @@ export default async function ArtistPage({
               {artist.summary}
             </p>
           )}
-          <div className="mt-[clamp(32px,4.5vw,68px)] hidden flex-wrap gap-3 md:flex">
-            {works.length > 0 && (
+          {works.length > 0 && (
+            <div className="mt-[clamp(32px,4.5vw,68px)] hidden flex-wrap gap-3 md:flex">
               <a
                 href="#works"
                 className="rounded-[2px] bg-ink px-5 py-3 text-[14px] font-medium text-white transition-colors hover:bg-accent"
               >
                 See {works.length} {works.length === 1 ? "work" : "works"}
               </a>
-            )}
-            <Link
-              href="/contact"
-              className="rounded-[2px] border border-ink bg-white px-5 py-3 text-[14px] font-medium transition-colors hover:bg-ink hover:text-white"
-            >
-              Ask about this artist
-            </Link>
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
