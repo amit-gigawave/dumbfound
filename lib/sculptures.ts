@@ -553,7 +553,7 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A drummer stands on a shaped, flat base, his head bowed towards the drum that hangs at his left hip. He holds a stick in each hand: one is raised, the other is held just above the pale drumhead. The drum itself is a deep cylinder in gold-brown, its side crossed by diagonal cords in a zigzag pattern.\n\nHe wears an orange-red cap and matching orange-red trousers, loose and creased down to the ankles. His jacket is a muted grey-green with epaulettes on both shoulders, a breast pocket, a row of buttons and a strap running diagonally across his chest to the drum. The bearded face, the hands, cuffs and shoes are left in the brown of the bronze. The modelling is rough and broken into small planes, especially across the jacket and the folds of the trousers.\n\nThe title names Adhikari Dada, and \"Drum Walae\" reads as \"the one with the drum\". The bronze measures 12 × 5 × 5 inches and is cast 3 of an edition of 9. The base is an irregular, rounded slab, wider on one side, and the trousers bunch above his shoes.",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-adhikari-dada-drum-walae.webp?v=5",
+    thumbnail: "/thumbnails/khanna-adhikari-dada-drum-walae.webp?v=6",
     modelUrl: "/sculptures/khanna-adhikari-dada-drum-walae.glb",
     look: { metalness: 0.21, roughness: 0.5, reflections: 0.6, sideLights: 0.4 },
     facing: 300,
@@ -837,7 +837,7 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "Listed in its source as Untitled (Male Head, blue turban, moustache), this fibreglass head by Thota Vaikuntam is dated 2025 and measures 97 × 50 × 72 inches, about two and a half metres tall.\n\nThe face is black. A light blue turban wraps the top of the head, and beneath it a white band on the forehead carries a narrow red vertical mark at the centre, with orange to either side. Thick black brows curve over wide almond-shaped eyes, white with dark pupils. Full red lips sit under a heavy black moustache whose ends curl down along the jaw on both sides, and an orange triangle runs from the lower lip to the chin. Large gold-coloured hoop earrings hang from the orange ears.\n\nThe neck is orange shading to dark, with a vertical line down its front, and strips of blue striped cloth show at either side of it. The orange of the nose, chin and neck forms a single vertical line down the centre of the face, crossed by the white forehead band and the red mouth, much like the bold reds, saffrons and oranges of Thota's paintings.",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp?v=6",
+    thumbnail: "/thumbnails/thota-male-head-with-blue-turban.webp?v=7",
     modelUrl: "/sculptures/thota-untitled-head-with-turban.glb",
     look: { metalness: 0.15, roughness: 2.29, reflections: 1.2, light: 1.3, sideLights: 1, specular: 0.6 },
     material: "Fiberglass",
@@ -857,7 +857,7 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "Long black hair falls down one side of this bronze head, sweeping past the neck to the base. Listed in its source as Untitled (Female Head, bronze with long hair), the work by Thota Vaikuntam measures 58 × 58 × 47 inches, almost one and a half metres tall.\n\nThe face is brown, smooth and broad. An orange-yellow band crosses the forehead beneath black hair parted at the centre, with small gold-coloured ornaments at the hairline on either side, and a round red bindi sits at its centre. The orange-yellow continues as a narrow strip down the ridge of the nose. The eyes are almond-shaped under heavy lids, and the full lips are a strong red. A gold-coloured nose ring hangs from one nostril, and long, thin gold-coloured earrings follow the line of the ears.\n\nAt the neck, a thick gold-coloured ring sits above a green collar marked with small dark dots. On the side where the hair falls, its black mass is marked with long flowing lines and widens as it reaches the base. The bindi recalls the large vermilion bindis of the women in Thota's paintings.",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-bronze-female-head-with-long-hair.webp?v=4",
+    thumbnail: "/thumbnails/thota-bronze-female-head-with-long-hair.webp?v=5",
     modelUrl: "/sculptures/thota-untitled-head-with-nose-ring.glb",
     look: { metalness: 0.2, roughness: 1.8, reflections: 0.6 },
     material: "Bronze",
