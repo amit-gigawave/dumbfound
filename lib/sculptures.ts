@@ -991,7 +991,7 @@ export const sculptures: Sculpture[] = [
     artistSlug: "himmat-shah",
     thumbnail: "/thumbnails/shah-head-with-a-cross.webp",
     modelUrl: "/sculptures/shah-head-with-a-cross.glb",
-    look: { metalness: 0.15, roughness: 1.5, reflections: 0.6 },
+    look: { metalness: 0.05, roughness: 0.75, reflections: 0.6, light: 1.5, sideLights: 0.5 },
     material: "Bronze",
     year: "",
     dimensions: "50 × 28 × 31 inches",
