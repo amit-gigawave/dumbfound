@@ -56,6 +56,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `npm run build` / `npm start` | Production build and server |
 | `npm run lint` | ESLint |
 | `npm run add-model -- <file>` | Adds a 3D work from a `.glb`, `.usdz` or `.usdc`: Blender conversion, model checks and fixes, compression, catalogue entry, thumbnail, facing check and AR copy. `--slug <slug> --replace` swaps a work's model; `--slug <slug> --facing 180` turns one |
+| `node scripts/pack-ao.mjs <model.glb> <ao.png> <out.glb>` | Packs a baked ambient occlusion map into a model (red channel of its metallic-roughness texture, set as the occlusion map) before `add-model`; used for Ruby Saree Lady |
 | `npm run check-model -- <file>` | Reports on a model's checks (opaque, single-sided, colour layers, winding, texture size) without changing anything |
 | `npm run add-work` | Interactive helper for photo-only works: resizes the image and adds the entry |
 | `npm run thumbnails -- [slug]` | Renders thumbnails of 3D works with Puppeteer. The dev server must be running. Leave out the slug to redo all of them |

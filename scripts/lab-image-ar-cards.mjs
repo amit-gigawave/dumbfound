@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 const { sculptures } = await import(pathToFileURL(resolve("lib/sculptures.ts")).href);
 const { artists } = await import(pathToFileURL(resolve("lib/artists.ts")).href);
-const SLUGS = ["khanna-kc-the-bandmaster", "thota-female-head-with-polka-dot-collar", "sugandh-meri-patang", "thota-yellow-saree-lady"];
+const SLUGS = ["khanna-kc-the-bandmaster", "thota-female-head-with-polka-dot-collar", "sugandh-meri-patang", "thota-yellow-saree-lady", "thota-ruby-saree-lady"];
 const W = 1000, H = 1300, B = 70; // card size, border width
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 // A different high-contrast border pattern per card.
@@ -15,8 +15,9 @@ const patterns = [
   (c) => `<pattern id="p" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="${c}"/><circle cx="9" cy="9" r="6" fill="#fff"/><circle cx="27" cy="27" r="6" fill="#fff"/><rect x="24" y="4" width="8" height="8" fill="#111"/></pattern>`,
   (c) => `<pattern id="p" width="44" height="44" patternUnits="userSpaceOnUse"><rect width="44" height="44" fill="#fff"/><path d="M22 2 L42 22 L22 42 L2 22 Z" fill="${c}"/><path d="M22 14 L30 22 L22 30 L14 22 Z" fill="#fff"/><circle cx="22" cy="22" r="3" fill="#111"/></pattern>`,
   (c) => `<pattern id="p" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#fff"/><rect width="20" height="20" fill="${c}"/><rect x="20" y="20" width="20" height="20" fill="#111"/><circle cx="30" cy="10" r="5" fill="${c}"/></pattern>`,
+  (c) => `<pattern id="p" width="48" height="48" patternUnits="userSpaceOnUse"><rect width="48" height="48" fill="#fff"/><path d="M0 0 L24 0 L0 24 Z M24 48 L48 24 L48 48 Z" fill="${c}"/><rect x="18" y="18" width="12" height="12" fill="#111"/><circle cx="38" cy="10" r="4" fill="#111"/><circle cx="10" cy="38" r="4" fill="${c}"/></pattern>`,
 ];
-const colours = ["#b4532a", "#396046", "#2f4f8f", "#8a6a3f"];
+const colours = ["#b4532a", "#396046", "#2f4f8f", "#8a6a3f", "#9b2335"];
 for (const [i, slug] of SLUGS.entries()) {
   const w = sculptures.find((s) => s.slug === slug);
   const a = artists.find((x) => x.slug === w.artistSlug);
