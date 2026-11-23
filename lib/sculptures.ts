@@ -808,7 +808,8 @@ export const sculptures: Sculpture[] = [
     dimensions: "99 × 85 × 53 inches",
     heightCm: 251,
   },
-  // Scan "38 - Thotta - Female Head - 10 .glb" (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // Model from scan "02 - Head01.glb" (sheet row "2 - Thotta - Female Head - 01": Ruby Saree Lady, TV-0105), which replaced the
+  // earlier scan "38 - Thotta - Female Head - 10 .glb" of the same work on 2026-11-23 (original in .glb-backup/web/). Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
   // row "38 - Thotta - Female Head - 10": TV-0105 (edition cast).
   {
     slug: "thota-ruby-saree-lady",
@@ -816,10 +817,10 @@ export const sculptures: Sculpture[] = [
     title: "Ruby Saree Lady",
     description: "Ruby Saree Lady (2026), a bronze head by Thota Vaikuntam, 24 × 16 × 24 inches.",
     longDescription:
-      "Calm and symmetrical, this bronze head by Thota Vaikuntam is dated 2026 and measures 24 × 16 × 24 inches, about 61 centimetres tall. The face is a smooth, rounded oval in brown bronze, broad across the cheeks and narrowing towards the chin.\n\nA broad yellow band runs across the forehead beneath dark hair parted at the centre, and an oval bindi in orange sits in the middle of it. Small ornaments mark the hairline on each side. The brows form a strong, continuous line that drops into a long straight nose, and the almond-shaped eyes are set under heavy lids. The ears are flat and close to the head, without visible earrings. Below the closed lips, a pointed yellow triangle runs down to the chin.\n\nA thin ring circles the neck, and a vertical ridge runs down its front. At the base, the collar of the garment opens in a V, its two orange panels marked with small dots. Seen from the front, the head is almost perfectly balanced left to right, and the bindi recalls the large vermilion bindis of the women in Thota's paintings.",
+      "Calm and symmetrical, this bronze head by Thota Vaikuntam is dated 2026 and measures 24 × 16 × 24 inches, about 61 centimetres tall. The face is a smooth, rounded oval in brown bronze, broad across the cheeks and narrowing towards the chin.\n\nA broad yellow band runs across the forehead beneath dark hair, which is drawn back into a large round bun at the back of the head, and an oval red-orange bindi sits in the middle of the band. Small ornaments mark the hairline on each side. The brows form a strong, continuous line that drops into a long straight nose, and the almond-shaped eyes are set under heavy lids. The ears are flat and close to the head, without visible earrings. Below the closed lips, a pointed yellow triangle runs down to the chin.\n\nA thin ring circles the neck, and a vertical ridge runs down its front. At the base, the collar of the garment opens in a V, its two red panels marked with small dots. Seen from the front, the head is almost perfectly balanced left to right, and the bindi recalls the large vermilion bindis of the women in Thota's paintings.",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-ruby-saree-lady.webp?v=5",
-    modelUrl: "/sculptures/thota-female-head-10.glb",
+    thumbnail: "/thumbnails/thota-ruby-saree-lady.webp?v=6",
+    modelUrl: "/sculptures/thota-female-head-10.glb?v=2",
     look: { metalness: 0.8, roughness: 1.2, reflections: 0.85, light: 1.2, sideLights: 0.85 },
     material: "Bronze",
     year: "2026",

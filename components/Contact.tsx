@@ -3,65 +3,29 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type Field = { name: string; label: string; type?: "text" | "url" | "work" };
-
-const TOPICS: { id: string; label: string; fields: Field[] }[] = [
-  {
-    id: "artwork",
-    label: "An artwork",
-    fields: [{ name: "work", label: "Which work?", type: "work" }],
-  },
-  {
-    id: "exhibitions",
-    label: "Exhibitions",
-    fields: [
-      { name: "venue", label: "Venue or organisation" },
-      { name: "dates", label: "Dates, if known" },
-    ],
-  },
-  {
-    id: "collaborations",
-    label: "Collaborations",
-    fields: [
-      { name: "organisation", label: "Organisation" },
-      { name: "website", label: "Website", type: "url" },
-    ],
-  },
-  {
-    id: "patronage",
-    label: "Patronage",
-    fields: [{ name: "organisation", label: "Organisation, if any" }],
-  },
-  {
-    id: "artist",
-    label: "I'm an artist",
-    fields: [
-      { name: "portfolio", label: "Portfolio or website link", type: "url" },
-      { name: "medium", label: "Your medium" },
-    ],
-  },
-  { id: "other", label: "Something else", fields: [] },
-];
-
-const EASE = "ease-[cubic-bezier(.3,.7,.3,1)]";
 const field =
   "w-full border-b border-rule bg-transparent py-2.5 text-[15px] caret-accent outline-none transition-colors placeholder:text-stone/60 focus:border-accent";
 
 interface Enquiry {
-  topic: string;
+  /** The artwork asked about, or "" when the visitor hasn't picked one. */
+  work: string;
   name: string;
   email: string;
-  lines: string[];
   message: string;
 }
 
 type Via = "mail" | "whatsapp";
 
-const subjectOf = (e: Enquiry) => `Enquiry: ${e.topic} — ${e.name}`;
+const subjectOf = (e: Enquiry) =>
+  `Artwork enquiry${e.work ? `: ${e.work}` : ""} — ${e.name}`;
 const bodyOf = (e: Enquiry) =>
-  [`Name: ${e.name}`, `Email: ${e.email}`, ...e.lines, "", e.message].join(
-    "\n",
-  );
+  [
+    `Name: ${e.name}`,
+    `Email: ${e.email}`,
+    ...(e.work ? [`Artwork: ${e.work}`] : []),
+    "",
+    e.message,
+  ].join("\n");
 
 const mailto = (to: string, e: Enquiry) =>
   `mailto:${to}?subject=${encodeURIComponent(subjectOf(e))}&body=${encodeURIComponent(bodyOf(e))}`;
@@ -130,8 +94,9 @@ const Tick = () => {
 };
 
 /**
- * Enquiry form: topic buttons, extra fields that slide in for the chosen topic,
- * then a confirmation. Arriving from an artwork preselects "An artwork" and it.
+ * Artwork enquiry: which work (optional), name, email and a message, handed to
+ * WhatsApp or the visitor's email app, then a confirmation. Arriving from an
+ * artwork's page preselects it.
  */
 export default function Contact({
   email,
@@ -146,7 +111,6 @@ export default function Contact({
   workSlug?: string;
 }) {
   const work = works.find((w) => w.slug === workSlug);
-  const [topic, setTopic] = useState(work ? "artwork" : "exhibitions");
   const [status, setStatus] = useState<"idle" | Via>("idle");
   const [last, setLast] = useState<Enquiry | null>(null);
   const [copied, setCopied] = useState(false);
@@ -240,24 +204,11 @@ ${bodyOf(last)}`,
     const via: Via =
       submitter?.getAttribute("value") === "whatsapp" ? "whatsapp" : "mail";
     const data = new FormData(ev.currentTarget);
-    const t = TOPICS.find((x) => x.id === topic)!;
     const get = (k: string) => String(data.get(k) ?? "").trim();
-    const lines = t.fields
-      .map((f) => {
-        const v = get(`${t.id}.${f.name}`);
-        const shown =
-          f.type === "work"
-            ? (works.find((w) => w.slug === v)?.label ?? "")
-            : v;
-        return shown ? `${f.label.replace(/[?,].*$/, "")}: ${shown}` : "";
-      })
-      .filter(Boolean);
-    if (get("phone")) lines.push(`Phone: ${get("phone")}`);
     const enquiry: Enquiry = {
-      topic: t.label,
+      work: works.find((w) => w.slug === get("work"))?.label ?? "",
       name: get("name"),
       email: get("email"),
-      lines,
       message: get("message"),
     };
     setLast(enquiry);
@@ -267,86 +218,19 @@ ${bodyOf(last)}`,
 
   return (
     <form onSubmit={onSubmit} className="grid gap-8">
-      {/* Topics and their fields form one block, so closed groups add no spacing. */}
-      <div>
-        <fieldset>
-          <legend className="label">I&apos;m writing about</legend>
-          <div className="mt-4 flex flex-wrap gap-2.5">
-            {TOPICS.map((t) => (
-              <label key={t.id} className="cursor-pointer">
-                <input
-                  type="radio"
-                  name="topic"
-                  value={t.id}
-                  checked={topic === t.id}
-                  onChange={() => setTopic(t.id)}
-                  className="peer sr-only"
-                />
-                <span
-                  className={`inline-block rounded-full border px-4 py-2 text-[13px] transition-[background-color,border-color,color,transform] duration-300 peer-focus-visible:ring-2 peer-focus-visible:ring-accent/40 peer-active:scale-95 ${
-                    topic === t.id
-                      ? "border-ink bg-ink text-paper"
-                      : "border-rule text-ink hover:border-accent hover:text-accent"
-                  }`}
-                >
-                  {t.label}
-                </span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+      <label className="grid gap-1.5">
+        <span className="label">Artwork</span>
+        <select name="work" defaultValue={work?.slug ?? ""} className={field}>
+          <option value="">Not sure yet, or several</option>
+          {works.map((w) => (
+            <option key={w.slug} value={w.slug}>
+              {w.label}
+            </option>
+          ))}
+        </select>
+      </label>
 
-        {/* Extra fields for the chosen topic slide open; the rest stay closed and inert. */}
-        {TOPICS.filter((t) => t.fields.length).map((t) => {
-          const open = topic === t.id;
-          return (
-            <div
-              key={t.id}
-              inert={!open}
-              className={`grid transition-[grid-template-rows,opacity] duration-500 ${EASE} ${
-                open
-                  ? "grid-rows-[1fr] opacity-100"
-                  : "grid-rows-[0fr] opacity-0"
-              }`}
-            >
-              <div className="overflow-hidden">
-                <div className="grid gap-7 pt-8 sm:grid-cols-2">
-                  {t.fields.map((f) => (
-                    <label
-                      key={f.name}
-                      className={`grid gap-1.5 ${f.type === "work" ? "sm:col-span-2" : ""}`}
-                    >
-                      <span className="label">{f.label}</span>
-                      {f.type === "work" ? (
-                        <select
-                          name={`${t.id}.${f.name}`}
-                          defaultValue={work?.slug ?? ""}
-                          className={field}
-                        >
-                          <option value="">Not sure yet / several</option>
-                          {works.map((w) => (
-                            <option key={w.slug} value={w.slug}>
-                              {w.label}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input
-                          name={`${t.id}.${f.name}`}
-                          type={f.type ?? "text"}
-                          className={field}
-                        />
-                      )}
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-7 sm:grid-cols-2">
         <label className="grid gap-1.5">
           <span className="label">Name</span>
           <input name="name" required autoComplete="name" className={field} />
@@ -361,15 +245,6 @@ ${bodyOf(last)}`,
             className={field}
           />
         </label>
-        <label className="grid gap-1.5 sm:col-span-2 lg:col-span-1">
-          <span className="label">
-            Phone{" "}
-            <span className="normal-case tracking-normal text-stone/70">
-              (optional)
-            </span>
-          </span>
-          <input name="phone" type="tel" autoComplete="tel" className={field} />
-        </label>
       </div>
 
       <label className="grid gap-1.5">
@@ -378,6 +253,7 @@ ${bodyOf(last)}`,
           name="message"
           required
           rows={4}
+          placeholder="What would you like to know?"
           defaultValue={
             work ? `I would like to know more about “${work.label}”.` : ""
           }

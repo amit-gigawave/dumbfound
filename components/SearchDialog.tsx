@@ -4,12 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import {
-  quickSearches,
-  search,
-  suggestions,
-  type SearchResult,
-} from "@/lib/search";
+import { search, suggestions, type SearchResult } from "@/lib/search";
 
 type Filter = "all" | "artist" | "artwork";
 const FILTERS: { id: Filter; label: string }[] = [
@@ -83,7 +78,6 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
     .filter((g) => g.items.length > 0);
   // Flat order that matches what's on screen, for keyboard navigation.
   const ordered = groups.flatMap((g) => g.items);
-  const quick = useMemo(() => quickSearches(), []);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -242,27 +236,6 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
           aria-label="Results"
           className="min-h-0 flex-1 overflow-y-auto px-3 py-3"
         >
-          {!q && quick.length > 0 && (
-            <div className="px-2 pb-4 pt-1">
-              <p className="label">Quick search</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {quick.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => {
-                      type(t);
-                      inputRef.current?.focus();
-                    }}
-                    className="rounded-full border border-rule bg-white px-3 py-1.5 text-[12px] text-ink transition-colors hover:border-accent hover:text-accent"
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {ordered.length === 0 ? (
             <div className="grid justify-items-center gap-3 px-6 py-12 text-center">
               <SearchIcon className="h-8 w-8 text-rule" />

@@ -12,7 +12,7 @@ import SectionHeader from "@/components/gallery/SectionHeader";
 
 export const metadata: Metadata = {
   title: "Enquiry",
-  description: `For exhibitions, artworks, collaborations, and patronage — write to ${site.name}.`,
+  description: `Ask ${site.name} about any artwork in the collection.`,
 };
 
 const wrap = "mx-auto max-w-[1200px] px-[clamp(16px,4vw,40px)]";
@@ -37,7 +37,7 @@ export default async function ContactPage({
       <PageHeader
         label="Get in touch"
         title="Enquiry"
-        line="For exhibitions, artworks, collaborations, and patronage — write to us and we will respond promptly."
+        line="Ask us about any artwork in the collection, and we will reply."
       />
 
       <section className={`${wrap} pt-[clamp(40px,6vw,72px)]`}>
@@ -72,7 +72,7 @@ export default async function ContactPage({
       <section
         className={`${wrap} pb-[clamp(64px,8vw,104px)] pt-[clamp(56px,8vw,96px)]`}
       >
-        <SectionHeader title="Send an enquiry" />
+        <SectionHeader title="Ask about an artwork" />
         <div data-reveal className="grid gap-6">
           {work && (
             <div className="flex items-center gap-5 rounded-[14px] border border-rule bg-white p-4 pr-6">
