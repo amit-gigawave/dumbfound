@@ -251,6 +251,11 @@ interface SculptureSceneProps {
   onParts?: (parts: ModelPart[]) => void;
   /** A part to tint green, to show where it is (look tweaker). */
   highlight?: string;
+  /**
+   * Framed and lit like the work's card thumbnail (look.cardLight, cardZoom,
+   * cardShift, cardLift), so a live model can take the thumbnail's place exactly.
+   */
+  card?: boolean;
   /** A candidate light rig to preview (components/three/lighting.ts); default LIGHTING. */
   rig?: string;
   /**
