@@ -110,16 +110,3 @@ export const suggestions = (): SearchResult[] => [
     .slice(0, 3)
     .map(strip),
 ];
-
-/** Quick-search chips: materials and media from the catalogue that return results. */
-export const quickSearches = (): string[] =>
-  [
-    "Bronze",
-    "Painting",
-    "Terracotta",
-    "Wire",
-    "Mythology",
-    "Portrait",
-    "Head",
-    "Watercolour",
-  ].filter((t) => search(t, 1).length > 0);
