@@ -1009,9 +1009,9 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A tall, narrow head stands on a block-like neck that widens into a squared base. Its outline is a long oval, but the surface is broken into flat, angled facets, as if the form had been cut and folded rather than smoothed, so that edges and ridges catch the light across the whole face.\n\nA thin, winding groove runs down the middle of the forehead from the crown. Below it, a small raised rectangle with a rounded hollow sits where the bridge of the nose would be. The lips are full and slightly parted, set above a short straight line that drops to the chin. The eyes are not shown as such: angled planes and shallow recesses on either side take their place.\n\nThe bronze is a warm brown, and patches of a paler, golden tone are scattered over the cheeks, brow and neck, with rough, mottled texture inside them. At the top, the crown is cut flat with a notch in the centre. The bronze measures 52 × 19 × 26 inches, about 132 cm high, and comes from an edition of 5 plus an artist's proof. It is listed in its source as Untitled (Head).",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-faceted-head.webp",
+    thumbnail: "/thumbnails/shah-faceted-head.webp?v=2",
     modelUrl: "/sculptures/shah-faceted-head.glb",
-    look: { metalness: 0.15, roughness: 2.46, reflections: 0.6 },
+    look: { metalness: 0.3, roughness: 1.7, reflections: 0.6 },
     material: "Bronze",
     year: "",
     dimensions: "52 × 19 × 26 inches",
