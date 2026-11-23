@@ -1036,6 +1036,25 @@ export const sculptures: Sculpture[] = [
     year: "",
     edition: "3 of 9",
   },
+  // Scan "meditatingB.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "24 - Meena Sansanwal Horse Of The Mind": MS-0096; the same work in
+  // the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/, "To be Scanned works"), matched by photo (the green seated figure with a gold ball). The scan's proportions match the size.
+  {
+    slug: "sansanwal-horse-of-the-mind",
+    form: "figure",
+    title: "Horse of the Mind",
+    description: "Horse of the Mind, a seated figure by Meena Sansanwal in papermache and acrylic paint, 20 × 12 × 12 inches.",
+    longDescription:
+      "A figure sits cross-legged on a broad, low base, its hands brought together in the lap. The shoulders are rounded and the body is simplified into smooth, swelling forms, with the breasts and the curve of the belly lightly modelled. In the middle of the torso, just above the hands, a round hollow opens into the body.\n\nThe head is a narrow oval with a calm, simplified face: closed eyes, a long nose and a small mouth. Above it the form does not stop but rises in a tall, twisting column, layered and uneven like a flame or a stack of shapes, and at the very top a smooth golden sphere balances on its tip.\n\nThe whole figure is a bright green, mottled with darker and lighter patches that give the surface a worn, uneven look, and the gold of the sphere stands out against it. The work is made in papermache and acrylic paint and measures 20 × 12 × 12 inches, about 51 cm high.",
+    artistSlug: "meena-sansanwal",
+    thumbnail: "/thumbnails/sansanwal-horse-of-the-mind.webp",
+    modelUrl: "/sculptures/sansanwal-horse-of-the-mind.glb",
+    look: { roughness: 2.01, reflections: 0.6 },
+    material: "Papermache and Acrylic Paint",
+    year: "",
+    dimensions: "20 × 12 × 12 inches",
+    heightCm: 51,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
