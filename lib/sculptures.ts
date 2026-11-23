@@ -267,9 +267,9 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A man sits on the ground with one knee drawn up, his right forearm resting across it and the hand hanging loosely over the edge, the fingers curled. His other leg lies folded flat in front of him, and his left hand is placed palm down on the ground beside his hip. His head is slightly lifted and his eyes appear nearly closed.\n\nHe wears a peaked cap with a band, a shirt buttoned to the collar, a loose open jacket with buttons down one side and a belt at the waist. His trousers are creased at the shin, and he wears heavy laced shoes, both placed at the front of the work. The clothing has a textured, slightly rough surface in a dark grey-violet tone, while the face, hands and a strip of bare ankle are a lighter golden brown.\n\nThis is a large bronze, 30 × 30 × 32 inches, about 76 cm high, and is cast 3 of an edition of 9. The title refers to a horn; from this front view the instrument is not visible. The seated figure is one of the bandsmen of Krishen Khanna's Bandwallahs series.",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp?v=6",
+    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp?v=7",
     modelUrl: "/sculptures/khanna-untitled-seated-man.glb?v=2",
-    look: { metalness: 1.5, roughness: 1.8, reflections: 1.5, light: 1.4, sideLights: 1 },
+    look: { roughness: 0.6, reflections: 1.1, light: 1.4, sideLights: 1, specular: 1 },
     material: "Bronze",
     year: "",
     dimensions: "30 × 30 × 32 inches",
@@ -705,9 +705,9 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A rough, upright column rises from a dark red block, its surface broken into folds, ridges and hollows like crumpled material. At its top sits a flat, rounded disc, tilted forward and to one side, in an olive and golden tone that is smoother than the column below. A small raised point marks the face of the disc, a little off centre.\n\nA thin orange rod passes diagonally through the column, entering low on one side and leaving high on the other. Its lower end reaches down past the corner of the block, while its upper end extends well beyond the top of the disc, so the line of the rod is the longest element in the work.\n\nMan from Moon is a small bronze by Himmat Shah, measuring 7 × 9 × 4 inches. Its three elements are kept clearly separate: the textured column, the smooth disc and the straight rod. The column is widest at its foot, where it meets the top of the block in an uneven edge, and its creases run mostly upwards. The disc overhangs the column on the side away from the rod, and its rim is slightly irregular.",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-man-from-moon.webp?v=4",
+    thumbnail: "/thumbnails/shah-man-from-moon.webp?v=5",
     modelUrl: "/sculptures/untitled-figure-with-spear.glb?v=2",
-    look: { metalness: 0.95, roughness: 0.2, reflections: 0.6, light: 1.55 },
+    look: { metalness: 0.95, roughness: 0.7, reflections: 0.6, light: 1.55, specular: 1 },
     facing: 270,
     material: "Bronze",
     year: "",
@@ -989,7 +989,7 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A tall, smooth head rises from a long cylindrical neck, its outline swelling from a narrow jaw to a broad, rounded crown, like an egg set on a column. The surface is plain and unbroken, with almost nothing to mark it as a face.\n\nThe features are reduced to a few small signs. High on the head, two tiny circles with dots at their centres sit where the eyes might be, set wide apart and slightly uneven in height. Lower down, where a mouth would be, two short cuts cross to form an X, pressed into the surface. A faint vertical ridge runs down the middle of the front from the crown to the chin, dividing the face into two halves.\n\nThe chin is rounded and pushed slightly forward, and the jaw turns back sharply into the neck, which stands straight and smooth down to its flat base. Seen from the side, the back of the skull bulges outward well beyond the neck. The bronze measures 50 × 28 × 31 inches, about 127 cm high.",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-head-with-a-cross.webp",
+    thumbnail: "/thumbnails/shah-head-with-a-cross.webp?v=2",
     modelUrl: "/sculptures/shah-head-with-a-cross.glb",
     look: { metalness: 0.05, roughness: 0.75, reflections: 0.6, light: 1.5, sideLights: 0.5 },
     material: "Bronze",

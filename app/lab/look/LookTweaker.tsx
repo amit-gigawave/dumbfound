@@ -125,6 +125,31 @@ export default function LookTweaker({
     if (!Object.keys(current).length) delete next[part];
     set({ parts: Object.keys(next).length ? next : undefined });
   };
+  // Surfaces the whole-work sliders can't change: metalness 0 in the scan
+  // (a multiplier can't move it) or no sheen (specular 0: roughness and
+  // reflections then have nothing to show on).
+  const unset = (name: string, key: "metalness" | "roughness") => look.parts?.[name]?.[key] === undefined;
+  const noMetal = parts.filter((p) => p.metalness < 0.02 && unset(p.name, "metalness")).map((p) => p.name);
+  const noSheen = look.specular === undefined ? parts.filter((p) => p.specular === 0).map((p) => p.name) : [];
+  // "This model has", "Every part has", "defaultMat has", "defaultMat and Material.001 have".
+  const names = (list: string[]) =>
+    parts.length === 1
+      ? "This model has"
+      : list.length === parts.length
+        ? "Every part has"
+        : list.length === 1
+          ? `${list[0]} has`
+          : `${list.slice(0, -1).join(", ")} and ${list.at(-1)} have`;
+  const warnings: Partial<Record<string, string>> = {
+    ...(noMetal.length && {
+      metalness: `${names(noMetal)} metalness 0 in the scan, so this slider can't change it. Set metalness under Parts below.`,
+    }),
+    ...(noSheen.length && {
+      roughness: `${names(noSheen)} no sheen in the scan, so roughness doesn't show there. Turn on Paint sheen below.`,
+      reflections: `${names(noSheen)} no sheen in the scan, so reflections don't show there. Turn on Paint sheen below.`,
+    }),
+  };
+
   const clearPart = () => {
     if (!part) return;
     const next = { ...(look.parts ?? {}) };
@@ -386,6 +411,9 @@ export default function LookTweaker({
                     className="mt-1.5 w-full accent-[#396046]"
                   />
                   <span className="block text-[12px] leading-snug text-stone">{s.hint}</span>
+                  {warnings[s.key] && (
+                    <span className="mt-1 block text-[12px] leading-snug text-[#b4532a]">{warnings[s.key]}</span>
+                  )}
                 </label>
               );
             })}
@@ -420,6 +448,11 @@ export default function LookTweaker({
               <span className="block text-[12px] leading-snug text-stone">
                 Some scans come with no sheen at all, which leaves dark paint flat. 1 is ordinary paint.
               </span>
+              {noSheen.length > 0 && (
+                <span className="mt-1 block text-[12px] leading-snug text-[#b4532a]">
+                  {names(noSheen)} no sheen in the scan. Turn this on to make roughness and reflections show.
+                </span>
+              )}
             </div>
 
             <label className="flex items-center justify-between text-[14px]">
@@ -437,12 +470,15 @@ export default function LookTweaker({
 
           {/* Parts: a model made of several surfaces can set each one's
               metalness and roughness on its own. */}
-          {parts.length > 1 && (
+          {parts.length > 0 && (
             <div className="mt-6 border-t border-rule pt-5">
               <p className="text-[14px]">Parts</p>
               <p className="mt-1 text-[12px] leading-snug text-stone">
-                This model has {parts.length} surfaces. Pick one to set it on its own; it lights up green in the
-                viewer. The sliders above still apply to every part you haven&rsquo;t set here.
+                {parts.length === 1
+                  ? "This model is one surface. Pick it to set its metalness and roughness directly, in place of the scan's own (including its texture)."
+                  : `This model has ${parts.length} surfaces. Pick one to set it on its own; it lights up green in the viewer.`}{" "}
+                Values set here are used as they are, in place of the scan&rsquo;s own; the sliders above still
+                apply to every part you haven&rsquo;t set.
               </p>
               <div role="radiogroup" aria-label="Part" className="mt-3 flex flex-wrap gap-1.5">
                 {[null, ...parts.map((p) => p.name)].map((name) => {
