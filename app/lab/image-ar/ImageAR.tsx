@@ -37,6 +37,8 @@ const PERSON_CM = 170;
 const FIT_UNITS = 1.1;
 /** Printed card widths a visitor can pick (cm). */
 const CARD_WIDTHS = [7, 10, 15];
+/** How long a work stays in place after its card is lost (ms). */
+const HOLD_MS = 2000;
 
 type Mode = "fit" | "real";
 
@@ -311,7 +313,9 @@ export default function ImageAR({
 
       <h2 className="font-display mt-12 text-[24px]">The cards</h2>
       <p className="mt-2 max-w-[64ch] text-[14px] text-stone">
-        Printed at 10 cm wide they work best. Two are easy for the tracker
+        The bigger the print, the further back you can stand: the tracker needs
+        the card to fill enough of the camera picture. At 10 cm wide stay within
+        about arm&apos;s length; print at A5 or A4 to step further back. Two are easy for the tracker
         (busy, high contrast) and two are harder (smooth bronze, thin shapes),
         to test how far this can go.
       </p>
@@ -429,6 +433,11 @@ async function startAR(
   const shownRot = works.map(() => new THREE.Quaternion());
   const shownScale = works.map(() => new THREE.Vector3(1, 1, 1));
   const fresh = works.map(() => true);
+  // When the tracker loses a card (most often the phone moved too far away,
+  // so the card is too small in the picture), the work stays where it was for
+  // HOLD_MS instead of vanishing at once, and carries on smoothly if the card
+  // is found again in that time.
+  const lostAt: (number | null)[] = works.map(() => null);
   let current: number | null = null;
   const controller = new Controller({
     inputWidth: video.videoWidth,
@@ -438,7 +447,7 @@ async function startAR(
     // setting), and a work isn't dropped for a few missed frames.
     filterMinCF: 0.0001,
     filterBeta: 0.001,
-    missTolerance: 8,
+    missTolerance: 12,
     onUpdate: (d: {
       type: string;
       targetIndex: number;
@@ -451,20 +460,18 @@ async function startAR(
         const m = new THREE.Matrix4();
         m.fromArray(d.worldMatrix);
         targetPose[d.targetIndex] = m.multiply(post[d.targetIndex]);
+        lostAt[d.targetIndex] = null;
         g.visible = true;
         if (current !== d.targetIndex) {
           current = d.targetIndex;
+          onStatus(null);
           onFound(current);
           load(current);
         }
       } else {
-        g.visible = false;
+        // Held for now; the render loop hides it if the card stays lost.
         targetPose[d.targetIndex] = null;
-        fresh[d.targetIndex] = true;
-        if (current === d.targetIndex) {
-          current = null;
-          onFound(null);
-        }
+        lostAt[d.targetIndex] = performance.now();
       }
     },
   });
@@ -558,7 +565,21 @@ async function startAR(
     // Ease each visible card's anchor towards the tracker's latest pose.
     anchors.forEach((g, i) => {
       const target = targetPose[i];
-      if (!target) return;
+      if (!target) {
+        // Lost: keep the last pose until HOLD_MS has passed, then hide it.
+        const since = lostAt[i];
+        if (since !== null && performance.now() - since > HOLD_MS) {
+          lostAt[i] = null;
+          g.visible = false;
+          fresh[i] = true;
+          if (current === i) {
+            current = null;
+            onFound(null);
+            onStatus("Card lost: move the phone closer to the card");
+          }
+        }
+        return;
+      }
       target.decompose(tmpPos, tmpRot, tmpScale);
       if (fresh[i]) {
         shownPos[i].copy(tmpPos);
