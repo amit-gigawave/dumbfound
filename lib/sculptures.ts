@@ -1055,6 +1055,27 @@ export const sculptures: Sculpture[] = [
     dimensions: "20 × 12 × 12 inches",
     heightCm: 51,
   },
+  // Scan "Drone02.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "50 - Drone 02", and the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/, "To be Scanned works") (matched by photo): TVA/Mar2025/001. Year not given.
+  // Listed as 92 x 71 x 80 inches on a painted stainless steel pedestal (12 x 54 x 48 inches; overall height 102 inches).
+  // The scan has no pedestal, so the head's own size is shown.
+  // Titled "Untitled (Female Head, striped nose ring, hair bun)" in its source; descriptive name used on the site, as for the other drone works.
+  {
+    slug: "thota-female-head-with-hair-bun",
+    form: "head",
+    title: "Female Head with Hair Bun",
+    description: "A head by Thota Vaikuntam in resinated fibreglass with automotive paint, 92 × 71 × 80 inches: well over two metres tall. Listed in its source as Untitled (Female Head, striped nose ring, hair bun).",
+    longDescription:
+      "A woman's head looks straight ahead, its face a deep blue-grey framed by black hair drawn smoothly back from the forehead. A broad yellow band crosses the brow, with a large round red bindi at its centre, and from it a yellow stripe runs down the nose, over the full red lips and on to the chin.\n\nThe eyes are long and almond-shaped, white with dark pupils, set under heavy black lids and brows. A small white drop hangs from the nose, and beside it, resting on the cheek, is a large round nose ornament striped in red, orange and white. Long yellow ears stand out at the sides, and from each hangs a bell-shaped earring banded in red and orange.\n\nThe neck is yellow, circled by a plain brown ring, and below it the collar is painted in bands of yellow and dark blue. Behind the head the hair is gathered into a large round bun. The work is made in resinated fibreglass with automotive paint and measures 92 × 71 × 80 inches, about 234 cm high, and is shown on a painted stainless steel pedestal. It is listed in its source as Untitled (Female Head, striped nose ring, hair bun).",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-female-head-with-hair-bun.webp",
+    modelUrl: "/sculptures/thota-female-head-with-hair-bun.glb",
+    look: { metalness: 0.32, roughness: 2.48, reflections: 0.6 },
+    material: "Resinated Fibreglass with Automotive Paint",
+    year: "",
+    dimensions: "92 × 71 × 80 inches",
+    heightCm: 234,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
