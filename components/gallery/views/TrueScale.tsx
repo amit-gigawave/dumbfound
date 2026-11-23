@@ -148,16 +148,45 @@ export default function TrueScale({
   const [hover, setHover] = useState<string | null>(null);
   const [ready, setReady] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // While a model is being turned (button held), the pointer may wander off
+  // the work or over its neighbours: the model stays until the button is let
+  // go, and only then is a leave that happened meanwhile carried out.
+  const turning = useRef(false);
+  const leftWhileTurning = useRef(false);
   const enter = (slug: string) => {
+    if (turning.current) {
+      leftWhileTurning.current = false;
+      return;
+    }
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setHover(slug), 140);
   };
   const leave = () => {
+    if (turning.current) {
+      leftWhileTurning.current = true;
+      return;
+    }
     clearTimeout(timer.current);
     setHover(null);
     setReady(null);
   };
-  useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => {
+    const up = () => {
+      if (!turning.current) return;
+      turning.current = false;
+      if (leftWhileTurning.current) {
+        leftWhileTurning.current = false;
+        leave();
+      }
+    };
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      clearTimeout(timer.current);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, []);
 
   // A new artist starts the line again from its tallest work, and the address
   // keeps the choice (so Back, a reload or a shared link return to it).
@@ -410,7 +439,9 @@ export default function TrueScale({
                     ref={(el) => {
                       items.current[i] = el;
                     }}
-                    className="flex w-max flex-col items-center"
+                    className={`relative flex w-max flex-col items-center ${
+                      hover === w.slug ? "z-20" : ""
+                    }`}
                   >
                     {/* Hover (or focus) turns the still image into the 3D model, which the visitor turns by dragging. */}
                     <HoverZone
@@ -426,16 +457,20 @@ export default function TrueScale({
                       {hover === w.slug && w.modelUrl && (
                         <div
                           aria-hidden
-                          className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500"
+                          className="absolute z-10 transition-opacity duration-500"
                           style={{
-                            height: `${100 / FIT_CARD}%`,
-                            minWidth: `${100 / FIT_CARD}%`,
+                            // The thumbnail's own box (see the img below).
+                            height: `${100 / bh}%`,
                             aspectRatio: "4 / 5",
+                            top: `${(-t / bh) * 100}%`,
+                            left: `${(-l / bw) * 100}%`,
                             opacity: ready === w.slug ? 1 : 0,
                           }}
                           // A press and release without moving still opens the work.
                           onPointerDown={(e) => {
                             press.current = { x: e.clientX, y: e.clientY };
+                            turning.current = true;
+                            leftWhileTurning.current = false;
                           }}
                           onPointerUp={(e) => {
                             const p = press.current;
@@ -454,11 +489,13 @@ export default function TrueScale({
                             url={w.modelUrl}
                             interactive
                             rotateOnly
+                            alwaysRender
                             fit={FIT_CARD}
                             adaptiveBackground={false}
                             reveal={false}
                             facing={w.facing}
                             look={w.look}
+                            card
                             onReady={() => {
                               setReady(w.slug);
                               setHinted(true);
