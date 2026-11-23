@@ -1112,7 +1112,7 @@ export const sculptures: Sculpture[] = [
     title: "Female Head with Long Black Hair",
     description: "A head by Thota Vaikuntam in resinated fibreglass with automotive paint, 93 × 70 × 57 inches: well over two metres tall. Listed in its source as Untitled (Female Head, long black hair, striped nose ring).",
     artistSlug: "thota-vaikuntam",
-    thumbnail: "/thumbnails/thota-female-head-with-long-black-hair.webp",
+    thumbnail: "/thumbnails/thota-female-head-with-long-black-hair.webp?v=2",
     modelUrl: "/sculptures/thota-female-head-with-long-black-hair.glb",
     look: { metalness: 0.2, roughness: 1.65, reflections: 0.6 },
     facing: 90,
