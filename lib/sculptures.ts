@@ -976,6 +976,27 @@ export const sculptures: Sculpture[] = [
     material: "",
     year: "",
   },
+  // Scan "56.glb". The Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U)
+  // has only row "56 - Bronze Head", with no details. Details from the Namtech Fine Art private view
+  // (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/, "To be Scanned works"): Himmat Shah, Bronze, 50 x 28 x 31 inches, HS-0421,
+  // matched by photo (the smooth head with an X on the face); the scan's proportions match those dimensions.
+  // No title in its source; descriptive name used on the site, as for the other Himmat Shah heads.
+  {
+    slug: "shah-head-with-a-cross",
+    form: "head",
+    title: "Head with a Cross",
+    description: "A bronze head by Himmat Shah, 50 × 28 × 31 inches. Listed in its source without a title.",
+    longDescription:
+      "A tall, smooth head rises from a long cylindrical neck, its outline swelling from a narrow jaw to a broad, rounded crown, like an egg set on a column. The surface is plain and unbroken, with almost nothing to mark it as a face.\n\nThe features are reduced to a few small signs. High on the head, two tiny circles with dots at their centres sit where the eyes might be, set wide apart and slightly uneven in height. Lower down, where a mouth would be, two short cuts cross to form an X, pressed into the surface. A faint vertical ridge runs down the middle of the front from the crown to the chin, dividing the face into two halves.\n\nThe chin is rounded and pushed slightly forward, and the jaw turns back sharply into the neck, which stands straight and smooth down to its flat base. Seen from the side, the back of the skull bulges outward well beyond the neck. The bronze measures 50 × 28 × 31 inches, about 127 cm high.",
+    artistSlug: "himmat-shah",
+    thumbnail: "/thumbnails/shah-head-with-a-cross.webp",
+    modelUrl: "/sculptures/shah-head-with-a-cross.glb",
+    look: { metalness: 0.15, roughness: 1.5, reflections: 0.6 },
+    material: "Bronze",
+    year: "",
+    dimensions: "50 × 28 × 31 inches",
+    heightCm: 127,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
