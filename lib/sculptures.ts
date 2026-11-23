@@ -989,7 +989,7 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A tall, smooth head rises from a long cylindrical neck, its outline swelling from a narrow jaw to a broad, rounded crown, like an egg set on a column. The surface is plain and unbroken, with almost nothing to mark it as a face.\n\nThe features are reduced to a few small signs. High on the head, two tiny circles with dots at their centres sit where the eyes might be, set wide apart and slightly uneven in height. Lower down, where a mouth would be, two short cuts cross to form an X, pressed into the surface. A faint vertical ridge runs down the middle of the front from the crown to the chin, dividing the face into two halves.\n\nThe chin is rounded and pushed slightly forward, and the jaw turns back sharply into the neck, which stands straight and smooth down to its flat base. Seen from the side, the back of the skull bulges outward well beyond the neck. The bronze measures 50 × 28 × 31 inches, about 127 cm high.",
     artistSlug: "himmat-shah",
-    thumbnail: "/thumbnails/shah-head-with-a-cross.webp",
+    thumbnail: "/thumbnails/shah-head-with-a-cross.webp?v=2",
     modelUrl: "/sculptures/shah-head-with-a-cross.glb",
     look: { metalness: 0.05, roughness: 0.75, reflections: 0.6, light: 1.5, sideLights: 0.5 },
     material: "Bronze",
