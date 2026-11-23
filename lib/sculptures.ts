@@ -1018,6 +1018,24 @@ export const sculptures: Sculpture[] = [
     edition: "Edition of 5 + AP",
     heightCm: 132,
   },
+  // Scan "HORSE_HOW.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "30 - Madhvi Parekh Horse": Bronze, 3 of 9 (no size or year given); the same work in
+  // the Namtech Fine Art private view (privateviews.artlogic.net/2/a23b59e4e2638f8218bdb9/, "To be Scanned works"), matched by photo (the horse on wheels).
+  {
+    slug: "parekh-horse",
+    form: "other",
+    title: "Horse",
+    description: "A bronze horse on wheels by Madhvi Parekh, number 3 from an edition of 9.",
+    longDescription:
+      "A horse strides forward on four bent legs, each hoof set on a small spoked wheel, so the whole animal stands like a toy that could be pulled along. Its head is long and lowered, the mouth open to show its teeth, with a strap running from the muzzle up behind the ear like a bridle.\n\nAlong the neck, the mane rises in a row of tall, pointed spikes. Towards the front, several of them end in small round knobs, like pins. The tail curls up and forward over the back and ends in a round, ball-shaped form, and from its base two fan-like sprays of thin rods spread out to either side.\n\nAcross the body hangs a saddle-cloth framed by a border of small signs. In its centre a smaller animal runs to the left in low relief, in the same direction as the horse. The whole work is cast in bronze with a warm, even golden-brown surface. It is number 3 from an edition of 9.",
+    artistSlug: "madhvi-parekh",
+    thumbnail: "/thumbnails/parekh-horse.webp",
+    modelUrl: "/sculptures/parekh-horse.glb",
+    look: { metalness: 0.33, roughness: 1.47, reflections: 0.6 },
+    material: "Bronze",
+    year: "",
+    edition: "3 of 9",
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
