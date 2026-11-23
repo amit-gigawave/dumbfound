@@ -132,6 +132,8 @@ const prepareMaterial = (m: THREE.Material, clip: THREE.Plane) => {
     c.userData.base = {
       metalness: c.metalness,
       roughness: c.roughness,
+      metalnessMap: c.metalnessMap,
+      roughnessMap: c.roughnessMap,
       specular: c instanceof THREE.MeshPhysicalMaterial ? c.specularIntensity : undefined,
     };
   }
@@ -145,9 +147,18 @@ const prepareMaterial = (m: THREE.Material, clip: THREE.Plane) => {
  */
 const applyLook = (c: THREE.Material, look: ArtworkLook | undefined) => {
   if (!(c instanceof THREE.MeshStandardMaterial)) return;
-  const base = c.userData.base as { metalness: number; roughness: number; specular?: number };
-  // A part's own setting (look.parts) replaces the whole work's multiplier.
+  const base = c.userData.base as SurfaceBase;
+  // A part's own setting (look.parts) is the value itself: it replaces the
+  // whole work's multiplier and the scan's texture for that channel, so it
+  // works even where the scan's metalness is 0.
   const part = look?.parts?.[c.userData.part as string];
+  const metalnessMap = part?.metalness !== undefined ? null : base.metalnessMap;
+  const roughnessMap = part?.roughness !== undefined ? null : base.roughnessMap;
+  if (metalnessMap !== c.metalnessMap || roughnessMap !== c.roughnessMap) {
+    c.metalnessMap = metalnessMap;
+    c.roughnessMap = roughnessMap;
+    c.needsUpdate = true;
+  }
   c.metalness = part?.metalness ?? base.metalness * (look?.metalness ?? 1);
   // Scales the roughness texture too; the shader caps it at fully matte.
   c.roughness = (part?.roughness ?? base.roughness * (look?.roughness ?? 1)) * SHINE.roughness;
@@ -155,8 +166,45 @@ const applyLook = (c: THREE.Material, look: ArtworkLook | undefined) => {
     c.specularIntensity = look?.specular ?? base.specular;
 };
 
-/** One surface of a model, as the look tweaker lists it. */
-export type ModelPart = { name: string; points: number; metalness: number; roughness: number };
+type SurfaceBase = {
+  metalness: number;
+  roughness: number;
+  metalnessMap: THREE.Texture | null;
+  roughnessMap: THREE.Texture | null;
+  specular?: number;
+};
+
+/** Average of one channel of a texture (sampled small), 0–1; for the look tweaker. */
+const channelAverage = (tex: THREE.Texture | null, channel: 1 | 2): number | null => {
+  const img = tex?.image as CanvasImageSource | undefined;
+  if (!img) return null;
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 32;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(img, 0, 0, 32, 32);
+    const data = ctx.getImageData(0, 0, 32, 32).data;
+    let sum = 0;
+    for (let i = 0; i < data.length; i += 4) sum += data[i + channel];
+    return sum / (data.length / 4) / 255;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * One surface of a model, as the look tweaker lists it: the scan's own
+ * metalness and roughness (texture included, averaged) and its sheen
+ * (specular; null when the material has none to set).
+ */
+export type ModelPart = {
+  name: string;
+  points: number;
+  metalness: number;
+  roughness: number;
+  specular: number | null;
+};
 
 interface SculptureSceneProps {
   url: string;
@@ -409,8 +457,20 @@ const RevealModel: FC<{
       const points = child.geometry.getAttribute("position")?.count ?? 0;
       for (const m of [child.material].flat()) {
         const name = m.userData.part as string;
-        const base = m.userData.base as { metalness: number; roughness: number } | undefined;
-        const p = found.get(name) ?? { name, points: 0, metalness: base?.metalness ?? 0, roughness: base?.roughness ?? 1 };
+        let p = found.get(name);
+        if (!p) {
+          const base = m.userData.base as SurfaceBase | undefined;
+          // glTF packs roughness in green and metalness in blue.
+          const metalTex = base?.metalnessMap ? channelAverage(base.metalnessMap, 2) : 1;
+          const roughTex = base?.roughnessMap ? channelAverage(base.roughnessMap, 1) : 1;
+          p = {
+            name,
+            points: 0,
+            metalness: (base?.metalness ?? 0) * (metalTex ?? 1),
+            roughness: (base?.roughness ?? 1) * (roughTex ?? 1),
+            specular: base?.specular ?? null,
+          };
+        }
         p.points += points;
         found.set(name, p);
       }
