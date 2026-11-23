@@ -124,6 +124,15 @@ export default function ImageAR({
     const el = stage.current;
     if (!el) return;
     setRunning(true);
+    // Browsers give pages the camera only over https (or on localhost itself).
+    // Opened from a computer's network address (http://192.168…) there is no
+    // navigator.mediaDevices at all.
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      setStatus(
+        `The camera only works on a secure (https://) page, and this one is ${window.location.protocol === "http:" ? "plain http" : "not secure"}. Open it on the live site (https://dumbfound.vercel.app/lab/image-ar), or run "npm run tunnel" and use the https address it prints.`,
+      );
+      return;
+    }
     setStatus("Starting the camera…");
     try {
       stopRef.current = await startAR(
