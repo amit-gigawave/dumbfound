@@ -63,6 +63,8 @@ const nextConfig: NextConfig = {
       { source: "/draco/:path*", headers: staticAsset },
       // The scan page's targets (4 MB) and pictures.
       { source: "/scan/:path*", headers: staticAsset },
+      // The 8th Wall scan app's models, targets and config.
+      { source: "/scan8/:path*", headers: staticAsset },
     ];
   },
 };
