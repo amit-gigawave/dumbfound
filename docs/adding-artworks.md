@@ -47,6 +47,8 @@ everything else:
 8. **Builds the card preview**, `public/previews/<slug>.glb`: a light copy
    (1024 px textures) that the artwork cards turn in 3D on hover.
 
+It doesn't update the scan page (`/scan`): run `node scripts/scan-targets.mjs` afterwards (with the site running) so the new work's thumbnail can be scanned too.
+
 It doesn't commit. At the end it prints the files it made and a ready
 `git add` / `git commit` command, so you can check the page first.
 
@@ -291,4 +293,5 @@ Optional details only appear on the page when filled in. Text that starts with `
 - AR opens `public/ar/<slug>.glb`, a copy of the model made by `npm run ar-models`. Phone AR reads model units as metres, while our models come in arbitrary units, so the copy is scaled to the work's **`heightCm`**, turned by `facing`, and stands on the floor.
 - **Works without `heightCm` appear 50 cm tall.** Add the real height for true-to-life size.
 - On **Android** AR runs in the browser (WebXR, through Google's `<model-viewer>`, self-hosted in `public/vendor/`). The work shows straight away and settles onto the floor once the phone finds it. Messages guide the visitor while it searches, suggest a better surface if it can't find one, and say when the camera can't see the room. Phones without in-browser AR open Google Scene Viewer instead. On **iPhone** the copy is converted to USDZ in the browser and opens in AR Quick Look.
+- **Scanning a picture (`/scan`)** works with any 3D work's thumbnail as it is on the site, printed or on a screen. The targets are rebuilt by `node scripts/scan-targets.mjs`; a work added or re-rendered since then is not recognised until it is run. Bigger prints can be scanned from further away; smooth bronze pictures with little detail take a moment longer to be found.
 - Floors are found fastest when they are **well lit and have some texture or pattern**. Plain, dark or shiny surfaces (a black desk, glossy tiles) can take a long time or not be found at all.

@@ -61,6 +61,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `npm run add-work` | Interactive helper for photo-only works: resizes the image and adds the entry |
 | `npm run thumbnails -- [slug]` | Renders thumbnails of 3D works with Puppeteer. The dev server must be running. Leave out the slug to redo all of them |
 | `npm run ar-models -- [slug]` | Builds the AR copies of 3D works (`public/ar/`): real size from `heightCm`, facing front, on the floor |
+| `node scripts/scan-targets.mjs` | Builds the image targets of `/scan` from every 3D work's thumbnail (`public/scan/targets/`, `public/scan/targets.mind.gz`, order in `lib/scan-targets.json`). The dev server must be running; takes a few minutes. Run it after adding a work or re-rendering a thumbnail |
 | `npm run tunnel -- [--port 3000]` | ngrok tunnel to the dev server, for testing the AR QR code from a phone (see above) |
 
 ## Routes
@@ -75,6 +76,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `/blog/feed.xml` | RSS feed of the blog |
 | `/about` | About the platform |
 | `/contact` | Artwork enquiry form: which work (optional; preselected from `?work=`), name, email and message. It opens WhatsApp (to `site.phone`) or the visitor's mail app (to `site.email`) with the message filled in |
+| `/scan` | Scan a work: point a phone at any 3D work's thumbnail (printed, on a poster or on another screen) and the work stands up out of the picture at 90 degrees, fixed to it. Pinch resizes, a drag (or a two-finger twist) turns it, a double tap or Reset puts it back; nothing else moves it. MindAR image tracking (`public/vendor/mindar-1.2.5`) against the targets from `scripts/scan-targets.mjs`, with our own pose smoothing (`app/scan/ScanAR.tsx`). Needs `https://`. Not linked anywhere yet and not indexed |
 | `/artworks/thumb/[slug]` | Hidden page that `npm run thumbnails` renders thumbnails from |
 | `/sitemap.xml`, `/robots.txt` | Built from the catalogue by `app/sitemap.ts` and `app/robots.ts` |
 | `/lab/*` | Internal design comparison pages. They are not linked anywhere and are not indexed. `/lab/home-b.html` is a static, self-contained dark home page concept for review (`public/lab/home-b.html`, cut-out images in `public/lab/home-b/img`; 3D from `/previews` via the self-hosted model-viewer) |

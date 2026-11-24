@@ -61,6 +61,8 @@ const nextConfig: NextConfig = {
       { source: "/sculptures/:path*", headers: staticAsset },
       { source: "/thumbnails/:path*", headers: staticAsset },
       { source: "/draco/:path*", headers: staticAsset },
+      // The scan page's targets (4 MB) and pictures.
+      { source: "/scan/:path*", headers: staticAsset },
     ];
   },
 };
