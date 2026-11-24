@@ -1121,6 +1121,25 @@ export const sculptures: Sculpture[] = [
     dimensions: "93 × 70 × 57 inches",
     heightCm: 236,
   },
+  // Scan "DRONE_01.usdz". Details from the Sheet "Sculpted India (Digital)" (docs.google.com/spreadsheets/d/1weRYGv2Y6cV9bRKbX062EWXj-jcPaEIsdqSi6Cxi32U), column F,
+  // row "49 - Drone 01": TVA/Feb2025/007. Year not given. The scan shows the orange collar named in the source title.
+  // Listed as H 88 x W 58 x D 81 inches on a painted stainless steel pedestal (18 x 56 x 48 inches; overall height 106 inches).
+  // The scan has no pedestal, so the head's own size is shown (88 inches = 224 cm).
+  // Titled "Untitled (Female Head, orange collar)" in its source; descriptive name used on the site, as for the other drone works.
+  {
+    slug: "thota-female-head-with-orange-collar",
+    form: "head",
+    title: "Female Head with Orange Collar",
+    description: "A head by Thota Vaikuntam in resinated fibreglass with automotive paint, 88 × 58 × 81 inches: well over two metres tall. Listed in its source as Untitled (Female Head, orange collar).",
+    artistSlug: "thota-vaikuntam",
+    thumbnail: "/thumbnails/thota-female-head-with-orange-collar.webp?v=2",
+    modelUrl: "/sculptures/thota-female-head-with-orange-collar.glb",
+    look: { metalness: 0.5, roughness: 1.35, reflections: 0.8, light: 0.9, sideLights: 1.25 },
+    material: "Resinated Fibreglass with Automotive Paint",
+    year: "",
+    dimensions: "88 × 58 × 81 inches",
+    heightCm: 224,
+  },
 ];
 
 export const getSculpture = (slug: string): Sculpture | undefined =>

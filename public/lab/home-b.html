@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home concept B — Sculpted India</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Familjen+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<script type="module" src="/vendor/model-viewer-4.3.1.min.js"></script>
+<style>
+/* Home page concept B (dark): the artists are the trust signal. A static
+   mock-up for review, not part of the Next app. Design source:
+   C:yan\sculpted-india-redesign\home-dark-the-names.html.
+   3D uses the site's light model copies in /previews. */
+:root{
+  --ground:#101311;
+  --raised:#181c19;
+  --raised-2:#1f2420;
+  --bone:#efebe3;
+  --dust:#959b95;
+  --line:#272c28;
+  --patina:#396046;
+  --patina-lit:#95c6a5;
+  --gut:clamp(16px,4vw,56px);
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+*{box-sizing:border-box;margin:0}
+html{background:var(--ground);color:var(--bone);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font:400 17px/1.6 "Familjen Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--patina-lit);outline-offset:4px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 var(--gut)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+model-viewer{--poster-color:transparent;--progress-bar-color:var(--patina-lit);background:transparent;width:100%;height:100%}
+model-viewer::part(default-progress-bar){display:none}
+
+/* Header: gains a ground once you scroll */
+header{position:sticky;top:0;z-index:20;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+header.scrolled{background:rgba(16,19,17,.88);backdrop-filter:blur(10px);border-color:var(--line)}
+header .wrap{display:flex;align-items:center;height:84px;gap:36px}
+.logo img{height:28px;filter:brightness(1.9) saturate(.9)}
+nav{margin-left:auto;display:flex;gap:28px;font-size:15px;color:var(--dust)}
+nav a{text-decoration:none}nav a:hover{color:var(--bone)}
+.btn{display:inline-block;text-decoration:none;font-weight:500;font-size:16px;padding:18px 28px;border-radius:2px;transition:background .2s,border-color .2s}
+.btn.solid{background:var(--patina);color:#fff}
+.btn.solid:hover{background:#447353}
+.btn.line{border:1px solid #3c443e;color:var(--bone)}
+.btn.line:hover{border-color:var(--patina-lit)}
+.btn.small{font-size:15px;padding:11px 20px}
+.link{color:var(--bone);text-underline-offset:6px;text-decoration:underline;text-decoration-color:var(--patina)}
+.link:hover{text-decoration-color:var(--patina-lit)}
+
+/* ---------- Hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center;min-height:calc(100svh - 84px);padding-block:clamp(40px,6vw,80px)}
+h1{font-family:Gloock,Georgia,serif;font-weight:400;font-size:clamp(38px,4.6vw,66px);line-height:1;letter-spacing:-.02em}
+h1 .nw{white-space:nowrap}
+/* Name slot: one name rolls up and out as the next rolls in */
+.slot{display:inline-block;position:relative;overflow:hidden;vertical-align:bottom;padding-bottom:.16em;margin-bottom:-.16em;color:var(--bone)}
+.slot span{display:inline-block;white-space:nowrap}
+.slot span.leaving{position:absolute;left:0;top:0}
+.lede{margin-top:30px;max-width:44ch;font-size:clamp(17px,1.35vw,19px);color:#cdcac2}
+.lede button{display:inline;color:var(--bone);text-decoration:underline;text-decoration-color:var(--patina);text-underline-offset:5px;text-decoration-thickness:1px}
+.lede button:hover{text-decoration-color:var(--patina-lit)}
+.ctas{margin-top:40px;display:flex;flex-wrap:wrap;gap:14px}
+.faces{margin-top:52px;display:flex;align-items:center;gap:20px}
+.faces .stack{display:flex}
+.faces button{width:54px;height:54px;border-radius:50%;margin-left:-12px;border:2px solid var(--ground);transition:transform .25s var(--ease),border-color .25s}
+.faces button:first-child{margin-left:0}
+.faces button img{width:100%;height:100%;border-radius:50%;object-fit:cover;filter:grayscale(1)}
+.faces button:hover{transform:translateY(-4px)}
+.faces button[aria-pressed=true]{border-color:var(--patina-lit);z-index:1}
+.faces button[aria-pressed=true] img{filter:none}
+.faces p{font-size:15px;line-height:1.45;color:var(--dust);max-width:34ch}
+.faces p b{color:var(--bone);font-weight:500}
+
+.hero-stage{position:relative;height:min(80vh,780px)}
+.hero-stage::before{content:"";position:absolute;inset:4% 0 10%;background:radial-gradient(46% 50% at 50% 50%,rgba(239,235,227,.07),transparent 70%);pointer-events:none}
+.hero-stage model-viewer{transition:opacity .4s}
+.hero-stage model-viewer.loading{opacity:.15}
+.tag{position:absolute;left:0;top:8%;font-size:14px;color:var(--dust);border-left:1px solid var(--patina);padding-left:14px;line-height:1.5;pointer-events:none}
+.tag i{font-style:normal;font-family:Gloock,Georgia,serif;color:var(--bone);font-size:21px}
+.hint{position:absolute;right:0;bottom:4%;font-size:13px;color:var(--dust);display:flex;gap:8px;align-items:center;transition:opacity .5s}
+.hint svg{width:18px;height:18px}
+.hint.gone{opacity:0}
+.open3d{position:absolute;right:0;top:8%;font-size:14px}
+
+section{padding:clamp(100px,12vw,170px) 0}
+h2{font-family:Gloock,Georgia,serif;font-weight:400;font-size:clamp(34px,4vw,60px);line-height:1.04;letter-spacing:-.015em;max-width:16ch}
+.intro{margin-top:20px;color:#cdcac2;max-width:48ch}
+.head-row{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap}
+
+/* ---------- The band ---------- */
+.band{margin-top:clamp(56px,7vw,96px);display:flex;align-items:flex-end;gap:clamp(12px,1.8vw,32px);overflow-x:auto;padding:40px var(--gut) 0;scrollbar-width:none;border-bottom:1px solid var(--patina);cursor:grab;scroll-snap-type:x proximity}
+.band::-webkit-scrollbar{display:none}
+.band.dragging{cursor:grabbing;scroll-snap-type:none}
+.band button{flex:none;position:relative;scroll-snap-align:center;transition:transform .35s var(--ease)}
+.band button img{height:clamp(200px,24vw,340px);width:auto;pointer-events:none;transition:filter .35s}
+.band button:nth-child(even) img{height:clamp(180px,21vw,300px)}
+.band:hover button img{filter:brightness(.55)}
+.band button:hover img,.band button:focus-visible img{filter:none}
+.band button:hover,.band button:focus-visible{transform:translateY(-14px)}
+.band button span{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);white-space:nowrap;font-size:13px;color:var(--bone);background:var(--raised-2);border:1px solid var(--line);padding:5px 10px;opacity:0;transition:opacity .25s;pointer-events:none}
+.band button:hover span,.band button:focus-visible span{opacity:1}
+.band-foot{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-top:20px;font-size:14px;color:var(--dust)}
+.arrows{display:flex;gap:8px}
+.arrows button{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--bone)}
+.arrows button:hover{border-color:var(--patina-lit)}
+
+/* ---------- Series viewer (Thota) ---------- */
+.series{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(32px,5vw,88px);align-items:center;margin-top:clamp(56px,7vw,96px)}
+.series-stage{position:relative;height:min(78vh,720px);background:radial-gradient(55% 55% at 50% 50%,var(--raised-2),var(--ground) 75%)}
+.series-stage .cap{position:absolute;left:24px;top:22px;font-size:14px;color:var(--dust);line-height:1.5}
+.series-stage .cap i{font-style:normal;font-family:Gloock,Georgia,serif;font-size:22px;color:var(--bone)}
+blockquote{font-family:Gloock,Georgia,serif;font-size:clamp(26px,2.5vw,38px);line-height:1.2}
+blockquote + p{margin-top:16px;font-size:14px;color:var(--dust)}
+.thumbs{margin-top:48px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.thumbs button{aspect-ratio:3/4;background:var(--raised);border:1px solid var(--line);padding:10%;overflow:hidden;transition:border-color .25s,background .25s}
+.thumbs button img{width:100%;height:100%;object-fit:contain}
+.thumbs button:hover{background:var(--raised-2)}
+.thumbs button[aria-pressed=true]{border-color:var(--patina-lit);background:var(--raised-2)}
+.thumbs-label{margin-top:14px;font-size:14px;color:var(--dust)}
+
+/* ---------- Heads (Shah) ---------- */
+.heads{margin-top:clamp(56px,7vw,96px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(12px,1.6vw,24px)}
+.heads button{text-align:left}
+.heads .pic{aspect-ratio:3/4;background:radial-gradient(60% 55% at 50% 45%,var(--raised-2),var(--raised));padding:14%;overflow:hidden}
+.heads .pic img{width:100%;height:100%;object-fit:contain;transition:transform .6s var(--ease)}
+.heads button:hover .pic img,.heads button:focus-visible .pic img{transform:scale(1.06)}
+.heads h3{margin-top:14px;font-family:Gloock,Georgia,serif;font-weight:400;font-size:19px;line-height:1.2}
+.heads p{font-size:14px;color:var(--dust);display:flex;justify-content:space-between}
+.heads p em{font-style:normal;color:var(--patina-lit);opacity:0;transition:opacity .25s}
+.heads button:hover p em,.heads button:focus-visible p em{opacity:1}
+
+/* ---------- Roster ---------- */
+.roster{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(32px,4vw,64px) clamp(24px,3vw,48px);margin-top:clamp(56px,7vw,96px)}
+.artist{text-decoration:none;display:block}
+.artist .ph{overflow:hidden}
+.artist img{aspect-ratio:1;object-fit:cover;width:100%;filter:grayscale(1) brightness(.9);transition:filter .5s,transform .8s var(--ease)}
+.artist:hover img,.artist:focus-visible img{filter:grayscale(0) brightness(1);transform:scale(1.03)}
+.artist h3{margin-top:18px;font-family:Gloock,Georgia,serif;font-weight:400;font-size:clamp(24px,2.2vw,32px);line-height:1.1}
+.artist p{margin-top:6px;font-size:15px;color:var(--dust)}
+.also{margin-top:56px;padding-top:28px;border-top:1px solid var(--line);font-size:clamp(20px,1.9vw,28px);font-family:Gloock,Georgia,serif;color:var(--dust);line-height:1.55}
+.also a{color:var(--bone);text-decoration:underline;text-decoration-color:var(--patina);text-underline-offset:6px}
+.peek{position:fixed;left:0;top:0;width:150px;aspect-ratio:4/5;object-fit:cover;pointer-events:none;z-index:30;opacity:0;transform:translate(-50%,-115%) scale(.92);transition:opacity .2s,transform .2s;filter:grayscale(1);border:1px solid var(--line)}
+.peek.on{opacity:1;transform:translate(-50%,-115%) scale(1)}
+
+/* ---------- Steps (a real sequence) ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,4vw,64px);margin-top:clamp(48px,6vw,80px);counter-reset:s;list-style:none;padding:0}
+.steps li{border-top:1px solid var(--patina);padding-top:24px;counter-increment:s}
+.steps li::before{content:counter(s);font-family:Gloock,Georgia,serif;font-size:44px;line-height:1;color:var(--patina-lit);display:block;margin-bottom:20px}
+.steps h3{font-weight:500;font-size:19px}
+.steps p{margin-top:8px;color:var(--dust);font-size:16px;max-width:30ch}
+
+/* ---------- Shows ---------- */
+.shows{margin-top:clamp(48px,6vw,80px);list-style:none;padding:0;border-top:1px solid var(--line)}
+.shows li{display:grid;grid-template-columns:1fr 2fr 1fr;gap:32px;padding:32px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.shows .when{color:var(--dust);font-size:15px}
+.shows h3{font-family:Gloock,Georgia,serif;font-weight:400;font-size:clamp(24px,2.2vw,32px);line-height:1.15}
+.shows .what{margin-top:8px;color:#cdcac2;font-size:16px;max-width:52ch}
+.shows .where{color:var(--dust);font-size:15px;text-align:right}
+
+/* ---------- Enquire ---------- */
+.close{background:var(--raised)}
+.close .wrap > *{min-width:0}
+.close .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(40px,6vw,96px);align-items:start}
+.close .intro{margin-bottom:32px}
+form{display:grid;gap:18px}
+label{display:grid;gap:8px;font-size:14px;color:var(--dust)}
+select,input,textarea{width:100%;min-width:0;font:inherit;font-size:16px;color:var(--bone);background:var(--ground);border:1px solid var(--line);border-radius:2px;padding:14px 16px}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--patina-lit)}
+textarea{min-height:110px;resize:vertical}
+.send{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:6px}
+.contact-alt{font-size:14px;color:var(--dust)}
+
+footer{padding:44px 0;color:var(--dust);font-size:14px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* ---------- 3D viewer dialog ---------- */
+dialog{margin:auto;border:0;padding:0;background:var(--ground);color:var(--bone);width:min(1100px,94vw);height:min(760px,90vh);max-width:none;max-height:none}
+dialog::backdrop{background:rgba(5,7,6,.78);backdrop-filter:blur(4px)}
+dialog[open]{display:grid;grid-template-columns:1.4fr 1fr}
+@media (prefers-reduced-motion:no-preference){dialog[open]{animation:pop .35s var(--ease)}@keyframes pop{from{opacity:0;transform:scale(.97)}}}
+.dlg-stage{position:relative;background:radial-gradient(55% 55% at 50% 50%,var(--raised-2),var(--ground) 75%)}
+.dlg-info{padding:clamp(28px,4vw,56px);display:flex;flex-direction:column;border-left:1px solid var(--line);overflow:auto}
+.dlg-info h3{font-family:Gloock,Georgia,serif;font-weight:400;font-size:clamp(28px,3vw,42px);line-height:1.05}
+.dlg-info .by{margin-top:10px;color:var(--patina-lit)}
+.dlg-info dl{margin-top:28px;display:grid;grid-template-columns:auto 1fr;gap:10px 24px;font-size:15px}
+.dlg-info dt{color:var(--dust)}
+.dlg-info .acts{margin-top:auto;padding-top:32px;display:grid;gap:12px}
+.dlg-info .acts .btn{text-align:center}
+.x{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;z-index:2;background:var(--ground)}
+.x:hover{border-color:var(--patina-lit)}
+
+@media (prefers-reduced-motion:no-preference){
+  .hero-stage{animation:in 1.4s var(--ease) both .15s}
+  @keyframes in{from{opacity:0;transform:translateY(28px)}}
+}
+@media (max-width:960px){
+  nav{display:none}
+  .hero{grid-template-columns:1fr;min-height:0}
+  .hero-stage{height:60vh}
+  .series{grid-template-columns:1fr}
+  .series-stage{height:62vh}
+  .heads{grid-template-columns:repeat(2,1fr)}
+  .roster{grid-template-columns:1fr 1fr}
+  .steps,.close .wrap{grid-template-columns:1fr}
+  .shows li{grid-template-columns:1fr;gap:6px}
+  .shows .where{text-align:left}
+  dialog[open]{grid-template-columns:1fr;grid-template-rows:55% 45%}
+  .dlg-info{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:520px){
+  .btn:not(.small){width:100%;text-align:center}
+  h1{font-size:clamp(30px,9.3vw,44px)}
+  .faces{align-items:flex-start;flex-direction:column}
+  .thumbs{grid-template-columns:repeat(5,1fr);gap:6px}
+  .roster{grid-template-columns:1fr}
+  .tag{top:0}
+  .open3d{top:auto;bottom:4%;left:auto}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+<header id="top"><div class="wrap">
+  <a class="logo" href="#"><img src="/logos/sculpted-india-wordmark.png" alt="Sculpted India"></a>
+  <nav><a href="#band">Artworks</a><a href="#artists">Artists</a><a href="#shows">Events</a><a href="#">About</a></nav>
+  <a class="btn solid small" href="#enquire">Enquire</a>
+</div></header>
+
+<main>
+  <!-- ===== Hero: pick an artist, the headline and the 3D work change ===== -->
+  <div class="wrap hero">
+    <div>
+      <h1 aria-label="Bring home a Krishen Khanna, Jogen Chowdhury, Himmat Shah, Thota Vaikuntam or other Indian artist's art.">Bring home a<br><span class="nw" aria-hidden="true"><span class="slot" id="heroSlot"><span>Krishen Khanna</span></span> art.</span></h1>
+      <p class="lede">Original sculpture by eleven Indian artists, from Krishen Khanna and Jogen Chowdhury to Himmat Shah and Thota Vaikuntam. Every work turns in 3D and stands in your room through your phone.</p>
+      <div class="ctas">
+        <a class="btn solid" href="#band">Browse the 52 works</a>
+        <a class="btn line" href="#enquire">Talk to us on WhatsApp</a>
+      </div>
+      <div class="faces">
+        <div class="stack" id="heroFaces" role="group" aria-label="Show an artist's name"></div>
+        <p><b>11 artists, 52 works.</b> Our 2026 shows: Travancore Palace, New Delhi and Design Democracy, Hyderabad.</p>
+      </div>
+    </div>
+    <div class="hero-stage">
+      <model-viewer id="heroMV" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="14deg" interaction-prompt="none" disable-zoom disable-pan shadow-intensity="1" shadow-softness="1" exposure="1.05" environment-image="neutral" tone-mapping="neutral" camera-orbit="0deg 82deg auto" field-of-view="26deg" alt=""></model-viewer>
+      <p class="tag" id="heroTag" aria-live="polite"></p>
+      <button class="link open3d" id="heroOpen">Open in full view</button>
+      <p class="hint" id="heroHint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg>Drag to turn</p>
+    </div>
+  </div>
+
+  <!-- ===== The band ===== -->
+  <section id="band">
+    <div class="wrap head-row">
+      <div>
+        <h2>Khanna's bandwallas, thirteen of them.</h2>
+        <p class="intro">Krishen Khanna is known for his Bandwallahs paintings. Here the band players stand in bronze, most of them titled with the player's own name. Pick one to turn it in 3D.</p>
+      </div>
+    </div>
+    <div class="band" id="bandStrip" aria-label="Krishen Khanna's bandsmen"></div>
+    <div class="wrap band-foot">
+      <span>Drag or swipe along the band</span>
+      <div class="arrows">
+        <button id="bandPrev" aria-label="Scroll the band left"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button id="bandNext" aria-label="Scroll the band right"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Thota series ===== -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <h2>Thota Vaikuntam's women of Telangana</h2>
+      <p class="intro">For six decades he has painted the women and men of rural Telangana in bold colour, and has lately given them form in sculpture.</p>
+      <div class="series">
+        <div class="series-stage">
+          <model-viewer id="seriesMV" camera-controls auto-rotate rotation-per-second="10deg" interaction-prompt="none" disable-zoom disable-pan shadow-intensity="1" exposure="1" environment-image="neutral" tone-mapping="neutral" camera-orbit="0deg 82deg auto" field-of-view="26deg" loading="lazy" alt=""></model-viewer>
+          <p class="cap" id="seriesCap" aria-live="polite"></p>
+        </div>
+        <div>
+          <blockquote>“Art history can teach technique, but my village taught me identity.”</blockquote>
+          <p>Thota Vaikuntam, <a class="link" href="https://www.deccanchronicle.com/lifestyle/thota-vaikuntam-on-turning-telanganas-everyday-lives-into-an-enduring-visual-language-1988502">Deccan Chronicle, 2026</a></p>
+          <div class="thumbs" id="seriesThumbs" role="group" aria-label="Choose a work"></div>
+          <p class="thumbs-label">Five of his 19 works here. <a class="link" href="#">See all of Thota Vaikuntam's works</a></p>
+          <div class="ctas"><button class="btn line" id="seriesEnquire">Ask about this work</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Shah heads ===== -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head-row">
+        <div>
+          <h2>Himmat Shah's heads</h2>
+          <p class="intro">A founding member of Group 1890 in 1962, Himmat Shah was best known for his heads. These are cast in bronze. Open one to turn it.</p>
+        </div>
+        <a class="link" href="#">All 7 works by Himmat Shah</a>
+      </div>
+      <div class="heads" id="headsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== Artists ===== -->
+  <section style="padding-top:0" id="artists">
+    <div class="wrap">
+      <h2>The artists behind the works</h2>
+      <div class="roster">
+        <a class="artist" href="#"><div class="ph"><img src="/artists/thota-vaikuntam-colour.webp" alt=""></div><h3>Thota Vaikuntam</h3><p>b. 1942. 19 works</p></a>
+        <a class="artist" href="#"><div class="ph"><img src="/artists/krishen-khanna.webp" alt=""></div><h3>Krishen Khanna</h3><p>b. 1925. 13 works</p></a>
+        <a class="artist" href="#"><div class="ph"><img src="/artists/himmat-shah.webp" alt=""></div><h3>Himmat Shah</h3><p>1933–2025. 7 works</p></a>
+      </div>
+      <p class="also" id="also">Also
+        <a href="#" data-face="jogen-chowdhury.webp">Jogen Chowdhury</a>,
+        <a href="#" data-face="sujata-bajaj-colour.webp">Sujata Bajaj</a>,
+        <a href="#" data-face="madhvi-parekh.webp">Madhvi Parekh</a>,
+        <a href="#" data-face="subba-ghosh.webp">Subba Ghosh</a>,
+        <a href="#" data-face="gaurab-das.webp">Gaurab Das</a>,
+        <a href="#" data-face="meena-sansanwal.webp">Meena Sansanwal</a>,
+        <a href="#" data-face="yashika-sugandh.webp">Yashika Sugandh</a> and
+        <a href="#" data-face="yusuf.webp">Yusuf</a>.</p>
+    </div>
+  </section>
+
+  <!-- ===== How buying works ===== -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <h2>How buying a work happens</h2>
+      <ol class="steps">
+        <li><h3>Find it</h3><p>Turn any work in 3D and look at it from every side.</p></li>
+        <li><h3>Place it</h3><p>Open it on your phone and stand it in your room.</p></li>
+        <li><h3>Ask us</h3><p>Send the work's name on WhatsApp or email and we reply with price and availability.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== Shows ===== -->
+  <section style="padding-top:0" id="shows">
+    <div class="wrap">
+      <h2>Where we've shown</h2>
+      <ul class="shows">
+        <li><span class="when">12–15 October 2026</span><div><h3>Between Presence and Absence</h3><p class="what">A solo exhibition of Dhananjay Singh's coiled stainless steel, copper and bronze wire, with Black Cube Gallery.</p></div><span class="where">Travancore Palace, New Delhi</span></li>
+        <li><span class="when">18–20 September 2026</span><div><h3>Design Democracy 2026</h3><p class="what">Our debut showcase at Design Democracy: modern and contemporary Indian sculpture where art, architecture and design meet.</p></div><span class="where">HITEX, Hyderabad</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Enquire: composes a WhatsApp message, like the real site ===== -->
+  <section class="close" id="enquire">
+    <div class="wrap">
+      <div>
+        <h2>Have a work in mind? Ask us about it.</h2>
+        <p class="intro">Pick the work and send. Your message opens in WhatsApp, ready to go, and we reply about price and availability.</p>
+        <p class="contact-alt">Or write to <a class="link" href="mailto:info@sculptedindia.com">info@sculptedindia.com</a></p>
+      </div>
+      <form id="enqForm">
+        <label>Work<select id="enqWork"></select></label>
+        <label>Your name<input id="enqName" autocomplete="name" placeholder="Your name"></label>
+        <label>Anything to add<textarea id="enqMsg" placeholder="Where it would go, questions about the work"></textarea></label>
+        <div class="send">
+          <button class="btn solid" type="submit">Send on WhatsApp</button>
+          <a class="link" id="enqMail" href="mailto:info@sculptedindia.com">Send by email instead</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><span>Sculpted India</span><span>info@sculptedindia.com</span></div></footer>
+
+<img class="peek" id="peek" alt="">
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg-stage">
+    <model-viewer id="dlgMV" camera-controls auto-rotate rotation-per-second="12deg" interaction-prompt="none" shadow-intensity="1" exposure="1.05" environment-image="neutral" tone-mapping="neutral" camera-orbit="0deg 82deg auto" field-of-view="26deg" ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" alt=""></model-viewer>
+  </div>
+  <div class="dlg-info">
+    <button class="x" id="dlgClose" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <h3 id="dlgTitle"></h3>
+    <p class="by" id="dlgBy"></p>
+    <dl id="dlgDl"></dl>
+    <div class="acts">
+      <button class="btn solid" id="dlgEnquire">Enquire about this work</button>
+      <button class="btn line" id="dlgAR" hidden>View in your room</button>
+      <p class="contact-alt">Drag to turn, scroll to zoom.</p>
+    </div>
+  </div>
+</dialog>
+
+<script type="module">
+// Facts from lib/sculptures.ts and lib/artists.ts in the repo. `facing` turns
+// the model to face front, as on the site (degrees about the vertical axis).
+const PRE = "/previews/";
+const IMG = "/lab/home-b/img/";
+const FACE = "/artists/";
+const W = {
+  "khanna-trumpeter": ["Trumpeter","Krishen Khanna","Bronze","17 × 9 × 8 inches",0],
+  "chowdhury-couple": ["Couple","Jogen Chowdhury","Bronze","11 × 13 × 9 inches",180],
+  "shah-tirthankar": ["Tirthankar","Himmat Shah","Bronze","48 × 26 × 20 inches",150],
+  "dancing-shiva": ["Dancing Shiva","Thota Vaikuntam","","",290],
+  "thota-female-in-dotted-saree": ["Female in Dotted Saree","Thota Vaikuntam","Bronze","23 × 7 × 6 inches",0],
+  "thota-blue-saree": ["Blue Saree","Thota Vaikuntam","Bronze","23 × 9 × 7 inches",0],
+  "thota-yellow-saree-lady": ["Yellow Saree Lady","Thota Vaikuntam","Bronze","24 × 16 × 24 inches",0],
+  "thota-ruby-saree-lady": ["Ruby Saree Lady","Thota Vaikuntam","Bronze","24 × 16 × 24 inches",0],
+  "thota-dark-green-saree-lady": ["Saree Lady Series (White)","Thota Vaikuntam","Bronze","24 × 16 × 24 inches",180],
+  "khanna-patinder-rawat-trumpet-walae": ["Patinder Rawat Trumpet Walae","Krishen Khanna","Bronze","12 × 5 × 5 inches",310],
+  "khanna-satwant-sher-singh-cymbal-walae": ["Satwant Sher Singh Cymbal Walae","Krishen Khanna","Bronze","14 × 5 × 6 inches",30],
+  "khanna-kc-the-bandmaster": ["KC The Bandmaster","Krishen Khanna","Bronze","13 × 12 × 8 inches",180],
+  "khanna-davinder-raj-tutu-walae": ["Davinder Raj Tutu Walae","Krishen Khanna","Bronze","10 × 6 × 10 inches",330],
+  "khanna-rajinder-kaka-horn-walae": ["Rajinder Kaka Horn Walae","Krishen Khanna","Bronze","12 × 7 × 6 inches",250],
+  "khanna-adhikari-dada-drum-walae": ["Adhikari Dada Drum Walae","Krishen Khanna","Bronze","12 × 5 × 5 inches",300],
+  "khanna-retd-captain-ramesh-kumar-accordian-walae": ["Retd Captain Ramesh Kumar Accordian Walae","Krishen Khanna","Bronze","12 × 8 × 12 inches",65],
+  "khanna-gulratan-bhon-bhon-walae": ["Gulratan Bhon Bhon Walae","Krishen Khanna","Bronze","12 × 6 × 4 inches",190],
+  "khanna-shyam-pratap-bhompu-walae": ["Shyam Pratap Bhompu Walae","Krishen Khanna","Bronze","12 × 8 × 8 inches",260],
+  "khanna-patinder-ji-haran-walla": ["Patinder Ji Haran Walla","Krishen Khanna","Bronze","56 × 32 × 18 inches",270],
+  "shah-head-with-bared-teeth": ["Head with Bared Teeth","Himmat Shah","Bronze","49 × 29 × 35 inches",0],
+  "shah-cracked-head": ["Cracked Head","Himmat Shah","Bronze","49 × 27 × 31 inches",240],
+  "shah-head-with-pinpoint-eyes": ["Head with Pinpoint Eyes","Himmat Shah","Bronze","42 × 27 × 37 inches",90],
+  "shah-faceted-head": ["Faceted Head","Himmat Shah","Bronze","52 × 19 × 26 inches",0],
+  "shah-head-with-a-cross": ["Head with a Cross","Himmat Shah","Bronze","50 × 28 × 31 inches",0],
+};
+const work = (slug) => { const [title,artist,material,size,facing] = W[slug]; return {slug,title,artist,material,size,facing}; };
+const label = (w) => [w.material, w.size].filter(Boolean).join(", ");
+const $ = (id) => document.getElementById(id);
+
+await customElements.whenDefined("model-viewer");
+customElements.get("model-viewer").dracoDecoderLocation = new URL("/draco/", location.href).href;
+
+// Point a viewer at a work. Matte "house look" like the site: low metal, soft gloss.
+function show(mv, w) {
+  mv.classList.add("loading");
+  mv.orientation = `0deg 0deg ${w.facing}deg`;
+  mv.alt = `${w.title} by ${w.artist}, a 3D model you can turn`;
+  mv.poster = IMG + w.slug + ".png";
+  mv.src = PRE + w.slug + ".glb";
+}
+document.querySelectorAll("model-viewer").forEach((mv) => mv.addEventListener("load", () => {
+  for (const m of mv.model?.materials ?? []) {
+    const p = m.pbrMetallicRoughness;
+    p.setMetallicFactor(Math.min(p.metallicFactor, 0.15));
+    p.setRoughnessFactor(Math.max(p.roughnessFactor, 0.6));
+  }
+  mv.classList.remove("loading");
+}));
+
+// ---------- Hero: the artist's name rolls through all eleven ----------
+// The work on the right stays put: Thota Vaikuntam's Dancing Shiva.
+const NAMES = ["Krishen Khanna","Jogen Chowdhury","Himmat Shah","Thota Vaikuntam","Sujata Bajaj","Madhvi Parekh","Subba Ghosh","Gaurab Das","Meena Sansanwal","Yashika Sugandh","Yusuf"];
+const FACES = {"Krishen Khanna":"krishen-khanna.webp","Jogen Chowdhury":"jogen-chowdhury.webp","Himmat Shah":"himmat-shah.webp","Thota Vaikuntam":"thota-vaikuntam-colour.webp","Sujata Bajaj":"sujata-bajaj-colour.webp"};
+const still = matchMedia("(prefers-reduced-motion: reduce)");
+const heroMV = $("heroMV"), slot = $("heroSlot"), faces = $("heroFaces");
+let nameIdx = 0, timer = 0, paused = false;
+
+Object.entries(FACES).forEach(([name, face]) => {
+  const b = document.createElement("button");
+  b.innerHTML = `<img src="${FACE + face}" alt="">`;
+  b.setAttribute("aria-label", `Show ${name}`);
+  b.dataset.name = name;
+  b.addEventListener("click", () => { roll(NAMES.indexOf(name)); restart(); });
+  faces.append(b);
+});
+const markFace = () => faces.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.name === NAMES[nameIdx])));
+
+function roll(i) {
+  if (i === nameIdx) return;
+  nameIdx = i;
+  markFace();
+  const old = slot.querySelector("span:not(.leaving)");
+  const fromW = slot.getBoundingClientRect().width;
+  const next = document.createElement("span");
+  next.textContent = NAMES[i];
+  old.classList.add("leaving");
+  slot.append(next);
+  if (still.matches) return old.remove();
+  const toW = slot.getBoundingClientRect().width;
+  const t = {duration: 760, easing: "cubic-bezier(.7,0,.2,1)"};
+  // The slot eases to the new name's width, so "art." glides along.
+  slot.animate([{width: fromW + "px"}, {width: toW + "px"}], t);
+  old.animate([{transform: "translateY(0)", opacity: 1}, {transform: "translateY(-105%)", opacity: 0}], t).onfinish = () => old.remove();
+  next.animate([{transform: "translateY(105%)", opacity: 0}, {transform: "translateY(0)", opacity: 1}], t);
+}
+function restart() {
+  clearInterval(timer);
+  if (still.matches) return;
+  timer = setInterval(() => { if (!paused && !document.hidden) roll((nameIdx + 1) % NAMES.length); }, 2400);
+}
+// Hold still while someone is reading or pointing at the headline.
+const h1 = document.querySelector(".hero h1");
+h1.addEventListener("pointerenter", () => paused = true);
+h1.addEventListener("pointerleave", () => paused = false);
+still.addEventListener("change", restart);
+markFace();
+restart();
+
+const shiva = work("dancing-shiva");
+$("heroTag").innerHTML = `<i>${shiva.title}</i><br>${shiva.artist}`;
+show(heroMV, shiva);
+heroMV.addEventListener("camera-change", (e) => { if (e.detail.source === "user-interaction") $("heroHint").classList.add("gone"); });
+$("heroOpen").addEventListener("click", () => openWork("dancing-shiva"));
+
+// ---------- The band ----------
+const BAND = ["khanna-patinder-rawat-trumpet-walae","khanna-satwant-sher-singh-cymbal-walae","khanna-kc-the-bandmaster","khanna-davinder-raj-tutu-walae","khanna-rajinder-kaka-horn-walae","khanna-adhikari-dada-drum-walae","khanna-retd-captain-ramesh-kumar-accordian-walae","khanna-gulratan-bhon-bhon-walae","khanna-shyam-pratap-bhompu-walae","khanna-patinder-ji-haran-walla"];
+const strip = $("bandStrip");
+BAND.forEach((slug) => {
+  const w = work(slug), b = document.createElement("button");
+  b.innerHTML = `<img src="${IMG + slug}.png" alt="" loading="lazy"><span>${w.title}</span>`;
+  b.setAttribute("aria-label", `${w.title}, open in 3D`);
+  b.addEventListener("click", () => { if (!dragMoved) openWork(slug); });
+  strip.append(b);
+});
+// Mouse drag to scroll (touch already swipes natively).
+let dragX = 0, dragStart = 0, dragMoved = false, dragging = false;
+strip.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") return; dragging = true; dragMoved = false; dragX = e.clientX; dragStart = strip.scrollLeft; });
+addEventListener("pointermove", (e) => { if (!dragging) return; const dx = e.clientX - dragX; if (Math.abs(dx) > 5) { dragMoved = true; strip.classList.add("dragging"); } strip.scrollLeft = dragStart - dx; });
+addEventListener("pointerup", () => { dragging = false; strip.classList.remove("dragging"); setTimeout(() => dragMoved = false, 0); });
+const step = () => strip.clientWidth * 0.6;
+$("bandPrev").addEventListener("click", () => strip.scrollBy({left:-step(), behavior:"smooth"}));
+$("bandNext").addEventListener("click", () => strip.scrollBy({left:step(), behavior:"smooth"}));
+
+// ---------- Thota series ----------
+const SERIES = ["thota-female-in-dotted-saree","thota-blue-saree","thota-yellow-saree-lady","thota-ruby-saree-lady","thota-dark-green-saree-lady"];
+let seriesSlug = SERIES[0];
+const thumbs = $("seriesThumbs");
+SERIES.forEach((slug, i) => {
+  const w = work(slug), b = document.createElement("button");
+  b.innerHTML = `<img src="${IMG + slug}.png" alt="">`;
+  b.setAttribute("aria-label", w.title);
+  b.addEventListener("click", () => setSeries(slug));
+  thumbs.append(b);
+});
+function setSeries(slug) {
+  seriesSlug = slug;
+  const w = work(slug);
+  thumbs.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-pressed", String(SERIES[i] === slug)));
+  $("seriesCap").innerHTML = `<i>${w.title}</i><br>${label(w)}`;
+  show($("seriesMV"), w);
+}
+setSeries(seriesSlug);
+$("seriesEnquire").addEventListener("click", () => enquire(seriesSlug));
+
+// ---------- Shah heads ----------
+["shah-head-with-bared-teeth","shah-cracked-head","shah-head-with-pinpoint-eyes","shah-faceted-head","shah-head-with-a-cross"].forEach((slug) => {
+  const w = work(slug), b = document.createElement("button");
+  b.innerHTML = `<div class="pic"><img src="${IMG + slug}.png" alt="" loading="lazy"></div><h3>${w.title}</h3><p>${w.material}<em>Turn in 3D</em></p>`;
+  b.addEventListener("click", () => openWork(slug));
+  $("headsGrid").append(b);
+});
+
+// ---------- Portrait that follows the pointer over the artist names ----------
+const peek = $("peek");
+if (matchMedia("(hover:hover)").matches) {
+  $("also").querySelectorAll("a[data-face]").forEach((a) => {
+    a.addEventListener("pointerenter", () => { peek.src = FACE + a.dataset.face; peek.classList.add("on"); });
+    a.addEventListener("pointerleave", () => peek.classList.remove("on"));
+  });
+  addEventListener("pointermove", (e) => { peek.style.left = e.clientX + "px"; peek.style.top = e.clientY + "px"; });
+}
+
+// ---------- 3D dialog ----------
+const dlg = $("dlg");
+let dlgSlug = "";
+function openWork(slug) {
+  dlgSlug = slug;
+  const w = work(slug);
+  $("dlgTitle").textContent = w.title;
+  $("dlgBy").textContent = w.artist;
+  $("dlgDl").innerHTML = [["Medium", w.material], ["Size", w.size]].filter(([, v]) => v).map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  show($("dlgMV"), w);
+  dlg.showModal();
+}
+$("dlgMV").addEventListener("load", () => { $("dlgAR").hidden = !$("dlgMV").canActivateAR; });
+$("dlgAR").addEventListener("click", () => $("dlgMV").activateAR());
+$("dlgClose").addEventListener("click", () => dlg.close());
+dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+$("dlgEnquire").addEventListener("click", () => { dlg.close(); enquire(dlgSlug); });
+
+// ---------- Enquiry: compose the WhatsApp message (site.phone) ----------
+const sel = $("enqWork");
+sel.innerHTML = `<option value="">Not sure yet</option>` + Object.keys(W).map((s) => `<option value="${s}">${W[s][0]}, ${W[s][1]}</option>`).join("");
+function enquire(slug) {
+  sel.value = slug;
+  $("enquire").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  setTimeout(() => $("enqName").focus({preventScroll:true}), 600);
+}
+const message = () => {
+  const w = sel.value ? work(sel.value) : null;
+  return [
+    $("enqName").value ? `Hello, I'm ${$("enqName").value}.` : "Hello,",
+    w ? `I'd like to know about "${w.title}" by ${w.artist}.` : "I'd like to know about a work on Sculpted India.",
+    $("enqMsg").value,
+  ].filter(Boolean).join(" ");
+};
+const syncMail = () => $("enqMail").href = "mailto:info@sculptedindia.com?subject=" + encodeURIComponent("Enquiry") + "&body=" + encodeURIComponent(message());
+["change", "input"].forEach((ev) => $("enqForm").addEventListener(ev, syncMail));
+syncMail();
+$("enqForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  window.open("https://wa.me/919871663259?text=" + encodeURIComponent(message()), "_blank", "noopener");
+});
+
+// ---------- Header ground on scroll ----------
+const header = document.querySelector("header");
+const onScroll = () => header.classList.toggle("scrolled", scrollY > 10);
+addEventListener("scroll", onScroll, {passive:true}); onScroll();
+</script>
+</body>
+</html>
