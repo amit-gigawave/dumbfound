@@ -7,6 +7,8 @@
 // 8th Wall holds only a handful of image targets at once with world tracking
 // on, so this is a curated set, not every work. Edit SLUGS to change it.
 //   node scripts/scan8-targets.mjs
+//   node scripts/scan8-targets.mjs --all [--out <dir>]   # every work, images only
+//     (does not touch works.json; default --out is public/scan8/targets-all)
 import sharp from "sharp";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -27,14 +29,19 @@ const { sculptures } = await import(pathToFileURL(resolve("lib/sculptures.ts")).
 const { getArtist } = await import(pathToFileURL(resolve("lib/artists.ts")).href);
 const { AR_DEFAULT_CM } = await import(pathToFileURL(resolve("lib/sculptures.ts")).href);
 
-mkdirSync("public/scan8/targets", { recursive: true });
+const ALL = process.argv.includes("--all");
+const oi = process.argv.indexOf("--out");
+const OUT = ALL
+  ? resolve(oi > -1 ? process.argv[oi + 1] : "public/scan8/targets-all")
+  : resolve("public/scan8/targets");
+mkdirSync(OUT, { recursive: true });
 
 // A bigger, detailed image tracks better. The work on white, trimmed to its
 // outline (the white border carries no features, so keep it small). This is
 // both the file to upload as the console Image Target and the picture to print.
 const PX = 1024;
 const works = [];
-for (const slug of SLUGS) {
+for (const slug of ALL ? sculptures.map((x) => x.slug) : SLUGS) {
   const w = sculptures.find((s) => s.slug === slug);
   if (!w) throw new Error(`no work "${slug}" in lib/sculptures.ts`);
   if (!w.thumbnail) throw new Error(`"${slug}" has no thumbnail`);
@@ -47,7 +54,7 @@ for (const slug of SLUGS) {
     .extend({ top: 24, bottom: 24, left: 24, right: 24, background: "#ffffff" })
     .flatten({ background: "#ffffff" })
     .jpeg({ quality: 92 })
-    .toFile(`public/scan8/targets/${slug}.jpg`);
+    .toFile(resolve(OUT, `${slug}.jpg`));
   works.push({
     slug,
     name: slug, // the exact name to give this Image Target in the 8th Wall console
@@ -56,6 +63,10 @@ for (const slug of SLUGS) {
     heightCm: w.heightCm ?? AR_DEFAULT_CM,
     ar: `/ar/${slug}.glb`, // real-size (metres), upright, standing on the floor
   });
+}
+if (ALL) {
+  console.log(`${works.length} target images written to ${OUT}`);
+  process.exit(0);
 }
 writeFileSync("public/scan8/works.json", JSON.stringify(works, null, 2) + "\n");
 console.log(
