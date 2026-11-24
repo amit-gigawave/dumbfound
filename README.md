@@ -77,7 +77,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `/contact` | Artwork enquiry form: which work (optional; preselected from `?work=`), name, email and message. It opens WhatsApp (to `site.phone`) or the visitor's mail app (to `site.email`) with the message filled in |
 | `/artworks/thumb/[slug]` | Hidden page that `npm run thumbnails` renders thumbnails from |
 | `/sitemap.xml`, `/robots.txt` | Built from the catalogue by `app/sitemap.ts` and `app/robots.ts` |
-| `/lab/*` | Internal design comparison pages. They are not linked anywhere and are not indexed |
+| `/lab/*` | Internal design comparison pages. They are not linked anywhere and are not indexed. `/lab/home-b.html` is a static, self-contained dark home page concept for review (`public/lab/home-b.html`, cut-out images in `public/lab/home-b/img`; 3D from `/previews` via the self-hosted model-viewer) |
 
 `/gallery/*` redirects to `/artworks/*`.
 
