@@ -47,7 +47,7 @@ const ScrollFrames = () => {
 
 /** `drawIn` false: the work appears finished, without wireframe or pop. */
 const Model = ({ drawIn }: { drawIn: boolean }) => {
-  const { scene } = useGLTF(assetUrl("/sculptures/DancingShivaHero.glb"), DRACO_PATH);
+  const { scene } = useGLTF(assetUrl("/sculptures/dancing-shiva.glb"), DRACO_PATH);
   const groupRef = useRef<THREE.Group>(null);
   const wireRef = useRef<THREE.Group>(null);
   const progressRef = useRef(0);

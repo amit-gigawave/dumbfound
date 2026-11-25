@@ -8,8 +8,8 @@ bucket, under the same path.
 ## How it works
 
 - `lib/assets.ts` turns a site path into the bucket's address when
-  `NEXT_PUBLIC_ASSET_BASE` is set: `/sculptures/Lady.glb` →
-  `https://<bucket address>/sculptures/Lady.glb`. `?v=N` is kept, so a bumped
+  `NEXT_PUBLIC_ASSET_BASE` is set: `/sculptures/thota-lady.glb` →
+  `https://<bucket address>/sculptures/thota-lady.glb`. `?v=N` is kept, so a bumped
   version still gets a fresh copy.
 - `lib/sculptures.ts` keeps site paths in its entries. The scripts read and
   write them and find the files in `public/`. At the end of the file every
