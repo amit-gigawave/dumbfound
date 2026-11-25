@@ -38,6 +38,13 @@ const IconButton = ({
  * until the model is ready) and get a 3D | Photo switch plus "View in AR"
  * (on the visitor's phone). Other works show their photo.
  */
+/**
+ * The stage keeps one background from the first paint to the turning model.
+ * (The viewer used to swap to a light or dark backdrop picked from the model
+ * once it had loaded, which looked like a glitch.)
+ */
+const STAGE_BG = "#4b4b4b";
+
 export default function ArtworkStage({
   work,
   alt,
@@ -50,7 +57,6 @@ export default function ArtworkStage({
   const [inRound, setInRound] = useState(Boolean(work.modelUrl));
   const [ready, setReady] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
-  const [viewerBg, setViewerBg] = useState<string | null>(null);
 
   const onReady = useCallback(() => setReady(true), []);
   const modelUrl = work.modelUrl;
@@ -81,7 +87,7 @@ export default function ArtworkStage({
         className={`relative isolate aspect-[4/5] w-full overflow-hidden rounded-[14px] border border-rule transition-colors duration-500 ${
           inRound ? "" : "bg-plate"
         }`}
-        style={inRound ? { backgroundColor: viewerBg ?? "#4b4b4b" } : undefined}
+        style={inRound ? { backgroundColor: STAGE_BG } : undefined}
       >
         <Image
           src={work.thumbnail}
@@ -107,7 +113,7 @@ export default function ArtworkStage({
                 look={work.look}
                 controlsRef={controlsRef}
                 onReady={onReady}
-                onBackground={setViewerBg}
+                adaptiveBackground={false}
               />
             </div>
             {!ready && (
