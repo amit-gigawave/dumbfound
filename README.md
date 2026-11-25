@@ -63,6 +63,7 @@ The script writes the address into `NEXT_PUBLIC_SITE_URL` in `.env.local`, which
 | `npm run ar-models -- [slug]` | Builds the AR copies of 3D works (`public/ar/`): real size from `heightCm`, facing front, on the floor |
 | `node scripts/scan-targets.mjs` | Builds the image targets of `/scan` from every 3D work's thumbnail (`public/scan/targets/`, `public/scan/targets.mind.gz`, order in `lib/scan-targets.json`). The dev server must be running; takes a few minutes. Run it after adding a work or re-rendering a thumbnail |
 | `npm run tunnel -- [--port 3000]` | ngrok tunnel to the dev server, for testing the AR QR code from a phone (see above) |
+| `npm run r2-sync -- [--dry-run] [--all]` | Uploads new or changed models, AR copies, card previews and thumbnails to the Cloudflare R2 bucket the live site loads them from. Run it before pushing a change that refers to new files. See [docs/r2-assets.md](docs/r2-assets.md) |
 
 ## Routes
 

@@ -158,6 +158,17 @@ reports on 1–3 and 5 without changing anything.
    npm run preview-models -- my-sculpture
    ```
 
+6. **Upload the files to R2** before you push. The live site loads models,
+   AR copies, card previews and thumbnails from the Cloudflare R2 bucket, not
+   from `public/` ([r2-assets.md](r2-assets.md)), so it can't show the new
+   work until they're there:
+
+   ```bash
+   npm run r2-sync
+   ```
+
+   Commit `scripts/r2-manifest.json` with the work.
+
 ### A 3D scan (.usdz or .usdc)
 
 Scans from a phone or scanning app come as USD files. Turn them into a `.glb` with Blender (5.1), then follow the steps above.
