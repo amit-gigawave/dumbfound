@@ -6,6 +6,8 @@
  * Step-by-step guide:         docs/adding-artworks.md
  */
 
+import { assetUrl } from "./assets.ts";
+
 export interface Sculpture {
   // ---- Required ----
   /** Lowercase words with hyphens; becomes the address, e.g. /artworks/<slug>. */
@@ -129,7 +131,7 @@ export interface ArtworkLook {
 export const AR_DEFAULT_CM = 50;
 
 /** The AR copy of a work's model, built by `npm run ar-models`. */
-export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
+export const arModelUrl = (work: Sculpture) => assetUrl(`/ar/${work.slug}.glb`);
 
 /**
  * The light copy the artwork cards turn in 3D (1024 px textures), built by
@@ -138,7 +140,7 @@ export const arModelUrl = (work: Sculpture) => `/ar/${work.slug}.glb`;
  */
 export const previewModelUrl = (work: Sculpture) =>
   work.modelUrl
-    ? `/previews/${work.slug}.glb${work.modelUrl.match(/\?v=\d+/)?.[0] ?? ""}`
+    ? assetUrl(`/previews/${work.slug}.glb${work.modelUrl.match(/\?v=\d+/)?.[0] ?? ""}`)
     : undefined;
 
 export const sculptures: Sculpture[] = [
@@ -1141,6 +1143,15 @@ export const sculptures: Sculpture[] = [
     heightCm: 224,
   },
 ];
+
+// The entries above keep site paths (/sculptures/…, /thumbnails/…): the scripts
+// read and write them and find the files under public/. When the R2 bucket is
+// in use (lib/assets.ts), every page gets the bucket's addresses instead.
+for (const work of sculptures) {
+  work.thumbnail = assetUrl(work.thumbnail);
+  if (work.modelUrl) work.modelUrl = assetUrl(work.modelUrl);
+  if (work.usdzUrl) work.usdzUrl = assetUrl(work.usdzUrl);
+}
 
 export const getSculpture = (slug: string): Sculpture | undefined =>
   sculptures.find((s) => s.slug === slug);

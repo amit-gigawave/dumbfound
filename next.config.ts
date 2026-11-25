@@ -40,10 +40,30 @@ const renamedArtworks: [string, string][] = [
   ["thota-female-head-07", "thota-female-head-with-nose-ring"],
 ];
 
+// The R2 bucket the models and thumbnails come from in production (lib/assets.ts).
+const assetHost = process.env.NEXT_PUBLIC_ASSET_BASE
+  ? new URL(process.env.NEXT_PUBLIC_ASSET_BASE)
+  : undefined;
+
 const nextConfig: NextConfig = {
   // Local images may carry ?v=N, so a changed thumbnail gets a new address
   // and browsers and the image optimiser don't keep showing the old one.
-  images: { localPatterns: [{ pathname: "/**" }] },
+  // In production thumbnails come from the R2 bucket (lib/assets.ts). Spelled
+  // out rather than `new URL(...)`, which would only allow addresses without
+  // a query and so turn away every thumbnail with ?v=N.
+  images: {
+    localPatterns: [{ pathname: "/**" }],
+    remotePatterns: assetHost
+      ? [
+          {
+            protocol: assetHost.protocol.slice(0, -1) as "http" | "https",
+            hostname: assetHost.hostname,
+            port: assetHost.port,
+            pathname: "/**",
+          },
+        ]
+      : [],
+  },
   // The collection used to live at /gallery.
   async redirects() {
     return [
