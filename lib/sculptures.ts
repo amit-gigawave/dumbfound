@@ -269,9 +269,9 @@ export const sculptures: Sculpture[] = [
     longDescription:
       "A man sits on the ground with one knee drawn up, his right forearm resting across it and the hand hanging loosely over the edge, the fingers curled. His other leg lies folded flat in front of him, and his left hand is placed palm down on the ground beside his hip. His head is slightly lifted and his eyes appear nearly closed.\n\nHe wears a peaked cap with a band, a shirt buttoned to the collar, a loose open jacket with buttons down one side and a belt at the waist. His trousers are creased at the shin, and he wears heavy laced shoes, both placed at the front of the work. The clothing has a textured, slightly rough surface in a dark grey-violet tone, while the face, hands and a strip of bare ankle are a lighter golden brown.\n\nThis is a large bronze, 30 × 30 × 32 inches, about 76 cm high, and is cast 3 of an edition of 9. The title refers to a horn; from this front view the instrument is not visible. The seated figure is one of the bandsmen of Krishen Khanna's Bandwallahs series.",
     artistSlug: "krishen-khanna",
-    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp?v=8",
+    thumbnail: "/thumbnails/khanna-seated-bandsman-with-horn.webp?v=9",
     modelUrl: "/sculptures/khanna-seated-bandsman-with-horn.glb?v=3",
-    look: { roughness: 0.6, reflections: 1.1, light: 1.4, sideLights: 1, specular: 1 },
+    look: { roughness: 0.6, reflections: 1.1, light: 1.4, sideLights: 1, specular: 1, parts: { "defaultMat.001": { metalness: 0.51, roughness: 0.84 }, "mat0": { roughness: 0.41 } } },
     material: "Bronze",
     year: "",
     dimensions: "30 × 30 × 32 inches",
