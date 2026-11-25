@@ -387,8 +387,95 @@ export default function LookTweaker({
           <p className="text-[13px] text-stone">{work.artist}</p>
           <h2 className="font-display text-[24px] leading-tight">{work.title}</h2>
 
+          {/* Parts: a model made of several surfaces can set each one's
+              metalness and roughness on its own. Picked here, above the
+              sliders, so it's clear which of them follow the pick. */}
+          {parts.length > 0 && (
+            <div className="mt-5 border-y border-rule py-4">
+              <p className="text-[14px]">Parts</p>
+              <p className="mt-1 text-[12px] leading-snug text-stone">
+                {parts.length === 1
+                  ? "This model is one surface. Pick it to set its metalness and roughness directly, in place of the scan's own (including its texture)."
+                  : `This model has ${parts.length} surfaces. Pick one to set its metalness and roughness on its own; it lights up green in the viewer.`}{" "}
+                Light, reflections, side lights, sheen and the light setup are the same for every part.
+              </p>
+              <div role="radiogroup" aria-label="Part" className="mt-3 flex flex-wrap gap-1.5">
+                {[null, ...parts.map((p) => p.name)].map((name) => {
+                  const on = part === name;
+                  const info = parts.find((p) => p.name === name);
+                  const tuned = name !== null && look.parts?.[name] !== undefined;
+                  return (
+                    <button
+                      key={name ?? "whole"}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => choosePart(name)}
+                      title={info ? points(info.points) : undefined}
+                      className={`relative rounded-full border px-3 py-1.5 text-[13px] ${
+                        on ? "border-ink bg-ink text-white" : "border-rule bg-white hover:border-ink"
+                      }`}
+                    >
+                      {name ?? "Whole work"}
+                      {info && <span className={`ml-1.5 text-[11px] ${on ? "text-white/70" : "text-stone"}`}>{points(info.points)}</span>}
+                      {tuned && <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent" aria-label="Set on its own" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className="mt-5 space-y-5">
-            {SLIDERS.map((s) => {
+            {part && (() => {
+              const info = parts.find((p) => p.name === part);
+              const own = look.parts?.[part] ?? {};
+              return (
+                <div className="space-y-5">
+                  {(["metalness", "roughness"] as const).map((key) => {
+                    const scan = info?.[key] ?? 0;
+                    const v = own[key];
+                    return (
+                      <label key={key} className="block">
+                        <span className="flex items-baseline justify-between text-[14px]">
+                          <span>{key === "metalness" ? "Metalness" : "Roughness"} of {part}</span>
+                          <span className="tabular-nums text-ink">
+                            {v !== undefined ? v.toFixed(2) : `scan's own ${scan.toFixed(2)}`}
+                          </span>
+                        </span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={v ?? scan}
+                          onChange={(e) => setPartValue(key, Number(e.target.value))}
+                          className="mt-1.5 w-full accent-[#396046]"
+                        />
+                        <span className="block text-[12px] leading-snug text-stone">
+                          {key === "metalness"
+                            ? "Sets this part's metalness: 0 is paint or stone, 1 is metal."
+                            : "Sets this part's roughness: 0 is glossy, 1 is fully matte."}
+                        </span>
+                      </label>
+                    );
+                  })}
+                  {Object.keys(own).length > 0 && (
+                    <button
+                      type="button"
+                      onClick={clearPart}
+                      className="rounded-full border border-rule bg-white px-3 py-1.5 text-[13px] hover:border-ink"
+                    >
+                      Follow the whole-work sliders
+                    </button>
+                  )}
+                  <p className="border-t border-rule pt-4 text-[12px] leading-snug text-stone">
+                    Below: the same for every part.
+                  </p>
+                </div>
+              );
+            })()}
+            {SLIDERS.filter((s) => !part || (s.key !== "metalness" && s.key !== "roughness")).map((s) => {
               const v = look[s.key] ?? s.base;
               return (
                 <label key={s.key} className="block">
@@ -467,91 +554,6 @@ export default function LookTweaker({
               </select>
             </label>
           </div>
-
-          {/* Parts: a model made of several surfaces can set each one's
-              metalness and roughness on its own. */}
-          {parts.length > 0 && (
-            <div className="mt-6 border-t border-rule pt-5">
-              <p className="text-[14px]">Parts</p>
-              <p className="mt-1 text-[12px] leading-snug text-stone">
-                {parts.length === 1
-                  ? "This model is one surface. Pick it to set its metalness and roughness directly, in place of the scan's own (including its texture)."
-                  : `This model has ${parts.length} surfaces. Pick one to set it on its own; it lights up green in the viewer.`}{" "}
-                Values set here are used as they are, in place of the scan&rsquo;s own; the sliders above still
-                apply to every part you haven&rsquo;t set.
-              </p>
-              <div role="radiogroup" aria-label="Part" className="mt-3 flex flex-wrap gap-1.5">
-                {[null, ...parts.map((p) => p.name)].map((name) => {
-                  const on = part === name;
-                  const info = parts.find((p) => p.name === name);
-                  const tuned = name !== null && look.parts?.[name] !== undefined;
-                  return (
-                    <button
-                      key={name ?? "whole"}
-                      type="button"
-                      role="radio"
-                      aria-checked={on}
-                      onClick={() => choosePart(name)}
-                      title={info ? points(info.points) : undefined}
-                      className={`relative rounded-full border px-3 py-1.5 text-[13px] ${
-                        on ? "border-ink bg-ink text-white" : "border-rule bg-white hover:border-ink"
-                      }`}
-                    >
-                      {name ?? "Whole work"}
-                      {info && <span className={`ml-1.5 text-[11px] ${on ? "text-white/70" : "text-stone"}`}>{points(info.points)}</span>}
-                      {tuned && <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent" aria-label="Set on its own" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {part && (() => {
-                const info = parts.find((p) => p.name === part);
-                const own = look.parts?.[part] ?? {};
-                return (
-                  <div className="mt-4 space-y-5">
-                    {(["metalness", "roughness"] as const).map((key) => {
-                      const scan = info?.[key] ?? 0;
-                      const v = own[key];
-                      return (
-                        <label key={key} className="block">
-                          <span className="flex items-baseline justify-between text-[14px]">
-                            <span>{key === "metalness" ? "Metalness" : "Roughness"} of {part}</span>
-                            <span className="tabular-nums text-ink">
-                              {v !== undefined ? v.toFixed(2) : `scan's own ${scan.toFixed(2)}`}
-                            </span>
-                          </span>
-                          <input
-                            type="range"
-                            min={0}
-                            max={1}
-                            step={0.01}
-                            value={v ?? scan}
-                            onChange={(e) => setPartValue(key, Number(e.target.value))}
-                            className="mt-1.5 w-full accent-[#396046]"
-                          />
-                          <span className="block text-[12px] leading-snug text-stone">
-                            {key === "metalness"
-                              ? "Sets this part's metalness: 0 is paint or stone, 1 is metal."
-                              : "Sets this part's roughness: 0 is glossy, 1 is fully matte."}
-                          </span>
-                        </label>
-                      );
-                    })}
-                    {Object.keys(own).length > 0 && (
-                      <button
-                        type="button"
-                        onClick={clearPart}
-                        className="rounded-full border border-rule bg-white px-3 py-1.5 text-[13px] hover:border-ink"
-                      >
-                        Follow the whole-work sliders
-                      </button>
-                    )}
-                  </div>
-                );
-              })()}
-            </div>
-          )}
 
           <div className="mt-6 flex flex-wrap gap-2">
             <button
