@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Scan a work — AR</title>
+
+    <!--
+      8th Wall WebAR. THREE SCRIPTS below. Before this works you must, in the
+      8th Wall / Niantic console:
+        1. Put YOUR app key in the xrweb src (replace REPLACE_WITH_8THWALL_APP_KEY).
+        2. Upload each public/scan8/targets/<slug>.jpg as an Image Target named
+           exactly <slug> (the names in works.json).
+        3. Authorise this page's domain (e.g. dumbfound.vercel.app) in the
+           project's settings.
+      The camera needs HTTPS and a phone.
+    -->
+    <script src="//cdn.8thwall.com/web/aframe/8frame-1.5.0.min.js"></script>
+    <script
+      async
+      src="//apps.8thwall.com/xrweb?appKey=REPLACE_WITH_8THWALL_APP_KEY"
+    ></script>
+    <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: system-ui, -apple-system, sans-serif;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      #ui {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 10;
+        color: #fff;
+      }
+      #top {
+        position: absolute;
+        inset: 0 0 auto 0;
+        padding: 16px;
+        padding-top: max(16px, env(safe-area-inset-top));
+        background: linear-gradient(#000a, #0000);
+      }
+      #title {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.15;
+      }
+      #artist {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+      #status {
+        font-size: 15px;
+        margin-top: 2px;
+      }
+      #bottom {
+        position: absolute;
+        inset: auto 0 0 0;
+        padding: 16px;
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+        background: linear-gradient(#0000, #000b);
+        display: none;
+      }
+      #hint {
+        font-size: 13px;
+        opacity: 0.85;
+        margin-bottom: 10px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      button {
+        pointer-events: auto;
+        font: inherit;
+        font-size: 15px;
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        background: #ffffff22;
+        color: #fff;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #remove {
+        flex: 1;
+        background: #f3b23a;
+        color: #1c1a17;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      World tracking is ON (the xrweb default), so a work placed in the scene
+      stays anchored in the room even after its picture leaves the camera.
+      The placed work is a direct child of the scene (world space); app.js
+      moves it onto the picture when one is found, and never hides it on loss.
+    -->
+    <a-scene
+      scan-app
+      xrextras-gesture-detector
+      xrextras-loading
+      xrextras-runtime-error
+      renderer="colorManagement: true; exposure: 1; toneMapping: neutral"
+      gltf-model="dracoDecoderPath: /draco/"
+      xrweb="allowedDevices: any"
+    >
+      <a-camera position="0 8 0"></a-camera>
+      <a-entity id="placed" visible="false">
+        <a-gltf-model id="model"></a-gltf-model>
+      </a-entity>
+    </a-scene>
+
+    <div id="ui">
+      <div id="top">
+        <div id="title"></div>
+        <div id="artist"></div>
+        <div id="status">Loading…</div>
+      </div>
+      <div id="bottom">
+        <div id="hint">Pinch to resize · walk around to view every side</div>
+        <div class="row">
+          <button id="remove" type="button">Remove · scan another</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

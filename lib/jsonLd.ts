@@ -1,8 +1,8 @@
 import { site, siteUrl } from "./site";
 
-/** Absolute URL for a site path, for structured data and feeds. */
+/** Absolute URL for a site path, for structured data and feeds. Full URLs (R2 images) pass through. */
 export const absUrl = (path: string) =>
-  `${siteUrl}${path === "/" ? "" : path}`;
+  /^https?:\/\//.test(path) ? path : `${siteUrl}${path === "/" ? "" : path}`;
 
 /** Sculpted India as the author and publisher of its own pages. */
 export const organization = {

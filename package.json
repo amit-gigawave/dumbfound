@@ -14,6 +14,7 @@
     "check-model": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-model.mjs",
     "ar-models": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/make-ar-models.mjs",
     "preview-models": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/make-preview-models.mjs",
+    "r2-sync": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/r2-sync.mjs",
     "tunnel": "node scripts/tunnel.mjs"
   },
   "dependencies": {

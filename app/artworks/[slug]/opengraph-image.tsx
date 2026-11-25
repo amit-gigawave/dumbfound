@@ -1,5 +1,7 @@
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
+import { assetBase } from "@/lib/assets";
 import { getSculpture, sculptures } from "@/lib/sculptures";
 
 /*
@@ -37,12 +39,18 @@ export default async function ArtworkOpenGraphImage({
   const work = getSculpture(slug);
   if (!work) return new Response("Not found", { status: 404 });
 
-  const jpeg = await sharp(
-    // turbopackIgnore: a computed path under public/ would otherwise make
-    // file tracing pack all of public/ (3D models, AR copies: far past
-    // Vercel's 250 MB function limit) into this route's function.
-    join(/* turbopackIgnore: true */ process.cwd(), "public", work.thumbnail.split("?")[0]),
-  )
+  // The thumbnail's site path; with the R2 bucket in use it's a full URL.
+  const path = (assetBase ? work.thumbnail.replace(assetBase, "") : work.thumbnail).split("?")[0];
+  // turbopackIgnore: a computed path under public/ would otherwise make
+  // file tracing pack all of public/ (3D models, AR copies: far past
+  // Vercel's 250 MB function limit) into this route's function.
+  const local = join(/* turbopackIgnore: true */ process.cwd(), "public", path);
+  // Read it from public/ when the file is there, otherwise from the bucket.
+  const source = existsSync(local)
+    ? local
+    : Buffer.from(await (await fetch(work.thumbnail)).arrayBuffer());
+
+  const jpeg = await sharp(source)
     // Cut the empty transparent edges, so the work fills the small square
     // (with a narrow margin), then put it on the plate.
     .trim({ threshold: 1 })

@@ -51,6 +51,9 @@ const toHsl = ([r, g, b]: [number, number, number]): [
 const measure = (src: string): Promise<ImageStats | null> =>
   new Promise((resolve) => {
     const img = new Image();
+    // Thumbnails may come from the R2 bucket (lib/assets.ts): without CORS
+    // the canvas is tainted and its pixels can't be read.
+    img.crossOrigin = "anonymous";
     img.decoding = "async";
     img.onload = () => {
       try {

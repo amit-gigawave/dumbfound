@@ -158,6 +158,19 @@ export default function ScanAR({
         {running ? "Stop camera" : "Start camera"}
       </button>
 
+      {/* The 8th Wall version anchors the work in the room (world tracking), so
+          it stays put when the picture leaves view. A curated few works. */}
+      <p className="mt-4 text-[14px] text-stone">
+        Want it to stay put when you look away?{" "}
+        <a
+          href="/scan8/index.html"
+          className="text-ink underline decoration-rule underline-offset-4 hover:text-accent hover:decoration-accent"
+        >
+          Try the steadier, world-tracked version
+        </a>{" "}
+        (a few works, lays flat on the floor).
+      </p>
+
       {mounted &&
         createPortal(
           <div

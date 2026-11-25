@@ -1,6 +1,8 @@
+import { assetUrl } from "../assets";
+
 /** Share image from a work's thumbnail (800×1000, ours). */
 export const thumb = (slug: string, alt: string) => ({
-  src: `/thumbnails/${slug}.webp`,
+  src: assetUrl(`/thumbnails/${slug}.webp`),
   alt,
   width: 800,
   height: 1000,

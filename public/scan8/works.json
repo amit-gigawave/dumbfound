@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "thota-female-head-with-polka-dot-collar",
+    "name": "thota-female-head-with-polka-dot-collar",
+    "title": "Female Head with Polka-dot Collar",
+    "artist": "Thota Vaikuntam",
+    "heightCm": 251,
+    "ar": "/ar/thota-female-head-with-polka-dot-collar.glb"
+  },
+  {
+    "slug": "thota-male-head-with-blue-turban",
+    "name": "thota-male-head-with-blue-turban",
+    "title": "Male Head with Blue Turban and Moustache",
+    "artist": "Thota Vaikuntam",
+    "heightCm": 246,
+    "ar": "/ar/thota-male-head-with-blue-turban.glb"
+  },
+  {
+    "slug": "khanna-kc-the-bandmaster",
+    "name": "khanna-kc-the-bandmaster",
+    "title": "KC The Bandmaster",
+    "artist": "Krishen Khanna",
+    "heightCm": 33,
+    "ar": "/ar/khanna-kc-the-bandmaster.glb"
+  },
+  {
+    "slug": "sugandh-meri-patang",
+    "name": "sugandh-meri-patang",
+    "title": "Meri Patang",
+    "artist": "Yashika Sugandh",
+    "heightCm": 30,
+    "ar": "/ar/sugandh-meri-patang.glb"
+  },
+  {
+    "slug": "khanna-shyam-pratap-bhompu-walae",
+    "name": "khanna-shyam-pratap-bhompu-walae",
+    "title": "Shyam Pratap Bhompu Walae",
+    "artist": "Krishen Khanna",
+    "heightCm": 30,
+    "ar": "/ar/khanna-shyam-pratap-bhompu-walae.glb"
+  },
+  {
+    "slug": "thota-man-with-mridangam",
+    "name": "thota-man-with-mridangam",
+    "title": "Man with Mridangam",
+    "artist": "Thota Vaikuntam",
+    "heightCm": 150,
+    "ar": "/ar/thota-man-with-mridangam.glb"
+  }
+]
